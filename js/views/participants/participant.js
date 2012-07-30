@@ -8,8 +8,9 @@ define([
     'text!templates/participants/miniature.html',
     'views/participants/details',
     'views/participants/edit',
+    'views/participants/add',
     'pubsub'
-], function ($, _, Backbone, Participant, participantTemplate, NavigationView, miniatureTemplate, DetailsView, EditView, Pubsub) {
+], function ($, _, Backbone, Participant, participantTemplate, NavigationView, miniatureTemplate, DetailsView, EditView, AddView, Pubsub) {
     var ParticipantView = Backbone.View.extend({
 
         template:_.template(participantTemplate),
@@ -35,14 +36,19 @@ define([
 
         render:function () {
 
-            this.model.fetch({
-                success:function () {
-                    this.showTemplate();
-                }.bind(this),
-                error:function () {
-                    Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to get participant', 'alert-error']);
-                }
-            });
+            if (this.model.id) {
+                this.model.fetch({
+                    success:function () {
+                        this.showTemplate();
+                    }.bind(this),
+                    error:function () {
+                        Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to get participant', 'alert-error']);
+                    }
+                });
+            }
+            else {
+                this.showTemplate();
+            }
 
             return this;
         },
@@ -90,6 +96,9 @@ define([
                     this.mainView = new DetailsView(this.model);
                     break;
                 case 'edit':
+                    this.mainView = new EditView(this.model);
+                    break;
+                case 'add':
                     this.mainView = new EditView(this.model);
                     break;
             }

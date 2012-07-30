@@ -43,21 +43,19 @@ define([
         showParticipant:function (id) {
             classes.Views.HeaderView.setMenu(ParticipantsMenuView);
             classes.Views.HeaderView.selectMenuItem('element-menu');
-            //utils.showView($('#content'), new ParticipantView(id));
             utils.showView($('#content'), new ParticipantView(id, 'details'))
         },
 
         editParticipant:function (id) {
             classes.Views.HeaderView.setMenu(ParticipantsMenuView);
             classes.Views.HeaderView.selectMenuItem('element-menu');
-            //utils.showView($('#content'), new ParticipantEditView(id));
             utils.showView($('#content'), new ParticipantView(id, 'edit'))
         },
 
         addParticipant:function () {
             classes.Views.HeaderView.setMenu(ParticipantsMenuView);
             classes.Views.HeaderView.selectMenuItem('element-menu');
-            //utils.showView($('#content'), new ParticipantAddView());
+            utils.showView($('#content'), new ParticipantView(null, 'add'))
         },
 
         showDeletions:function () {

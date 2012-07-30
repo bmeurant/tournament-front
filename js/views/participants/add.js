@@ -2,16 +2,12 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'models/participant',
-    'views/participants/edit',
-    'pubsub'
-], function ($, _, Backbone, Participant, EditView, Pubsub) {
+    'views/participants/edit'
+], function ($, _, Backbone, EditView) {
 
-    var ParticipantAddView = EditView.extend({
-
+    var AddView = EditView.extend({
         type:'add'
-
     });
 
-    return ParticipantAddView;
+    return AddView;
 });
