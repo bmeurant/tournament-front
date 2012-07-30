@@ -274,3 +274,7 @@ i.icon-checked {
 i.icon-unchecked {
     background-image: url("../img/unchecked.png");
 }
+
+#content {
+    min-height: 600px;
+}
