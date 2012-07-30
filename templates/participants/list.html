@@ -1,0 +1,22 @@
+<ul class="thumbnails span12">
+    <% _.each(participants, function(participant, index){
+        if (_.indexOf(deleted, participant.id) < 0) { %>
+            <li id="<%= participant.id %>" class="thumbnail" draggable="true">
+                <input type="hidden" value="<%= index %>"/>
+                <a href="#participant/<%= participant.id %>" class="plain participant-thumb">
+                    <div class="participant-thumb">
+                        <% if (!participant.picture_url) { %>
+                        <img src="img/participants/no-photo.jpg" draggable="false" height="125" width="125" alt=""/>
+                        <% }
+                        else
+                        { %>
+                        <img class="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
+                        <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
+                        <% } %>
+                    </div>
+                    <h5><%= participant.firstname %>&nbsp;<%= participant.lastname %></h5>
+                </a>
+            </li>
+        <% }
+    }); %>
+</ul>

@@ -1,0 +1,276 @@
+img.photo {
+    max-width: 125px;
+    max-height: 125px;
+}
+
+#details img#photo {
+    max-width: 140px;
+}
+
+p.photo {
+    text-align: center;
+}
+
+a.participant-thumb img {
+    margin: auto;
+    display: block;
+}
+
+div.participant-thumb {
+    text-align: center;
+    width: 125px;
+    height: 125px;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.form-actions a.right-btn {
+    float: right;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.form-actions a.left-btn {
+    float: left;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.nav-bar {
+    display: block;
+    width: 100%;
+    padding: 0;
+    font-size: 25px;
+    line-height: 36px;
+    color: #333;
+    border: 0;
+    border-bottom: 1px solid #EEE;
+    vertical-align: middle;
+}
+
+.nav-bar .nav-pills {
+    font-size: 20px;
+    float: right;
+    list-style: none;
+}
+
+.nav-bar .title {
+    float: left;
+    margin-bottom: 5px;
+}
+
+html body {
+    padding-top: 65px;
+    overflow: hidden;
+}
+
+form .well {
+    margin-bottom: 0;
+}
+
+body .footer {
+    margin-top: 20px;
+    padding-top: 20px;
+    padding-bottom: 0;
+}
+
+form.form-horizontal {
+    margin: 0 0 0 18px;
+}
+
+*[draggable=true] {
+    -webkit-user-drag: element;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: move;
+}
+
+*[draggable=true] div, *[draggable=true] img {
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: move;
+}
+
+*:-khtml-drag {
+    background-color: rgba(238, 238, 238, 0.5);
+}
+
+ul.thumbnails {
+    overflow: hidden;
+}
+
+li.thumbnail:hover {
+    border-color: #0088cc;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+    -moz-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+    box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+}
+
+.navbar * .drop-zone {
+    -moz-transition: none 0s ease 0s;
+    border: 2px dotted;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 1;
+    padding: 3px 5px;
+    margin-top: 6px;
+}
+
+.navbar .nav img.element-separator, .navbar .nav .badge {
+    float: none;
+    padding: 9px 9px 11px;
+    line-height: 19px;
+    max-height: 21px;
+}
+
+.element-separator {
+}
+
+a.brand {
+    width: 193px;
+}
+
+body .navbar .nav > li > a {
+    padding-top: 11px;
+}
+
+body .navbar .nav > li.drop-zone > a {
+    padding: 0;
+}
+
+.navbar .nav .active a:not(.badge), .navbar .nav .active  a:hover:not(.badge) {
+    color: white;
+    text-decoration: none;
+    background-color: #222;
+}
+
+.navbar .nav > li > a.badge-info:hover, .navbar .nav > li > a.badge-info {
+    background-color: #3a87ad;
+    color: white;
+    text-decoration: none;
+}
+
+.navbar .nav > li > a.badge {
+    margin-top: 11px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+body .navbar .nav {
+    margin: 0;
+}
+
+.navbar .nav img.icon {
+    max-height: 14px;
+    vertical-align: text-top;
+}
+
+body .navbar .nav.pull-right {
+    margin-left: 0;
+}
+
+body input, textarea, select, .uneditable-input {
+    width: auto;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.emphasize {
+    color: #3a87ad;
+}
+
+.title .icon {
+    max-width: 16px;
+    vertical-align: top;
+}
+
+#dragIcon {
+    overflow: hidden;
+    margin: 10px;
+    position: absolute;
+    left: 10000px;
+}
+
+#dragIcon div.participant-thumb {
+    width: auto;
+    height: auto;
+}
+
+#dragIcon img {
+    max-width: 50px;
+}
+
+#dragIcon li.thumbnail {
+    max-width: 66px;
+}
+
+#dragIcon h5 {
+    font-size: 11px;
+    line-height: 13px;
+}
+
+.dropable, .navbar .nav .active a:not(.badge).dropable, .navbar .nav .active a:hover:not(.badge).dropable {
+    background-color: #7bb3cf;
+}
+
+.alerts {
+    height: 70px;
+}
+
+.alerts .span12 {
+    width: 979px;
+}
+
+.deleted-elements {
+    min-height: 50px;
+}
+
+.navbar-search {
+    position: relative;
+}
+
+.navbar-search .search-query {
+    padding-left: 29px;
+}
+
+.navbar-search .icon-search {
+    position: absolute;
+    top: 14px;
+    left: 38px;
+    background-image: url("/img/glyphicons-halflings-white.png");
+}
+
+.navbar-search .search-query:focus, .navbar-search .search-query.focused {
+    padding-left: 30px;
+}
+
+.search-query:focus + .icon-search {
+    background-image: url("/img/glyphicons-halflings.png");
+}
+
+.dropdown-menu label {
+    display: inline;
+}
+
+i.icon-checked, i.icon-unchecked {
+    background-position: 0px;
+    width: 17px;
+    margin-right: 5px;
+}
+
+i.icon-checked {
+    background-image: url("../img/checked.png");
+}
+
+i.icon-unchecked {
+    background-image: url("../img/unchecked.png");
+}

@@ -1,0 +1,12 @@
+<li id="<%= participant.id %>" class="thumbnail">
+    <a href="#participant/<%= participant.id %>" class="plain participant-thumb">
+        <% if (!participant.pict_min) { %>
+        <img src="img/participants/no-photo.jpg" draggable="false" alt="">
+        <% }
+        else
+        { %>
+        <img class="photo" src="<%= server_url %><%= participant.pict_min %>" draggable="false" alt="">
+        <% } %>
+        <h5><%= participant.firstname %> <%= participant.lastname %></h5>
+    </a>
+</li>

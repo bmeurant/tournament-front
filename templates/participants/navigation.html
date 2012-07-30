@@ -1,0 +1,14 @@
+<div class="title">Participant&nbsp;<img src="img/crop.png" class="icon" draggable="false"/></div>
+<% if ((type == 'view') || (type == 'edit')) { %>
+<ul class="nav-pills">
+    <li class="<% if (type == 'view') { print('active');} %>">
+        <a href="#participant/<%= participant._id %>">Details</a>
+    </li>
+    <li class="<% if (type == 'edit') { print('active');} %>">
+        <a href="#participant/<%= participant._id %>/edit">Edit</a>
+    </li>
+    <li>
+        <a href="#teams?participant-id=<%= participant._id %>">Teams</a>
+    </li>
+</ul>
+<% } %>
