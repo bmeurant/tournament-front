@@ -38,7 +38,6 @@ div.participant-thumb {
 
 .nav-bar {
     display: block;
-    width: 100%;
     padding: 0;
     font-size: 25px;
     line-height: 36px;
@@ -224,10 +223,11 @@ body input, textarea, select, .uneditable-input {
 
 .alerts {
     height: 70px;
+    margin-left: 0px;
 }
 
 .alerts .span12 {
-    width: 979px;
+    width: 960px;
 }
 
 .deleted-elements {

@@ -3,15 +3,12 @@ define([
     'underscore',
     'backbone',
     'views/participants/list',
-    'views/participants/view',
-    'views/participants/edit',
-    'views/participants/add',
+    'views/participants/participant',
     'views/participants/menu',
     'pubsub'
-], function ($, _, Backbone, ParticipantListView, ParticipantView, ParticipantEditView, ParticipantAddView,ParticipantsMenuView, Pubsub) {
+], function ($, _, Backbone, ParticipantListView, ParticipantView, ParticipantsMenuView, Pubsub) {
 
     Backbone.View.prototype.close = function () {
-        console.log('Closing view ' + this);
         if (this.beforeClose) {
             this.beforeClose();
         }
@@ -46,19 +43,21 @@ define([
         showParticipant:function (id) {
             classes.Views.HeaderView.setMenu(ParticipantsMenuView);
             classes.Views.HeaderView.selectMenuItem('element-menu');
-            utils.showView($('#content'), new ParticipantView(id));
+            //utils.showView($('#content'), new ParticipantView(id));
+            utils.showView($('#content'), new ParticipantView(id, 'details'))
         },
 
         editParticipant:function (id) {
             classes.Views.HeaderView.setMenu(ParticipantsMenuView);
             classes.Views.HeaderView.selectMenuItem('element-menu');
-            utils.showView($('#content'), new ParticipantEditView(id));
+            //utils.showView($('#content'), new ParticipantEditView(id));
+            utils.showView($('#content'), new ParticipantView(id, 'edit'))
         },
 
         addParticipant:function () {
             classes.Views.HeaderView.setMenu(ParticipantsMenuView);
             classes.Views.HeaderView.selectMenuItem('element-menu');
-            utils.showView($('#content'), new ParticipantAddView());
+            //utils.showView($('#content'), new ParticipantAddView());
         },
 
         showDeletions:function () {

@@ -11,16 +11,23 @@ define([
         template:_.template(navigationTemplate),
 
         events:{
+            "click .nav-pills":"navClicked"
         },
 
         handlers:[],
 
-        initialize:function () {
+        initialize:function (id, type) {
+            this.id=id;
+            this.type = type;
+        },
+
+        navClicked:function () {
+            Pubsub.publish(Events.REMOVE_ALERT);
         },
 
         render:function () {
-            this.$el.html(this.navigationTemplate({participant:this.model.toJSON()}));
-
+            this.$el.html(this.template({id:this.id, type: this.type}));
+            return this;
         }
 
     });

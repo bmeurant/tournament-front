@@ -66,7 +66,7 @@ define([
                 Pubsub.publish(Events.REMOVE_ALERT);
             }
 
-            this.onDragEnd();
+            this.onDragEnd(id);
         },
 
         deleteElement:function (type, id) {
@@ -84,9 +84,10 @@ define([
             }
         },
 
-        onDragEnd:function () {
+        onDragEnd:function (id) {
             $('.drop-zone').removeClass('emphasize');
             this.clearDropZone();
+            Pubsub.publish(Events.ELEM_DELETED_FROM_BAR, [id]);
         },
 
         emphasizeDropZone:function () {

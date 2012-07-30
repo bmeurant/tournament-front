@@ -17,7 +17,7 @@ define([
 
         actions:{
             'list':['add'],
-            'view':['list', 'add'],
+            'details':['list', 'add'],
             'edit':['save', 'list', 'add'],
             'add':['save', 'list', 'add'],
             'no':[]

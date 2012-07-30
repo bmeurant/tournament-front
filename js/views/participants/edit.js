@@ -4,11 +4,10 @@ define([
     'backbone',
     'models/participant',
     'text!templates/participants/edit.html',
-    'views/participants/abstract',
     'pubsub'
-], function ($, _, Backbone, Participant, participantEditTemplate, AbstractView, Pubsub) {
+], function ($, _, Backbone, Participant, participantEditTemplate, Pubsub) {
 
-    var ParticipantEditView = AbstractView.extend({
+    var ParticipantEditView = Backbone.View.extend({
 
         template:_.template(participantEditTemplate),
         handlers:[],
@@ -19,20 +18,13 @@ define([
             "drop #photo":"dropHandler"
         },
 
-        initialize:function (id) {
-            AbstractView.prototype.initialize.apply(this, arguments);
-            this.events = _.extend({}, AbstractView.prototype.events, this.events);
-            this.handlers = _.extend([], AbstractView.prototype.handlers, this.handlers);
+        initialize:function (model) {
+            this.model = model;
             this.handlers.push(Pubsub.subscribe(Events.SAVE_ELEM, this.saveElement.bind(this)));
         },
 
         render:function () {
-            if (this.model.id) {
-                AbstractView.prototype.render.apply(this, arguments);
-            }
-            else {
-                this.showTemplate();
-            }
+            this.$el.html(this.template({participant:this.model.toJSON(), server_url:'http://localhost:3000/api'}));
             return this;
         },
 
@@ -63,25 +55,24 @@ define([
         },
 
         saveParticipant:function () {
-            var self = this;
             this.model.save(null, {
                 success:function (model) {
-                    self.model.id = model.attributes.id;
-                    if (self.pictureFile) {
+                    this.model.id = model.attributes.id;
+                    if (this.pictureFile) {
                         //this.model.set("picture", this.pictureFile.name);
-                        self.uploadFile(self.pictureFile, self.model.id,
+                        this.uploadFile(self.pictureFile, self.model.id,
                             function () {
-                                self.render();
-                                window.location.hash = 'participant/' + self.model.id;
+                                this.render();
+                                window.location.hash = 'participant/' + this.model.id;
                             }
                         );
                     } else {
-                        self.render();
-                        window.location.hash = 'participant/' + self.model.id;
+                        this.render();
+                        window.location.hash = 'participant/' + this.model.id;
                     }
 
                     Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Participant saved successfully', 'alert-success']);
-                },
+                }.bind(this),
                 error:function () {
                     Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to update this item', 'alert-error']);
                 }

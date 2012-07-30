@@ -44,12 +44,12 @@
                     <div class="well">
                         <p class="photo">
                             <% if (!participant.picture_url) { %>
-                            <img id="photo" src="img/participants/no-photo.jpg" height="125" width="125" alt="" draggable="false"/>
+                                <img id="photo" src="img/participants/no-photo.jpg" height="125" width="125" alt="" draggable="false"/>
                             <% }
                             else
                             { %>
-                            <img id="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
-                            <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
+                                <img id="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
+                                <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
                             <% } %>
                         </p>
 
