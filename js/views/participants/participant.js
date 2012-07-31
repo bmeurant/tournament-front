@@ -36,7 +36,7 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_BAR, this.onParticipantDeleted.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.CHANGE_VIEW, this.changeParticipantView.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.PRECEDENT_CALLED, this.precedentHandler.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.PREVIOUS_CALLED, this.precedentHandler.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.NEXT_CALLED, this.nextHandler.bind(this)));
         },
 

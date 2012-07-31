@@ -15,7 +15,7 @@ Events = {
     DELETIONS_TO_CANCEL:"DeletionsToCancel",
     DELETION_CANCELED:"DeletionCanceled",
     CHANGE_VIEW:"ChangeView",
-    PRECEDENT_CALLED:"PrecedentCalled",
+    PREVIOUS_CALLED:"PreviousCalled",
     NEXT_CALLED:"NextCalled"
 };
 

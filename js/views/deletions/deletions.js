@@ -150,7 +150,7 @@ define([
         },
 
         showTemplate:function () {
-            this.$el.html(this.template({'participants':this.collectionToJSON(this.modelsCollection, 'participant'), server_url:'http://localhost:3000/api', 'deleted':[], 'participants_template':this.participantsTemplate}));
+            this.$el.html(this.template({'participants':this.collectionToJSON(this.modelsCollection, 'participant'), server_url:'http://localhost:3000/api', 'deleted':[], 'id_selected':'no','participants_template':this.participantsTemplate}));
         },
 
         renderDels:function () {

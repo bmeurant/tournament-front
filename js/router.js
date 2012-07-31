@@ -59,7 +59,9 @@ define([
         },
 
         showDeletions:function () {
-            classes.Views.currentView.close();
+            if (classes.Views.currentView) {
+                classes.Views.currentView.close();
+            }
             classes.Views.HeaderView.clearMenu();
             classes.Views.HeaderView.selectMenuItem('delete-menu');
             classes.Views.DeletionsView.render();
