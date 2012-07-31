@@ -101,7 +101,7 @@ define([
             if (this.mainIsLinkedView()) {
                 this.initializeLinkedViews();
                 this.renderLinkedViews();
-                this.$el.find('#view').addClass('linked-views').css('left', 50 - (this.linkedViewsTypes.indexOf(this.type) * 1040) + "px");
+                this.$el.find('#view').addClass('linked-views').css('margin-left', - (this.linkedViewsTypes.indexOf(this.type) * (940 + 20 + 50)) + "px");
             }
             else {
                 this.renderMainView();
@@ -230,7 +230,7 @@ define([
             }
 
             Pubsub.publish(Events.VIEW_CHANGED, [this.type]);
-            this.$el.find('#view').addClass('slide').css('left', 50 - (mainIndex * 1040) + "px");
+            this.$el.find('#view').addClass('slide').css('margin-left', - (mainIndex * (940 + 20 + 50)) + "px");
         },
 
         precedentHandler:function () {

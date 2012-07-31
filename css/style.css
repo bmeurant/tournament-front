@@ -45,6 +45,7 @@ div.participant-thumb {
     border: 0;
     border-bottom: 1px solid #EEE;
     vertical-align: middle;
+    width: 960px;
 }
 
 .nav-bar .nav-pills {
@@ -131,7 +132,7 @@ li.thumbnail:hover {
 }
 
 a.brand {
-    width: 193px;
+    width: 185px;
 }
 
 body .navbar .nav > li > a {
@@ -223,7 +224,7 @@ body input, textarea, select, .uneditable-input {
 
 .alerts {
     height: 70px;
-    margin-left: 0px;
+    width: 920px;
 }
 
 .deleted-elements {
@@ -236,6 +237,7 @@ body input, textarea, select, .uneditable-input {
 
 .navbar-search .search-query {
     padding-left: 29px;
+    margin-right: 5px;
 }
 
 .navbar-search .icon-search {
@@ -284,27 +286,12 @@ i.icon-unchecked {
 #content .linked-views div.slide {
     display: inline-block;
 }
-
-#content .linked-views .slide.right {
-    left: 1400px;
-}
-
-#content .linked-views .slide.left {
-    left: -1400px;
-}
-
-#content .linked-views .slide.middle {
-    left: 173px;
-}
-
 .linked-views {
-    position: absolute;
-    left: 50px;
     width: 500%;
-    top: 200px;
+    margin-top: 50px;
 }
 
 .linked-views .view-elem {
     height: 500px;
-    margin-left: 100px;
+    margin-right: 50px;
 }
