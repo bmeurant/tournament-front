@@ -21,6 +21,7 @@ define([
         initialize:function (id, type) {
             this.id = id;
             this.type = type;
+            this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.updatePills.bind(this)));
         },
 
         navClicked:function (event) {
@@ -33,9 +34,8 @@ define([
 
             if (this.type != type) {
                 this.type = type;
-                Pubsub.publish(Events.CHANGE_PARTICIPANT_VIEW, [type]);
+                Pubsub.publish(Events.CHANGE_VIEW, [type]);
                 Pubsub.publish(Events.REMOVE_ALERT);
-                this.updatePills();
             }
         },
 
@@ -44,13 +44,13 @@ define([
             return this;
         },
 
-        updatePills: function () {
+        updatePills: function (type) {
 
             // clear pills
             $('ul.nav-pills li').removeClass('active');
 
             // active the current type
-            $('ul.nav-pills li > a#'+this.type).parent().addClass('active');
+            $('ul.nav-pills li > a#'+type).parent().addClass('active');
         }
 
     });

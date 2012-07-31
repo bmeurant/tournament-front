@@ -14,6 +14,8 @@ Events = {
     DELETIONS_POPULATED:"DeletionsPopulated",
     DELETIONS_TO_CANCEL:"DeletionsToCancel",
     DELETION_CANCELED:"DeletionCanceled",
-    CHANGE_PARTICIPANT_VIEW:"ChangeParticipantView"
+    CHANGE_VIEW:"ChangeView",
+    PRECEDENT_CALLED:"PrecedentCalled",
+    NEXT_CALLED:"NextCalled"
 };
 

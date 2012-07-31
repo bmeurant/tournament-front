@@ -21,6 +21,7 @@ classes = {
     Routers:{},
     Collections:{},
     Models:{},
+    Controllers:{},
     Views:{}
 };
 

@@ -17,8 +17,7 @@ define([
         miniatureTemplate:_.template(miniatureTemplate),
 
         events:{
-            "dragstart div[draggable=\"true\"]":"dragStartHandler",
-            "keypress":"keyPressHandler"
+            "dragstart div[draggable=\"true\"]":"dragStartHandler"
         },
 
         linkedViewsTypes:['details', 'edit'],
@@ -36,7 +35,9 @@ define([
 
             this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_BAR, this.onParticipantDeleted.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.CHANGE_PARTICIPANT_VIEW, this.changeParticipantView.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.CHANGE_VIEW, this.changeParticipantView.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.PRECEDENT_CALLED, this.precedentHandler.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.NEXT_CALLED, this.nextHandler.bind(this)));
         },
 
         render:function () {
@@ -232,8 +233,26 @@ define([
             this.$el.find('#view').addClass('slide').css('left', 50 - (mainIndex * 1040) + "px");
         },
 
-        keyPressHandler:function (event) {
-            alert(event.which);
+        precedentHandler:function () {
+            if (this.mainIsLinkedView()) {
+                var mainIndex = this.linkedViewsTypes.indexOf(this.type);
+
+                if (mainIndex > 0) {
+                    var newType = this.linkedViewsTypes[mainIndex - 1];
+                    this.changeParticipantView(newType);
+                }
+            }
+        },
+
+        nextHandler:function () {
+            if (this.mainIsLinkedView()) {
+                var mainIndex = this.linkedViewsTypes.indexOf(this.type);
+
+                if (mainIndex < this.linkedViewsTypes.length-1) {
+                    var newType = this.linkedViewsTypes[mainIndex + 1];
+                    this.changeParticipantView(newType);
+                }
+            }
         }
 
     });
