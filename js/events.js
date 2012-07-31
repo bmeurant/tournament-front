@@ -13,6 +13,7 @@ Events = {
     DELETIONS_DONE:"DeletionsDone",
     DELETIONS_POPULATED:"DeletionsPopulated",
     DELETIONS_TO_CANCEL:"DeletionsToCancel",
-    DELETION_CANCELED:"DeletionCanceled"
+    DELETION_CANCELED:"DeletionCanceled",
+    CHANGE_PARTICIPANT_VIEW:"ChangeParticipantView"
 };
 

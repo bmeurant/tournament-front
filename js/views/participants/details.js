@@ -11,21 +11,21 @@ define([
 
         template:_.template(detailsTemplate),
 
-        handlers: [],
+        handlers:[],
 
         events:{
 
         },
 
-        type: 'details',
+        type:'details',
 
         initialize:function (model) {
             this.model = model;
         },
 
-        render:function() {
+        render:function () {
 
-            this.$el.html(this.template({participant:this.model.toJSON(), 'server_url': "http://localhost:3000/api"}));
+            this.$el.html(this.template({participant:this.model.toJSON(), 'server_url':"http://localhost:3000/api"}));
 
             return this;
         }

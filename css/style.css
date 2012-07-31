@@ -3,7 +3,7 @@ img.photo {
     max-height: 125px;
 }
 
-#details img#photo {
+#details img.photo {
     max-width: 140px;
 }
 
@@ -226,10 +226,6 @@ body input, textarea, select, .uneditable-input {
     margin-left: 0px;
 }
 
-.alerts .span12 {
-    width: 960px;
-}
-
 .deleted-elements {
     min-height: 50px;
 }
@@ -277,4 +273,38 @@ i.icon-unchecked {
 
 #content {
     min-height: 600px;
+}
+
+#content .slide {
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    transition-duration: 1s;
+}
+
+#content .linked-views div.slide {
+    display: inline-block;
+}
+
+#content .linked-views .slide.right {
+    left: 1400px;
+}
+
+#content .linked-views .slide.left {
+    left: -1400px;
+}
+
+#content .linked-views .slide.middle {
+    left: 173px;
+}
+
+.linked-views {
+    position: absolute;
+    left: 50px;
+    width: 500%;
+    top: 200px;
+}
+
+.linked-views .view-elem {
+    height: 500px;
+    margin-left: 100px;
 }

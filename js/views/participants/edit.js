@@ -14,13 +14,28 @@ define([
         type:'edit',
 
         events:{
-            "change":"change",
-            "drop #photo":"dropHandler"
+            "change": "change",
+            "drop .photo": "dropHandler"
         },
 
-        initialize:function (model) {
+        initialize:function (model, active) {
             this.model = model;
+            if (active == null || active == true) {
+                this.initBindings();
+            }
+        },
+
+        initBindings:function () {
             this.handlers.push(Pubsub.subscribe(Events.SAVE_ELEM, this.saveElement.bind(this)));
+        },
+
+        removeBindings:function () {
+            this.unbind();
+            if (this.handlers) {
+                $.each(this.handlers, function (index, value) {
+                    Pubsub.unsubscribe(value);
+                });
+            }
         },
 
         render:function () {
@@ -89,7 +104,7 @@ define([
             // Read the image file from the local file system and display it in the img tag
             var reader = new FileReader();
             reader.onloadend = function () {
-                $('#photo').attr('src', reader.result);
+                $('.photo').attr('src', reader.result);
             };
             reader.readAsDataURL(this.pictureFile);
         },

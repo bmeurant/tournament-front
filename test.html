@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <title>Animez vos pages HTML5 avec CSS3</title>
+
+    <meta charset='utf-8'>
+    <script type="text/javascript" src="js/libs/jquery.js" ></script>
+  </head>
+  
+  <body>
+
+<!-- Changement de position avec transition -->
+
+<style>
+	#im2 { position: absolute; -webkit-transition: 5s;}
+    #im2.begin { left: 0px; }
+    #im2.end   { left: 500px; }
+</style>
+<article onclick="$('#im2').toggleClass('begin').toggleClass('end');">
+      
+        <div class="animcontainer">
+        <img id="im2" class="begin" src="img/checked.png" />
+        </div>
+        <p>&nbsp;</p>
+        <table class="table-noborders">
+        <tr>
+        <td width="40%">
+</article>
+
+<div style="background-color:red">
+   <div style="background-color:blue; display: inline-block;">blah 1</div>
+   <div style="background-color:green; display: inline-block;">blah 2</div>
+   <div style="background-color:yellow; display: inline-block;">blah 3</div>
+
+</div>
+
+</body>
+</html>

@@ -18,8 +18,12 @@ define([
 
         events:{
             "dragstart div[draggable=\"true\"]":"dragStartHandler",
-            "dragend div[draggable=\"true\"]":"dragEndHandler"
+            "keypress":"keyPressHandler"
         },
+
+        linkedViewsTypes:['details', 'edit'],
+        linkedViewsClasses:[DetailsView, EditView],
+        linkedViewsInstances:[],
 
         handlers:[],
 
@@ -32,6 +36,7 @@ define([
 
             this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_BAR, this.onParticipantDeleted.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.CHANGE_PARTICIPANT_VIEW, this.changeParticipantView.bind(this)));
         },
 
         render:function () {
@@ -65,10 +70,6 @@ define([
             Pubsub.publish(Events.DRAG_START);
         },
 
-        dragEndHandler:function (event) {
-            Pubsub.publish(Events.DRAG_END);
-        },
-
         close:function () {
             this.navigationView.close();
 
@@ -76,21 +77,60 @@ define([
                 this.mainView.close();
             }
 
+            this.closeLinkedViews();
+
             Backbone.View.prototype.close.apply(this, arguments);
         },
 
         showTemplate:function () {
 
-            this.initializeMainView();
-
             this.$el.html(this.template());
             this.navigationView.render().$el.appendTo(this.$el.find('#navigation'));
-            this.mainView.render().$el.appendTo(this.$el.find('#view'));
+
+            this.renderViews();
 
             Pubsub.publish(Events.VIEW_CHANGED, [this.type]);
+            Pubsub.publish(Events.REMOVE_ALERT);
+        },
+
+        renderViews:function () {
+
+            this.initializeMainView();
+
+            if (this.mainIsLinkedView()) {
+                this.initializeLinkedViews();
+                this.renderLinkedViews();
+                this.$el.find('#view').addClass('linked-views').css('left', 50 - (this.linkedViewsTypes.indexOf(this.type) * 1040) + "px");
+            }
+            else {
+                this.renderMainView();
+            }
+        },
+
+        mainIsLinkedView:function () {
+            return this.linkedViewsTypes.indexOf(this.type) >= 0;
+        },
+
+        renderMainView:function () {
+            var $mainView = this.mainView.render().$el;
+            $mainView.appendTo(this.$el.find('#view'));
+        },
+
+        renderLinkedViews:function () {
+            if (this.linkedViewsInstances) {
+                for (var i = 0; i < this.linkedViewsInstances.length; i++) {
+                    var $newView = this.linkedViewsInstances[i].render().$el;
+                    $newView.find('div#' + this.linkedViewsInstances[i].type);
+                    $newView.appendTo(this.$el.find('#view'));
+                }
+            }
         },
 
         initializeMainView:function () {
+            if (this.mainView) {
+                this.mainView.close();
+            }
+
             switch (this.type) {
                 case 'details':
                     this.mainView = new DetailsView(this.model);
@@ -99,9 +139,50 @@ define([
                     this.mainView = new EditView(this.model);
                     break;
                 case 'add':
-                    this.mainView = new EditView(this.model);
+                    this.mainView = new AddView(this.model);
                     break;
             }
+
+        },
+
+        initializeLinkedViews:function () {
+
+            this.closeLinkedViews();
+
+            this.linkedViewsInstances = [];
+            var indexOfMainView = this.linkedViewsTypes.indexOf(this.type);
+
+            if (indexOfMainView < 0) {
+                return;
+            }
+
+            this.linkedViewsInstances[indexOfMainView] = this.mainView;
+
+            for (var i = indexOfMainView - 1; i >= 0; i--) {
+                this.recordLinkedView(i);
+            }
+
+            for (var i = indexOfMainView + 1; i < this.linkedViewsTypes.length; i++) {
+                this.recordLinkedView(i);
+            }
+
+        },
+
+        closeLinkedViews:function () {
+            if (this.linkedViewsInstances) {
+                $.each(this.linkedViewsInstances, function (index, value) {
+                    value.close();
+                });
+            }
+        },
+
+        recordLinkedView:function (i) {
+            var LinkedView = this.linkedViewsClasses[i];
+            var linkedViewInstance = new LinkedView(this.model, false);
+            if (linkedViewInstance && linkedViewInstance.removeBindings) {
+                linkedViewInstance.removeBindings.apply(linkedViewInstance);
+            }
+            this.linkedViewsInstances[i] = linkedViewInstance;
         },
 
         deleteFile:function (id, callbackSuccess) {
@@ -130,9 +211,33 @@ define([
 
         onParticipantDeleted:function () {
             window.location.hash = 'participants';
+        },
+
+        changeParticipantView:function (type) {
+
+            var mainIndex = this.linkedViewsTypes.indexOf(this.type);
+
+            if (this.linkedViewsInstances[mainIndex].removeBindings) {
+                this.linkedViewsInstances[mainIndex].removeBindings();
+            }
+
+            mainIndex = this.linkedViewsTypes.indexOf(type);
+            this.type = type;
+
+            if (this.linkedViewsInstances[mainIndex].initBindings) {
+                this.linkedViewsInstances[mainIndex].initBindings();
+            }
+
+            Pubsub.publish(Events.VIEW_CHANGED, [this.type]);
+            this.$el.find('#view').addClass('slide').css('left', 50 - (mainIndex * 1040) + "px");
+        },
+
+        keyPressHandler:function (event) {
+            alert(event.which);
         }
 
     });
 
     return ParticipantView;
-});
+})
+;

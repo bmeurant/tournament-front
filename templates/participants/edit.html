@@ -1,4 +1,4 @@
-<div id="details" class="span12">
+<div id="edit" class="span12 view-elem">
 
     <form class="form-horizontal span12">
         <fieldset>
@@ -44,11 +44,11 @@
                     <div class="well">
                         <p class="photo">
                             <% if (!participant.picture_url) { %>
-                                <img id="photo" src="img/participants/no-photo.jpg" height="125" width="125" alt="" draggable="false"/>
+                                <img class="photo" src="img/participants/no-photo.jpg" alt="" draggable="false"/>
                             <% }
                             else
                             { %>
-                                <img id="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
+                                <img class="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
                                 <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
                             <% } %>
                         </p>
