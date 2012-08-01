@@ -21,6 +21,7 @@ define([
         },
 
         linkedViewsTypes:['details', 'edit'],
+        linkedViewsURLFragment:['', '/edit'],
         linkedViewsClasses:[DetailsView, EditView],
         linkedViewsInstances:[],
 
@@ -101,7 +102,7 @@ define([
             if (this.mainIsLinkedView()) {
                 this.initializeLinkedViews();
                 this.renderLinkedViews();
-                this.$el.find('#view').addClass('linked-views').css('margin-left', - (this.linkedViewsTypes.indexOf(this.type) * (940 + 20 + 50)) + "px");
+                this.$el.find('#view').addClass('linked-views').css('margin-left', -(this.linkedViewsTypes.indexOf(this.type) * (940 + 20 + 50)) + "px");
             }
             else {
                 this.renderMainView();
@@ -118,10 +119,13 @@ define([
         },
 
         renderLinkedViews:function () {
+            var mainIndex = this.linkedViewsTypes.indexOf(this.type);
             if (this.linkedViewsInstances) {
                 for (var i = 0; i < this.linkedViewsInstances.length; i++) {
                     var $newView = this.linkedViewsInstances[i].render().$el;
-                    $newView.find('div#' + this.linkedViewsInstances[i].type);
+                    if (i != mainIndex) {
+                        $newView.find('div#' + this.linkedViewsInstances[i].type).addClass("hidden");
+                    }
                     $newView.appendTo(this.$el.find('#view'));
                 }
             }
@@ -216,21 +220,43 @@ define([
 
         changeParticipantView:function (type) {
 
-            var mainIndex = this.linkedViewsTypes.indexOf(this.type);
+            var oldType = this.type;
+            this.type = type;
+            var mainIndex = this.linkedViewsTypes.indexOf(oldType);
 
             if (this.linkedViewsInstances[mainIndex].removeBindings) {
                 this.linkedViewsInstances[mainIndex].removeBindings();
             }
 
-            mainIndex = this.linkedViewsTypes.indexOf(type);
-            this.type = type;
+            mainIndex = this.linkedViewsTypes.indexOf(this.type);
 
             if (this.linkedViewsInstances[mainIndex].initBindings) {
                 this.linkedViewsInstances[mainIndex].initBindings();
             }
 
+            this.$el.find('.view-elem#' + this.type).removeClass("hidden");
+            this.addTransitionCallbacks(this.$el.find('#view'), this.$el.find('.view-elem#' + oldType));
+
             Pubsub.publish(Events.VIEW_CHANGED, [this.type]);
-            this.$el.find('#view').addClass('slide').css('margin-left', - (mainIndex * (940 + 20 + 50)) + "px");
+            this.$el.find('#view').addClass('slide').css('margin-left', -(mainIndex * (940 + 20 + 50)) + "px");
+        },
+
+        addTransitionCallbacks:function ($el, $oldView) {
+            $el.off('webkitTransitionEnd');
+            $el.on('webkitTransitionEnd', {oldView:$oldView}, this.onTransitionEnd);
+
+            $el.off('transitionend');
+            $el.on('transitionend', {oldView:$oldView}, this.onTransitionEnd);
+
+            $el.off('MSTransitionEnd');
+            $el.on('MSTransitionEnd', {oldView:$oldView}, this.onTransitionEnd);
+
+            $el.off('oTransitionEnd');
+            $el.on('oTransitionEnd', {oldView:$oldView}, this.onTransitionEnd);
+        },
+
+        onTransitionEnd:function (event) {
+            event.data.oldView.addClass("hidden");
         },
 
         precedentHandler:function () {
@@ -240,6 +266,8 @@ define([
                 if (mainIndex > 0) {
                     var newType = this.linkedViewsTypes[mainIndex - 1];
                     this.changeParticipantView(newType);
+
+                    window.history.pushState(null, "Tournament", "#participant/" + this.model.id + this.linkedViewsURLFragment[mainIndex - 1 ]);
                 }
             }
         },
@@ -248,9 +276,11 @@ define([
             if (this.mainIsLinkedView()) {
                 var mainIndex = this.linkedViewsTypes.indexOf(this.type);
 
-                if (mainIndex < this.linkedViewsTypes.length-1) {
+                if (mainIndex < this.linkedViewsTypes.length - 1) {
                     var newType = this.linkedViewsTypes[mainIndex + 1];
                     this.changeParticipantView(newType);
+
+                    window.history.pushState(null, "Tournament", "#participant/" + this.model.id + this.linkedViewsURLFragment[mainIndex + 1]);
                 }
             }
         }
