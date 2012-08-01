@@ -13,8 +13,9 @@ define([
         miniatureTemplate:_.template(participantMiniatureTemplate),
 
         events:{
-            "dragstart li.thumbnail[draggable=\"true\"]":"dragStartHandler"
-            //"dragend li.thumbnail[draggable=\"true\"]":"dragEndHandler"
+            "dragstart li.thumbnail[draggable=\"true\"]":"dragStartHandler",
+            "focusin ul.thumbnails li.thumbnail a":"elemFocused",
+            "focusout ul.thumbnails li.thumbnail a":"elemLooseFocus"
         },
 
         handlers:[],
@@ -63,11 +64,10 @@ define([
             if (!deleted) {
                 deleted = [];
             }
+
             this.$el.html(this.template({participants:this.collection.toJSON(), server_url:'http://localhost:3000/api', deleted:deleted, 'id_selected':idSelected}));
-            var $selected = this.findSelected()
-            if (!$selected || $selected.length == 0) {
-                this.selectFirst();
-            }
+            this.selectElement();
+
             this.handlers.push(Pubsub.publish(Events.VIEW_CHANGED, ['list']));
         },
 
@@ -84,41 +84,40 @@ define([
             }
 
             $element.remove();
-
-            var $selected = this.findSelected();
-            if (!$selected || $selected.length == 0) {
-                this.selectFirst();
-            }
+            this.selectElement();
         },
 
-        selectNext:function () {
+        selectElement:function (type) {
             var $selected = this.findSelected();
-
             if (!$selected || $selected.length == 0) {
                 this.selectFirst();
                 return;
             }
 
-            var $toSelect = this.findNextSelect();
+            var $toSelect = (type == 'previous') ? this.findPreviousSelect() : this.findNextSelect();
 
             if ($toSelect && $toSelect.length > 0) {
                 $toSelect.addClass("selected");
                 $selected.removeClass("selected");
+                $('*:focus').blur();
+                $toSelect.focus();
             }
 
         },
 
-        selectFirst:function () {
-            this.$el.find(".thumbnails > li.thumbnail:first-child").addClass("selected");
+        selectNext:function () {
+            this.selectElement("next");
         },
 
         selectPrevious:function () {
-            var $selected = this.findSelected();
-            var $toSelect = this.findPreviousSelect();
+            this.selectElement("previous");
+        },
 
-            if ($toSelect && $toSelect.length > 0) {
-                $toSelect.addClass("selected");
-                $selected.removeClass("selected");
+        selectFirst:function () {
+            var $toselect = this.$el.find(".thumbnails > li.thumbnail:first-child");
+            if ($toselect && $toselect.length != 0) {
+                $('*:focus').blur();
+                $toselect.addClass("selected").focus();
             }
         },
 
@@ -156,6 +155,23 @@ define([
             var $selected = this.findSelected();
             if ($selected && $selected.length > 0) {
                 window.location.hash = 'participant/' + $selected.get(0).id;
+            }
+        },
+
+        elemFocused:function (event) {
+            if (event && event.currentTarget) {
+                $selected = this.findSelected();
+                if ($selected && $selected.length != 0) {
+                    $selected.removeClass('selected');
+                }
+                $(event.currentTarget).parent().addClass("selected");
+            }
+        },
+
+        elemLooseFocus:function (event) {
+            $selected = this.findSelected();
+            if ($selected && $selected.length != 0) {
+                $selected.removeClass('selected');
             }
         }
 

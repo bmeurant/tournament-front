@@ -105,10 +105,16 @@ ul.thumbnails {
 
 li.thumbnail:hover, li.thumbnail.selected {
     border-color: #0088cc;
-    -webkit-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
-    -moz-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
-    box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+    -webkit-box-shadow: 1px 1px 0 #0088cc;
+    -moz-box-shadow: 1px 1px 0 #0088cc;
+    box-shadow: 1px 1px 0 #0088cc;
 }
+
+ul.thumbnails li.thumbnail a:focus {
+    user-focus: ignore;
+    outline: none;
+}
+
 
 .navbar * .drop-zone {
     -moz-transition: none 0s ease 0s;
@@ -286,6 +292,7 @@ i.icon-unchecked {
 #content .linked-views div.slide {
     display: inline-block;
 }
+
 .linked-views {
     width: 500%;
     margin-top: 50px;

@@ -38,6 +38,9 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CANCELED, this.render.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETION_CANCELED, this.render.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CALLED, this.moveToDeletionsView.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.CONFIRM_DELS_CALLED, this.confirmDeletions.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.CANCEL_DELS_CALLED, this.cancelDeletions.bind(this)));
         },
 
         onViewChanged:function (type) {
@@ -130,17 +133,23 @@ define([
         },
 
         confirmDeletions:function (event) {
-            event.stopPropagation();
-            event.preventDefault();
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
 
             Pubsub.publish(Events.DELETIONS_CONFIRMED);
         },
 
         cancelDeletions:function (event) {
-            event.stopPropagation();
-            event.preventDefault();
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+
             this.emptyCollection();
             this.storeInLocalStorage();
+
             Pubsub.publish(Events.DELETIONS_TO_CANCEL);
         },
 
@@ -148,6 +157,10 @@ define([
             event.stopPropagation();
             event.preventDefault();
             Pubsub.publish(Events.DELETE_ELEM);
+        },
+
+        moveToDeletionsView:function () {
+            window.location.hash = "#deletions";
         }
 
     });

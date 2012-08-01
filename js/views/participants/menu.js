@@ -25,14 +25,18 @@ define([
 
         //tagName: "ul",
 
-        handlers: [],
+        handlers:[],
 
         initialize:function () {
             this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.ECHAP_CALLED, this.backToElementHome.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.LIST_CALLED, this.backToElementHome.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.SAVE_CALLED, this.saveElement.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.ADD_CALLED, this.addElement.bind(this)));
             this.type = "no";
         },
 
-        onViewChanged: function(type) {
+        onViewChanged:function (type) {
             this.type = type;
             this.render();
         },
@@ -44,10 +48,21 @@ define([
         },
 
         render:function () {
-            this.$el.addClass('nav').html(this.template({actions: this.actions[this.type]}));
+            this.$el.addClass('nav').html(this.template({actions:this.actions[this.type]}));
             return this;
-        }
+        },
 
+        backToElementHome:function () {
+            window.location.hash = "#participants";
+        },
+
+        saveElement:function () {
+            Pubsub.publish(Events.SAVE_ELEM);
+        },
+
+        addElement:function () {
+            window.location.hash = "#participant/add";
+        }
 
     });
     return menuView;

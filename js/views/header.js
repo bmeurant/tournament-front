@@ -18,7 +18,9 @@ define([
 
         },
 
-        searchOptions: {
+        handlers:[],
+
+        searchOptions:{
             participants:true,
             teams:true,
             tournaments:true
@@ -26,6 +28,13 @@ define([
 
         initialize:function (el) {
             this.setElement(el);
+
+            this.handlers.push(Pubsub.subscribe(Events.HOME_CALLED, this.backToGeneralHome.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.PARTICIPANTS_HOME_CALLED, this.moveToParticipantHome.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.TEAMS_HOME_CALLED, this.moveToTeamsHome.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.GT_HOME_CALLED, this.moveToGTHome.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.FIND_CALLED, this.focusOnSearch.bind(this)));
+
             this.render();
         },
 
@@ -69,6 +78,28 @@ define([
         toggleCheckBox:function ($checkbox) {
             $checkbox.toggleClass("icon-checked");
             $checkbox.toggleClass("icon-unchecked");
+        },
+
+        backToGeneralHome:function () {
+            window.location.hash = "#";
+        },
+
+        moveToParticipantHome:function () {
+            window.location.hash = "#participants";
+        },
+
+        moveToTeamsHome:function () {
+            window.location.hash = "#teams";
+        },
+
+        moveToGTHome:function () {
+            window.location.hash = "#games";
+        },
+
+        focusOnSearch:function (event) {
+            event.stopPropagation();
+            event.preventDefault();
+            $('#searchText').focus();
         }
 
     });
