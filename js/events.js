@@ -16,6 +16,7 @@ Events = {
     DELETION_CANCELED:"DeletionCanceled",
     CHANGE_VIEW:"ChangeView",
     PREVIOUS_CALLED:"PreviousCalled",
-    NEXT_CALLED:"NextCalled"
+    NEXT_CALLED:"NextCalled",
+    ENTER_CALLED:"EnterCalled"
 };
 

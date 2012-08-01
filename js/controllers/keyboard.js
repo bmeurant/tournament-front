@@ -8,6 +8,7 @@ define([
         this.LEFT_ARROW = 37;
         this.RIGHT_ARROW = 39;
         this.DEL = 46;
+        this.ENTER = 13;
 
         this.bindings = {};
 
@@ -21,6 +22,7 @@ define([
             this.bindings[this.LEFT_ARROW] = this.precedent;
             this.bindings[this.RIGHT_ARROW] = this.next;
             this.bindings[this.DEL] = this.del;
+            this.bindings[this.ENTER] = this.enter;
 
             $(document).keydown(this.onKeyDown.bind(this));
         },
@@ -31,16 +33,20 @@ define([
             }
         },
 
-        precedent: function () {
-           PubSub.publish(Events.PREVIOUS_CALLED);
+        precedent:function () {
+            PubSub.publish(Events.PREVIOUS_CALLED);
         },
 
-        next: function () {
+        next:function () {
             PubSub.publish(Events.NEXT_CALLED);
         },
 
-        del: function() {
+        del:function () {
             PubSub.publish(Events.DELETE_ELEM);
+        },
+
+        enter:function () {
+            PubSub.publish(Events.ENTER_CALLED);
         }
 
     });

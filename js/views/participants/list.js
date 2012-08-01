@@ -27,6 +27,7 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.NEXT_CALLED, this.selectNext.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.PREVIOUS_CALLED, this.selectPrevious.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.ENTER_CALLED, this.showSelected.bind(this)));
         },
 
         render:function (idSelected) {
@@ -148,6 +149,13 @@ define([
                 this.participantDeleted($selected.get(0).id);
 
                 Pubsub.publish(Events.ELEM_DELETED_FROM_VIEW);
+            }
+        },
+
+        showSelected:function () {
+            var $selected = this.findSelected();
+            if ($selected && $selected.length > 0) {
+                window.location.hash = 'participant/' + $selected.get(0).id;
             }
         }
 
