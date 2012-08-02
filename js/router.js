@@ -12,11 +12,6 @@ define([
         if (this.beforeClose) {
             this.beforeClose();
         }
-        if (this.handlers) {
-            $.each(this.handlers, function (index, value) {
-                Pubsub.unsubscribe(value);
-            });
-        }
         this.remove();
         this.unbind();
     };

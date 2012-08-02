@@ -18,6 +18,11 @@ define([
             $('.help-inline', controlGroup).html(message);
         },
 
+        clearValidationErrors:function () {
+            $('.control-group').removeClass("error");
+            $('.help-inline').empty();
+        },
+
         showView:function (selector, view) {
             if (classes.Views.currentView)
                 classes.Views.currentView.close();

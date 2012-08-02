@@ -28,8 +28,6 @@ define([
             event.stopPropagation();
             event.preventDefault();
 
-            Pubsub.publish(Events.REMOVE_ALERT);
-
             var type = event.target.id;
 
             if (this.type != type) {

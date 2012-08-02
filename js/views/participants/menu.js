@@ -19,7 +19,7 @@ define([
             'list':['add'],
             'details':['list', 'add'],
             'edit':['save', 'list', 'add'],
-            'add':['save', 'list', 'add'],
+            'add':['save', 'list'],
             'no':[]
         },
 
@@ -56,7 +56,9 @@ define([
             window.location.hash = "#participants";
         },
 
-        saveElement:function () {
+        saveElement:function (event) {
+            event.stopPropagation();
+            event.preventDefault();
             Pubsub.publish(Events.SAVE_ELEM);
         },
 

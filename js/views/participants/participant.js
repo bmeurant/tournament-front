@@ -75,7 +75,7 @@ define([
         close:function () {
             this.navigationView.close();
 
-            if (this.mainView) {
+            if (this.mainView && !this.linkedViewsInstances) {
                 this.mainView.close();
             }
 
@@ -92,7 +92,6 @@ define([
             this.renderViews();
 
             Pubsub.publish(Events.VIEW_CHANGED, [this.type]);
-            Pubsub.publish(Events.REMOVE_ALERT);
         },
 
         renderViews:function () {

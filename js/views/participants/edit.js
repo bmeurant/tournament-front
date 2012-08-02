@@ -14,8 +14,7 @@ define([
         type:'edit',
 
         events:{
-            "change": "change",
-            "drop .photo": "dropHandler"
+            "drop .photo":"dropHandler"
         },
 
         initialize:function (model, active) {
@@ -26,7 +25,7 @@ define([
         },
 
         initBindings:function () {
-            this.handlers.push(Pubsub.subscribe(Events.SAVE_ELEM, this.saveElement.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.SAVE_ELEM, this.saveParticipant.bind(this)));
         },
 
         removeBindings:function () {
@@ -43,55 +42,49 @@ define([
             return this;
         },
 
-        change:function (event) {
-
-            this.model.errors = {};
-
-            // Apply the change to the model
-            var target = event.target;
-            var change = {};
-            change[target.name] = target.value;
-            this.model.set(change);
-        },
-
-        saveElement:function () {
-            if (this.validate()) {
-                this.saveParticipant();
-            }
-        },
-
-        validate:function () {
-            if (!(Object.keys(this.model.errors).length == 0)) {
-                utils.displayValidationErrors(this.model.errors);
-                return false;
-            }
-
-            return true;
-        },
-
         saveParticipant:function () {
-            this.model.save(null, {
-                success:function (model) {
-                    this.model.id = model.attributes.id;
-                    if (this.pictureFile) {
-                        //this.model.set("picture", this.pictureFile.name);
-                        this.uploadFile(self.pictureFile, self.model.id,
-                            function () {
-                                this.render();
-                                window.location.hash = 'participant/' + this.model.id;
-                            }
-                        );
-                    } else {
-                        this.render();
-                        window.location.hash = 'participant/' + this.model.id;
-                    }
 
-                    Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Participant saved successfully', 'alert-success']);
-                }.bind(this),
-                error:function () {
-                    Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to update this item', 'alert-error']);
-                }
+            var attributes = {};
+            this.$el.find("form input:not('disabled')").each(function (index, value) {
+                attributes[value.name] = value.value;
             });
+
+            this.model.save(attributes, {
+                success:this.onSaveSuccess.bind(this),
+                error:this.onSaveError.bind(this)
+            });
+        },
+
+        onSaveError:function (model, resp) {
+            utils.clearValidationErrors();
+            // error is an http one
+            if (resp.hasOwnProperty("status")) {
+                Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to update this item', 'alert-error']);
+            }
+            else {
+                // validation errors
+                utils.displayValidationErrors(resp);
+            }
+        },
+
+        onSaveSuccess:function (model, resp) {
+            utils.clearValidationErrors();
+
+            this.model.id = model.attributes.id;
+            if (this.pictureFile) {
+                this.uploadFile(self.pictureFile, this.model.id,
+                    this.afterSave().bind(this)
+                );
+            } else {
+                this.afterSave();
+            }
+        },
+
+        afterSave:function () {
+
+            window.location.hash = 'participant/' + this.model.id;
+
+            Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Participant saved successfully', 'alert-success']);
         },
 
         dropHandler:function (event) {
