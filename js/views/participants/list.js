@@ -21,8 +21,11 @@ define([
         handlers:[],
 
         initialize:function () {
+            this.$el = $("<ul>").addClass("thumbnails").addClass("span12");
+            this.el = this.$el.get(0);
+
             this.collection = participantsCollection;
-            _.bindAll(this, 'render');
+
             this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_BAR, this.participantDeleted.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CANCELED, this.cancelDeletions.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.NEXT_CALLED, this.selectNext.bind(this)));
@@ -120,7 +123,7 @@ define([
         },
 
         selectFirst:function () {
-            var $toselect = this.$el.find(".thumbnails > li.thumbnail:first-child");
+            var $toselect = this.$el.find("li.thumbnail:first-child");
             if ($toselect && $toselect.length != 0) {
                 $('*:focus').blur();
                 $toselect.addClass("selected").focus();
@@ -128,15 +131,15 @@ define([
         },
 
         findSelected:function () {
-            return this.$el.find(".thumbnails > li.thumbnail.selected");
+            return this.$el.find("li.thumbnail.selected");
         },
 
         findNextSelect:function () {
-            return this.$el.find(".thumbnails > li.thumbnail.selected + li.thumbnail");
+            return this.$el.find("li.thumbnail.selected + li.thumbnail");
         },
 
         findPreviousSelect:function () {
-            var previous = this.$el.find(".thumbnails > li.thumbnail.selected").get(0).previousElementSibling;
+            var previous = this.$el.find("li.thumbnail.selected").get(0).previousElementSibling;
             if (previous) {
                 return this.$el.find('#' + previous.id);
             }

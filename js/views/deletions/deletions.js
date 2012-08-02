@@ -22,11 +22,15 @@ define([
         errors:{},
         modelsCollection:{},
 
-        initialize:function (el) {
+        initialize:function () {
+
+            AbstractView.prototype.initialize.apply(this, arguments);
             this.events = _.extend({}, AbstractView.prototype.events, this.events);
             this.handlers = _.extend([], AbstractView.prototype.handlers, this.handlers);
 
-            AbstractView.prototype.initialize.apply(this, arguments);
+            // override this.el because of abstract inheritance
+            this.$el = $("<div>");
+            this.el = this.$el.get(0);
 
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_TO_CANCEL, this.cancelDeletions.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CONFIRMED, this.confirmDeletions.bind(this)));
@@ -44,7 +48,7 @@ define([
             this.modelsCollection.participant = [];
         },
 
-        deleteElem: function (id, type) {
+        deleteElem:function (id, type) {
             this.initCollection();
             this.addToCollection(type, id);
             this.storeInLocalStorage();
@@ -149,10 +153,11 @@ define([
             this.emptyModelsCollection();
             this.populateCollection(this.showTemplate.bind(this));
             Pubsub.publish(Events.VIEW_CHANGED, ['deletions']);
+            return this;
         },
 
         showTemplate:function () {
-            this.$el.html(this.template({'participants':this.collectionToJSON(this.modelsCollection, 'participant'), server_url:'http://localhost:3000/api', 'deleted':[], 'id_selected':'no','participants_template':this.participantsTemplate}));
+            this.$el.html(this.template({'participants':this.collectionToJSON(this.modelsCollection, 'participant'), server_url:'http://localhost:3000/api', 'deleted':[], 'id_selected':'no', 'participants_template':this.participantsTemplate}));
         },
 
         renderDels:function () {

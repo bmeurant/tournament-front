@@ -1,17 +1,16 @@
-<div id="deletions-container">
-    <div class="row">
-        <div class="span12 nav nav-bar">
-            <div class="title">Participants</div>
-        </div>
+<div class="row">
+    <div class="span12 nav nav-bar">
+        <div class="title">Participants</div>
     </div>
-    <div class="row">
-        <div class="span12 deleted-elements">
-            <% if (participants.length != 0) { %>
-            <%= participants_template({ participants: participants, server_url:server_url, deleted:deleted, id_selected:id_selected}) %>
-            <% }
-            else { %>
-            <h3>No Participant to delete</h3>
-            <% } %>
-        </div>
+</div>
+<div class="row">
+    <div class="span12 deleted-elements">
+        <% if (participants.length != 0) { %>
+        <%= participants_template({ participants: participants, server_url:server_url, deleted:deleted,
+        id_selected:id_selected}) %>
+        <% }
+        else { %>
+        <h3>No Participant to delete</h3>
+        <% } %>
     </div>
 </div>

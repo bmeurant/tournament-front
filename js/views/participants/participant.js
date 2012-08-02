@@ -17,7 +17,6 @@ define([
         miniatureTemplate:_.template(miniatureTemplate),
 
         events:{
-            "dragstart div[draggable=\"true\"]":"dragStartHandler"
         },
 
         linkedViewsTypes:['details', 'edit'],
@@ -28,10 +27,18 @@ define([
         handlers:[],
 
         initialize:function (id, type) {
+
+            this.$el = $("<div>").addClass("row").attr("draggable", "true");
+            this.el = this.$el.get(0);
+
+            // manually bind this event because Backbone does not trigger events directly bind on el !
+            this.$el.on("dragstart", this.dragStartHandler.bind(this));
+
             this.type = type;
             this.model = new Participant();
             this.model.id = id;
 
+            // create sub navigation component
             this.navigationView = new NavigationView(this.model.id, this.type);
 
             this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this)));
@@ -66,6 +73,12 @@ define([
             event.originalEvent.dataTransfer.setData('id', this.model.id);
             event.originalEvent.dataTransfer.setData('type', 'participant');
 
+
+            // create miniature shown during drag
+            // this miniature must be already rendered by the browser and not hidden -> should be positioned
+            // out of visible page
+            // To embed remote image, this should be cacheable and the remote server should implement the
+            // corresponding cache politic
             var dragIcon = $("#dragIcon");
             dragIcon.html(this.miniatureTemplate({participant:this.model.toJSON(), server_url:"http://localhost:3000/api"}));
             event.originalEvent.dataTransfer.setDragImage(dragIcon.get(0), 50, 50);
@@ -73,6 +86,10 @@ define([
             Pubsub.publish(Events.DRAG_START);
         },
 
+        /**
+         * Close the current view and any of its embedded components in order
+         * to unbind events and handlers that should not be triggered anymore
+         */
         close:function () {
             this.navigationView.close();
 

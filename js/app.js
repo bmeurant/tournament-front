@@ -20,9 +20,12 @@ define([
             this.unbind();
         };
 
-        classes.Views.HeaderView = new HeaderView($('.header'));
-        classes.Views.DeletionsView = new DeletionsView($('#content'));
-        classes.Views.AlertsView = new AlertsView($('.alerts'));
+        classes.Views.HeaderView = new HeaderView();
+        $('.header').html(classes.Views.HeaderView.render().el);
+        classes.Views.DeletionsView = new DeletionsView();
+        $('#content').html(classes.Views.DeletionsView.render().el);
+        classes.Views.AlertsView = new AlertsView();
+        $('.alerts').html(classes.Views.AlertsView.render().el);
         classes.Controllers.KeyboardController = new KeyboardController();
 
         // Pass in our Router module and call it's initialize function

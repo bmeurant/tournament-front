@@ -24,12 +24,16 @@ define([
             "click .delete":"removeElement"
         },
 
-        initialize:function (el) {
-            this.events = _.extend({}, AbstractView.prototype.events, this.events);
-            this.handlers = _.extend([], AbstractView.prototype.handlers, this.handlers);
-            this.type = "no"
+        initialize:function () {
 
             AbstractView.prototype.initialize.apply(this, arguments);
+            this.events = _.extend({}, AbstractView.prototype.events, this.events);
+            this.handlers = _.extend([], AbstractView.prototype.handlers, this.handlers);
+
+            this.$el = $("<ul>").addClass("nav");
+            this.el = this.$el.get(0);
+
+            this.type = "no"
 
             this.handlers.push(Pubsub.subscribe(Events.DRAG_START, this.onDragStart.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DRAG_END, this.onDragEnd.bind(this)));
@@ -56,6 +60,7 @@ define([
             this.$el.html(this.menuTemplate({type:this.type}));
             this.initCollection();
             this.renderDels();
+            return this;
         },
 
         onDragStart:function () {

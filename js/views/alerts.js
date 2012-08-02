@@ -16,15 +16,15 @@ define([
 
         handlers:[],
 
-        initialize:function (el) {
-            this.setElement(el);
+        initialize:function () {
+            this.$el.addClass("row");
             this.handlers.push(Pubsub.subscribe(Events.REMOVE_ALERT, this.hideAlerts.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ALERT_RAISED, this.showAlert.bind(this)));
-            this.render();
         },
 
         render:function () {
             this.$el.html(this.template());
+            return this;
         },
 
         hideAlerts:function () {

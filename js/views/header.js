@@ -28,8 +28,9 @@ define([
             tournaments:true
         },
 
-        initialize:function (el) {
-            this.setElement(el);
+        initialize:function () {
+            this.$el = $("<div>").addClass("navbar").addClass("navbar-fixed-top");
+            this.el = this.$el.get(0);
 
             this.handlers.push(Pubsub.subscribe(Events.HOME_CALLED, this.backToGeneralHome.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.PARTICIPANTS_HOME_CALLED, this.moveToParticipantHome.bind(this)));
@@ -37,14 +38,17 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.GT_HOME_CALLED, this.moveToGTHome.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.FIND_CALLED, this.focusOnSearch.bind(this)));
 
-            this.render();
+            //this.render();
 
-            this.deletionMenu = new DeletionsMenuView($('.element-menu.delete-menu'));
-            this.searchMenu = new SearchMenuView($('.search-menu'));
+            this.deletionMenu = new DeletionsMenuView();
+            this.searchMenu = new SearchMenuView();
         },
 
         render:function () {
             this.$el.html(this.template());
+            this.deletionMenu.render().$el.appendTo(this.$el.find('.element-menu.delete-menu'));
+            this.searchMenu.render().$el.appendTo(this.$el.find('.search-menu'));
+            return this;
         },
 
         selectMenuItem:function (menuItem) {

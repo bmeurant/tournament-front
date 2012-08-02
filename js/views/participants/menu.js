@@ -23,17 +23,20 @@ define([
             'no':[]
         },
 
-        //tagName: "ul",
-
         handlers:[],
 
         initialize:function () {
+
+            this.$el = $("<ul>").addClass("nav");
+            this.el = this.$el.get(0);
+
+            this.type = "";
+
             this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ECHAP_CALLED, this.backToElementHome.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.LIST_CALLED, this.backToElementHome.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.SAVE_CALLED, this.saveElement.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ADD_CALLED, this.addElement.bind(this)));
-            this.type = "no";
         },
 
         onViewChanged:function (type) {
@@ -48,7 +51,7 @@ define([
         },
 
         render:function () {
-            this.$el.addClass('nav').html(this.template({actions:this.actions[this.type]}));
+            this.$el.html(this.template({actions:this.actions[this.type]}));
             return this;
         },
 

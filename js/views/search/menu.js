@@ -14,13 +14,14 @@ define([
         events:{
         },
 
-        initialize:function (el) {
-            this.setElement(el);
-            this.render();
+        initialize:function () {
+            this.$el = $("<form>").addClass("nav").addClass("navbar-search").addClass("pull-right").addClass("dropdown");
+            this.el = this.$el.get(0);
         },
 
         render:function () {
             this.$el.html(this.menuTemplate());
+            return this;
         }
 
     });
