@@ -26,6 +26,7 @@ define([
 
         initBindings:function () {
             this.handlers.push(Pubsub.subscribe(Events.SAVE_ELEM, this.saveParticipant.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.ENTER_CALLED, this.saveParticipant.bind(this)));
         },
 
         removeBindings:function () {
@@ -42,7 +43,11 @@ define([
             return this;
         },
 
-        saveParticipant:function () {
+        saveParticipant:function (event) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
 
             var attributes = {};
             this.$el.find("form input:not('disabled')").each(function (index, value) {

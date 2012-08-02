@@ -45,8 +45,9 @@ define([
         },
 
         onViewChanged:function (type) {
+            this.$el.empty();
             this.type = type;
-            if (this.acceptedTypes[type]) {
+            if (this.acceptedTypes.indexOf(type) >= 0) {
                 this.render();
             }
         },
