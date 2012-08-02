@@ -53,11 +53,11 @@ define([
         },
 
         backToElementHome:function () {
-            window.location.hash = "#participants";
+            window.location.hash = "/participants";
         },
 
         addElement:function () {
-            window.location.hash = "#participant/add";
+            window.location.hash = "/participant/add";
         }
 
     });

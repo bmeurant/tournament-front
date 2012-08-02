@@ -38,7 +38,18 @@ define([
 
         storeInLocalStorage:function () {
             localStorage.setItem('deletedElements', JSON.stringify(this.collection));
-        }
+        },
+
+        addToCollection:function (type, id) {
+
+            if (!this.collection[type]) {
+                this.collection[type] = [];
+            }
+
+            if (this.collection[type].indexOf(id) < 0) {
+                this.collection[type].push(id);
+            }
+        },
 
     });
 

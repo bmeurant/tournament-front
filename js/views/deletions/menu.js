@@ -73,27 +73,20 @@ define([
                 Pubsub.publish(Events.REMOVE_ALERT);
             }
 
-            this.onDragEnd(id);
+            this.onDragEnd(id, type);
         },
 
         deleteElement:function (type, id) {
             this.initCollection();
             this.addToCollection(type, id);
             this.storeInLocalStorage();
-
-            Pubsub.publish(Events.DELETE_ELEM_FROM_BAR, [id, type]);
         },
 
-        addToCollection:function (type, id) {
-            if (this.collection[type].indexOf(id) < 0) {
-                this.collection[type].push(id);
-            }
-        },
-
-        onDragEnd:function (id) {
+        onDragEnd:function (id, type) {
             $('.drop-zone').removeClass('emphasize');
             this.clearDropZone();
-            Pubsub.publish(Events.ELEM_DELETED_FROM_BAR, [id]);
+            this.renderDels();
+            Pubsub.publish(Events.ELEM_DELETED_FROM_BAR, [id, type]);
         },
 
         emphasizeDropZone:function () {
@@ -163,7 +156,7 @@ define([
         },
 
         moveToDeletionsView:function () {
-            window.location.hash = "#deletions";
+            window.location.hash = "/deletions";
         }
 
     });

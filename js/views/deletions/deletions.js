@@ -138,17 +138,6 @@ define([
             }
         },
 
-        addToCollection:function (type, id) {
-
-            if (!this.collection[type]) {
-                this.collection[type] = [];
-            }
-
-            if (this.collection[type].indexOf(id) < 0) {
-                this.collection[type].push(id);
-            }
-        },
-
         addToModelsCollection:function (type, model) {
             if (this.modelsCollection[type].indexOf(model) < 0) {
                 this.modelsCollection[type].push(model);

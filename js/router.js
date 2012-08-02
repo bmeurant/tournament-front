@@ -75,7 +75,7 @@ define([
 
     var initialize = function () {
         classes.Routers.AppRouter = new AppRouter;
-        Backbone.history.start();
+        Backbone.history.start({pushState: true, root: "/"});
     };
     return {
         initialize:initialize

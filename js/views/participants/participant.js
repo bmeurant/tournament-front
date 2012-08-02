@@ -210,7 +210,7 @@ define([
         },
 
         onParticipantDeleted:function () {
-            window.location.hash = 'participants';
+            window.location.hash = '/participants';
         },
 
         changeParticipantView:function (type) {
@@ -252,7 +252,7 @@ define([
 
         onTransitionEnd:function (event) {
             event.data.oldView.addClass("hidden");
-            window.history.pushState(null, "Tournament", "#participant/" + this.model.id + this.linkedViewsURLFragment[this.linkedViewsTypes.indexOf(this.type)]);
+            window.history.pushState(null, "Tournament", "/participant/" + this.model.id + this.linkedViewsURLFragment[this.linkedViewsTypes.indexOf(this.type)]);
         },
 
         precedentHandler:function () {

@@ -90,15 +90,15 @@ define([
         },
 
         moveToParticipantHome:function () {
-            window.location.hash = "#participants";
+            window.location.hash = "/participants";
         },
 
         moveToTeamsHome:function () {
-            window.location.hash = "#teams";
+            window.location.hash = "/teams";
         },
 
         moveToGTHome:function () {
-            window.location.hash = "#games";
+            window.location.hash = "/games";
         },
 
         focusOnSearch:function (event) {

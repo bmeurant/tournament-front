@@ -87,7 +87,7 @@ define([
 
         afterSave:function () {
 
-            window.location.hash = 'participant/' + this.model.id;
+            window.location.hash = '/participant/' + this.model.id;
 
             Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Participant saved successfully', 'alert-success']);
         },

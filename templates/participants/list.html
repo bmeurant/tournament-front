@@ -3,10 +3,10 @@
         if (_.indexOf(deleted, participant.id) < 0) { %>
             <li id="<%= participant.id %>" class="thumbnail <% if (id_selected == participant.id) {print ('selected');}%>" draggable="true">
                 <input type="hidden" value="<%= index %>"/>
-                <a href="#participant/<%= participant.id %>" class="plain participant-thumb">
+                <a href="/participant/<%= participant.id %>" class="plain participant-thumb">
                     <div class="participant-thumb">
                         <% if (!participant.picture_url) { %>
-                        <img class="photo" src="img/participants/no-photo.jpg" draggable="false" alt=""/>
+                        <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
                         <% }
                         else
                         { %>
