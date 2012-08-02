@@ -12,6 +12,11 @@ define([
         if (this.beforeClose) {
             this.beforeClose();
         }
+        if (this.handlers) {
+            $.each(this.handlers, function (index, value) {
+                Pubsub.unsubscribe(value);
+            });
+        }
         this.remove();
         this.unbind();
     };
@@ -32,25 +37,25 @@ define([
         listParticipants:function () {
             classes.Views.HeaderView.setMenu(ParticipantsMenuView);
             classes.Views.HeaderView.selectMenuItem('element-menu');
-            utils.showView($('#content'), new ParticipantListView());
+            utils.showView($('#content'), ParticipantListView);
         },
 
         showParticipant:function (id) {
             classes.Views.HeaderView.setMenu(ParticipantsMenuView);
             classes.Views.HeaderView.selectMenuItem('element-menu');
-            utils.showView($('#content'), new ParticipantView(id, 'details'))
+            utils.showView($('#content'), ParticipantView, [id, 'details']);
         },
 
         editParticipant:function (id) {
             classes.Views.HeaderView.setMenu(ParticipantsMenuView);
             classes.Views.HeaderView.selectMenuItem('element-menu');
-            utils.showView($('#content'), new ParticipantView(id, 'edit'))
+            utils.showView($('#content'), ParticipantView, [id, 'edit']);
         },
 
         addParticipant:function () {
             classes.Views.HeaderView.setMenu(ParticipantsMenuView);
             classes.Views.HeaderView.selectMenuItem('element-menu');
-            utils.showView($('#content'), new ParticipantView(null, 'add'))
+            utils.showView($('#content'), ParticipantView, [null, 'add']);
         },
 
         showDeletions:function () {

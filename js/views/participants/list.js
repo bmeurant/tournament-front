@@ -27,8 +27,9 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CANCELED, this.cancelDeletions.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.NEXT_CALLED, this.selectNext.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.PREVIOUS_CALLED, this.selectPrevious.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ENTER_CALLED, this.showSelected.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_VIEW, this.participantDeleted.bind(this)));
         },
 
         render:function (idSelected) {
@@ -84,7 +85,12 @@ define([
             }
 
             $element.remove();
-            this.selectElement();
+
+            var $selected = this.findSelected();
+            if (!$selected || $selected.length == 0) {
+                this.selectFirst();
+            }
+
         },
 
         selectElement:function (type) {
@@ -141,13 +147,9 @@ define([
 
             var $selected = this.findSelected();
             if ($selected && $selected.length > 0) {
-                this.deletedElements = JSON.parse(localStorage.getItem('deletedElements'));
-                this.deletedElements['participant'].push($selected.get(0).id);
-                localStorage.setItem('deletedElements', JSON.stringify(this.deletedElements));
-
                 this.participantDeleted($selected.get(0).id);
 
-                Pubsub.publish(Events.ELEM_DELETED_FROM_VIEW);
+                Pubsub.publish(Events.DELETE_ELEM_FROM_VIEW, [$selected.get(0).id, 'participant']);
             }
         },
 

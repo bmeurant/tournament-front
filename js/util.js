@@ -23,9 +23,14 @@ define([
             $('.help-inline').empty();
         },
 
-        showView:function (selector, view) {
+        showView:function (selector, View, args) {
+
+            args = args || [];
+
             if (classes.Views.currentView)
                 classes.Views.currentView.close();
+            args.splice(0,0, this);
+            var view = new (Function.prototype.bind.apply (View, args));
             $(selector).html(view.render().el);
             classes.Views.currentView = view;
             return view;

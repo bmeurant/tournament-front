@@ -30,6 +30,7 @@ define([
 
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_TO_CANCEL, this.cancelDeletions.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CONFIRMED, this.confirmDeletions.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM_FROM_VIEW, this.deleteElem.bind(this)));
 
             this.emptyErrors();
             this.emptyModelsCollection();
@@ -41,6 +42,13 @@ define([
 
         emptyModelsCollection:function () {
             this.modelsCollection.participant = [];
+        },
+
+        deleteElem: function (id, type) {
+            this.initCollection();
+            this.addToCollection(type, id);
+            this.storeInLocalStorage();
+            Pubsub.publish(Events.ELEM_DELETED_FROM_VIEW, [id, type]);
         },
 
         populateCollection:function (callback) {
@@ -131,6 +139,11 @@ define([
         },
 
         addToCollection:function (type, id) {
+
+            if (!this.collection[type]) {
+                this.collection[type] = [];
+            }
+
             if (this.collection[type].indexOf(id) < 0) {
                 this.collection[type].push(id);
             }

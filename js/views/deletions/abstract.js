@@ -21,13 +21,14 @@ define([
 
         initCollection:function () {
             this.getFromLocalStorage();
-            if (!this.collection) {
+            if (!this.collection || Object.keys(this.collection).length == 0) {
                 this.emptyCollection();
             }
             this.storeInLocalStorage();
         },
 
         emptyCollection:function () {
+            this.collection = {};
             this.collection.participant = [];
         },
 

@@ -34,8 +34,9 @@ define([
 
             this.navigationView = new NavigationView(this.model.id, this.type);
 
-            this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_BAR, this.onParticipantDeleted.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_VIEW, this.onParticipantDeleted.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.CHANGE_VIEW, this.changeParticipantView.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.PREVIOUS_CALLED, this.precedentHandler.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.NEXT_CALLED, this.nextHandler.bind(this)));
@@ -205,12 +206,7 @@ define([
         },
 
         deleteParticipant:function () {
-            this.deletedElements = JSON.parse(localStorage.getItem('deletedElements'));
-            this.deletedElements['participant'].push(this.model.id);
-            localStorage.setItem('deletedElements', JSON.stringify(this.deletedElements));
-
-            Pubsub.publish(Events.ELEM_DELETED_FROM_VIEW);
-            window.location.hash = 'participants';
+            Pubsub.publish(Events.DELETE_ELEM_FROM_VIEW, [this.model.id, 'participant']);
         },
 
         onParticipantDeleted:function () {

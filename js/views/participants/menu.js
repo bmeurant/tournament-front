@@ -56,12 +56,6 @@ define([
             window.location.hash = "#participants";
         },
 
-        saveElement:function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-            Pubsub.publish(Events.SAVE_ELEM);
-        },
-
         addElement:function () {
             window.location.hash = "#participant/add";
         }

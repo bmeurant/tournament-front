@@ -13,6 +13,7 @@ define([
         nbDelsSelector:".nb-dels",
 
         handlers:[],
+        acceptedTypes:['details', 'edit', 'list'],
 
         events:{
             "drop #deleteDropZone":"onDrop",
@@ -32,7 +33,7 @@ define([
 
             this.handlers.push(Pubsub.subscribe(Events.DRAG_START, this.onDragStart.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DRAG_END, this.onDragEnd.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_VIEW, this.render.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_VIEW, this.renderDels.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_DONE, this.render.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_POPULATED, this.render.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CANCELED, this.render.bind(this)));
@@ -45,7 +46,9 @@ define([
 
         onViewChanged:function (type) {
             this.type = type;
-            this.render();
+            if (this.acceptedTypes[type]) {
+                this.render();
+            }
         },
 
         render:function () {
@@ -73,12 +76,11 @@ define([
         },
 
         deleteElement:function (type, id) {
-            this.getFromLocalStorage();
+            this.initCollection();
             this.addToCollection(type, id);
             this.storeInLocalStorage();
 
-            Pubsub.publish(Events.ELEM_DELETED_FROM_BAR, [id]);
-            this.renderDels();
+            Pubsub.publish(Events.DELETE_ELEM_FROM_BAR, [id, type]);
         },
 
         addToCollection:function (type, id) {
@@ -156,7 +158,7 @@ define([
         removeElement:function (event) {
             event.stopPropagation();
             event.preventDefault();
-            Pubsub.publish(Events.DELETE_ELEM);
+            Pubsub.publish(Events.DELETE_ELEM_FROM_BAR);
         },
 
         moveToDeletionsView:function () {
