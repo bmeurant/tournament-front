@@ -29,7 +29,7 @@ define([
 
         initialize:function (id, type) {
             this.type = type;
-            this.model = new Participant;
+            this.model = new Participant();
             this.model.id = id;
 
             this.navigationView = new NavigationView(this.model.id, this.type);
@@ -238,20 +238,21 @@ define([
 
         addTransitionCallbacks:function ($el, $oldView) {
             $el.off('webkitTransitionEnd');
-            $el.on('webkitTransitionEnd', {oldView:$oldView}, this.onTransitionEnd);
+            $el.on('webkitTransitionEnd', {oldView:$oldView}, this.onTransitionEnd.bind(this));
 
             $el.off('transitionend');
-            $el.on('transitionend', {oldView:$oldView}, this.onTransitionEnd);
+            $el.on('transitionend', {oldView:$oldView}, this.onTransitionEnd.bind(this));
 
             $el.off('MSTransitionEnd');
-            $el.on('MSTransitionEnd', {oldView:$oldView}, this.onTransitionEnd);
+            $el.on('MSTransitionEnd', {oldView:$oldView}, this.onTransitionEnd.bind(this));
 
             $el.off('oTransitionEnd');
-            $el.on('oTransitionEnd', {oldView:$oldView}, this.onTransitionEnd);
+            $el.on('oTransitionEnd', {oldView:$oldView}, this.onTransitionEnd.bind(this));
         },
 
         onTransitionEnd:function (event) {
             event.data.oldView.addClass("hidden");
+            window.history.pushState(null, "Tournament", "#participant/" + this.model.id + this.linkedViewsURLFragment[this.linkedViewsTypes.indexOf(this.type)]);
         },
 
         precedentHandler:function () {
@@ -261,8 +262,6 @@ define([
                 if (mainIndex > 0) {
                     var newType = this.linkedViewsTypes[mainIndex - 1];
                     this.changeParticipantView(newType);
-
-                    window.history.pushState(null, "Tournament", "#participant/" + this.model.id + this.linkedViewsURLFragment[mainIndex - 1 ]);
                 }
             }
         },
@@ -274,8 +273,6 @@ define([
                 if (mainIndex < this.linkedViewsTypes.length - 1) {
                     var newType = this.linkedViewsTypes[mainIndex + 1];
                     this.changeParticipantView(newType);
-
-                    window.history.pushState(null, "Tournament", "#participant/" + this.model.id + this.linkedViewsURLFragment[mainIndex + 1]);
                 }
             }
         }

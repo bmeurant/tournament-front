@@ -4,8 +4,10 @@ define([
     'backbone',
     'bootstrap-dropdown',
     'text!templates/header.html',
+    'views/deletions/menu',
+    'views/search/menu',
     'pubsub'
-], function ($, _, Backbone, bdd, headerTemplate, Pubsub) {
+], function ($, _, Backbone, bdd, headerTemplate, DeletionsMenuView,  SearchMenuView, Pubsub) {
 
     var headerView = Backbone.View.extend({
 
@@ -36,6 +38,9 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.FIND_CALLED, this.focusOnSearch.bind(this)));
 
             this.render();
+
+            this.deletionMenu = new DeletionsMenuView($('.element-menu.delete-menu'));
+            this.searchMenu = new SearchMenuView($('.search-menu'));
         },
 
         render:function () {
@@ -53,13 +58,13 @@ define([
             if (this.menuView)
                 this.menuView.close();
             this.menuView = new MenuView();
-            $('#actions-menu').html(this.menuView.render().el);
+            $('.actions-menu').html(this.menuView.render().el);
         },
 
         clearMenu:function () {
             if (this.menuView)
                 this.menuView.close();
-            $('#actions-menu').html("&nbsp;").css("width", "189px");
+            $('.actions-menu').html("&nbsp;").css("width", "189px");
         },
 
         menuClicked:function () {

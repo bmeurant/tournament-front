@@ -45,10 +45,10 @@ define([
         },
 
         onViewChanged:function (type) {
-            this.$el.empty();
             this.type = type;
-            if (this.acceptedTypes.indexOf(type) >= 0) {
-                this.render();
+            this.render();
+            if (this.acceptedTypes.indexOf(type) < 0) {
+                this.$el.find(".delete-menu.drop-zone").addClass("hidden");
             }
         },
 

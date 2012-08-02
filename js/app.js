@@ -21,7 +21,6 @@ define([
         };
 
         classes.Views.HeaderView = new HeaderView($('.header'));
-        classes.Views.DeletionsMenuView = new DeletionsMenuView($('.element-menu.delete-menu'));
         classes.Views.DeletionsView = new DeletionsView($('#content'));
         classes.Views.AlertsView = new AlertsView($('.alerts'));
         classes.Controllers.KeyboardController = new KeyboardController();
