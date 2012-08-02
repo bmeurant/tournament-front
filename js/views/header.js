@@ -86,19 +86,19 @@ define([
         },
 
         backToGeneralHome:function () {
-            window.location.hash = "#";
+            Backbone.history.navigate("/", true);
         },
 
         moveToParticipantHome:function () {
-            window.location.hash = "/participants";
+            Backbone.history.navigate("/participants", true);
         },
 
         moveToTeamsHome:function () {
-            window.location.hash = "/teams";
+            Backbone.history.navigate("/teams", true);
         },
 
         moveToGTHome:function () {
-            window.location.hash = "/games";
+            Backbone.history.navigate("/games", true);
         },
 
         focusOnSearch:function (event) {

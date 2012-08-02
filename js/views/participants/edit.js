@@ -87,7 +87,7 @@ define([
 
         afterSave:function () {
 
-            window.location.hash = '/participant/' + this.model.id;
+            Backbone.history.navigate('/participant/' + this.model.id, true);
 
             Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Participant saved successfully', 'alert-success']);
         },

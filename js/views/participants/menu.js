@@ -53,11 +53,11 @@ define([
         },
 
         backToElementHome:function () {
-            window.location.hash = "/participants";
+            Backbone.history.navigate("/participants", true);
         },
 
         addElement:function () {
-            window.location.hash = "/participant/add";
+            Backbone.history.navigate("/participant/add", true);
         }
 
     });

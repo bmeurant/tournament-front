@@ -210,7 +210,7 @@ define([
         },
 
         onParticipantDeleted:function () {
-            window.location.hash = '/participants';
+            Backbone.history.navigate('/participants', true);
         },
 
         changeParticipantView:function (type) {

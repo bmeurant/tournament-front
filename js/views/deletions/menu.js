@@ -156,7 +156,7 @@ define([
         },
 
         moveToDeletionsView:function () {
-            window.location.hash = "/deletions";
+            Backbone.history.navigate("/deletions", true);
         }
 
     });

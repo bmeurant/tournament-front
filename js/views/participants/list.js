@@ -156,7 +156,7 @@ define([
         showSelected:function () {
             var $selected = this.findSelected();
             if ($selected && $selected.length > 0) {
-                window.location.hash = '/participant/' + $selected.get(0).id;
+                Backbone.history.navigate('/participant/' + $selected.get(0).id, true);
             }
         },
 
