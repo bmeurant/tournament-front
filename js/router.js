@@ -75,7 +75,19 @@ define([
 
     var initialize = function () {
         classes.Routers.AppRouter = new AppRouter;
-        Backbone.history.start({pushState: true, root: "/"});
+        Backbone.history.start({pushState:true, root:"/"});
+
+        // force all links to be handled by Backbone pushstate - no get will be send to server
+        $(document).on('click', 'a:not([data-bypass])', function (evt) {
+
+            var href = $(this).attr('href');
+            var protocol = this.protocol + '//';
+
+            if (href.slice(protocol.length) !== protocol) {
+                evt.preventDefault();
+                Backbone.history.navigate(href, true);
+            }
+        });
     };
     return {
         initialize:initialize
