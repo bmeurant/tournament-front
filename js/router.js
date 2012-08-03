@@ -8,19 +8,6 @@ define([
     'pubsub'
 ], function ($, _, Backbone, ParticipantListView, ParticipantView, ParticipantsMenuView, Pubsub) {
 
-    Backbone.View.prototype.close = function () {
-        if (this.beforeClose) {
-            this.beforeClose();
-        }
-        if (this.handlers) {
-            $.each(this.handlers, function (index, value) {
-                Pubsub.unsubscribe(value);
-            });
-        }
-        this.remove();
-        this.unbind();
-    };
-
     var AppRouter = Backbone.Router.extend({
         routes:{
             // Define some URL routes

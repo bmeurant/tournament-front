@@ -12,9 +12,14 @@ define([
 ], function ($, _, Backbone, Router, HeaderView, DeletionsMenuView, DeletionsView, AlertsView, KeyboardController, Pubsub) {
     var initialize = function () {
 
-        Backbone.View.close = function () {
+        Backbone.View.prototype.close = function () {
             if (this.beforeClose) {
                 this.beforeClose();
+            }
+            if (this.handlers) {
+                $.each(this.handlers, function (index, value) {
+                    Pubsub.unsubscribe(value);
+                });
             }
             this.remove();
             this.unbind();
