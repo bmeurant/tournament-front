@@ -23,8 +23,11 @@ define([
             this.model = model;
         },
 
-        render:function () {
+        initBindings:function () {
 
+        },
+
+        render:function () {
             this.$el.html(this.template({participant:this.model.toJSON(), 'server_url':"http://localhost:3000/api"}));
 
             return this;

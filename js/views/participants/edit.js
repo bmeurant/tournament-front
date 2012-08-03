@@ -31,7 +31,6 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.SAVE_ELEM, this.submitForm.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ENTER_CALLED, this.submitForm.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ECHAP_CALLED, this.blur.bind(this)));
-
         },
 
         removeBindings:function () {
@@ -115,6 +114,8 @@ define([
 
             utils.clearValidationErrors();
 
+            Pubsub.publish(Events.MODEL_CHANGED, [model]);
+
             if (this.pictureFile) {
                 this.uploadFile(self.pictureFile, this.model.id,
                     this.afterSave().bind(this)
@@ -125,6 +126,7 @@ define([
         },
 
         afterSave:function () {
+            this.renderNext = true;
             Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Participant saved successfully', 'alert-success']);
             if (this.focusedField) {
                 $(this.focusedField).focus();

@@ -23,6 +23,7 @@ define([
         linkedViewsURLFragment:['', '/edit'],
         linkedViewsClasses:[DetailsView, EditView],
         linkedViewsInstances:[],
+        renderNext:false,
 
         handlers:[],
 
@@ -138,7 +139,7 @@ define([
 
         renderMainView:function () {
             var $mainView = this.mainView.render().$el;
-            this.$el.find('#view').html($mainView);
+            this.$el.find('#view #edit').html($mainView);
         },
 
         renderLinkedViews:function () {
@@ -146,10 +147,10 @@ define([
             if (this.linkedViewsInstances) {
                 for (var i = 0; i < this.linkedViewsInstances.length; i++) {
                     var $newView = this.linkedViewsInstances[i].render().$el;
-                    if (i != mainIndex) {
-                        $newView.find('div#' + this.linkedViewsInstances[i].type).addClass("hidden");
+                    $newView.appendTo(this.$el.find('#view #' + this.linkedViewsInstances[i].type));
+                    if (i == mainIndex) {
+                        this.$el.find('div#' + this.linkedViewsInstances[i].type).removeClass("hidden");
                     }
-                    $newView.appendTo(this.$el.find('#view'));
                 }
             }
         },
@@ -246,12 +247,18 @@ define([
                 this.linkedViewsInstances[mainIndex].removeBindings();
             }
 
+            var renderNext = this.linkedViewsInstances[mainIndex].renderNext;
+
             mainIndex = this.linkedViewsTypes.indexOf(this.type);
 
             if (this.linkedViewsInstances[mainIndex].initBindings) {
                 this.linkedViewsInstances[mainIndex].initBindings();
             }
 
+            if (renderNext) {
+                this.linkedViewsInstances[mainIndex].render().$el;
+                this.renderNext = false;
+            }
             this.$el.find('.view-elem#' + this.type).removeClass("hidden");
             this.addTransitionCallbacks(this.$el.find('#view'), this.$el.find('.view-elem#' + oldType));
 
