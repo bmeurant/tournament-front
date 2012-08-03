@@ -76,7 +76,12 @@ define([
         },
 
         cancelDeletions:function () {
-            var idSelected = this.findSelected().get(0).id;
+            var $selected = this.findSelected();
+            var idSelected;
+
+            if ($selected && $selected.length > 0) {
+                idSelected = this.findSelected().get(0).id;
+            }
             this.render(idSelected);
         },
 

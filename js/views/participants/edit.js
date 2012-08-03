@@ -14,7 +14,10 @@ define([
         type:'edit',
 
         events:{
-            "drop .photo":"dropHandler"
+            "drop .well":"dropHandler",
+            "dragover .well":"dragOverHandler",
+            "input form input":"onInput",
+            "submit form":"onSubmitForm"
         },
 
         initialize:function (model, active) {
@@ -25,12 +28,12 @@ define([
         },
 
         initBindings:function () {
-            this.handlers.push(Pubsub.subscribe(Events.SAVE_ELEM, this.saveParticipant.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.ENTER_CALLED, this.saveParticipant.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.SAVE_ELEM, this.submitForm.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.ENTER_CALLED, this.submitForm.bind(this)));
         },
 
         removeBindings:function () {
-            this.unbind();
+            this.   unbind();
             if (this.handlers) {
                 $.each(this.handlers, function (index, value) {
                     Pubsub.unsubscribe(value);
@@ -43,16 +46,48 @@ define([
             return this;
         },
 
-        saveParticipant:function (event) {
-            if (event) {
+        onInput:function (event) {
+            if (event != null) {
                 event.stopPropagation();
                 event.preventDefault();
             }
 
+            var target = event.currentTarget;
+
+            var $parent = $(target.parentNode);
+            var $help = $parent.find(".help-inline");
+            var $controlGroup = $parent.parent();
+
+            $help.text(target.validationMessage);
+
+            if (target.validity.valid) {
+                $controlGroup.removeClass("error");
+            }
+            else {
+                $controlGroup.addClass("error");
+            }
+
+            this.focusedField = target;
+        },
+
+        submitForm:function () {
+            this.$el.find("form input[type='submit']").click();
+        },
+
+        onSubmitForm:function (event) {
+            if (event != null) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            this.saveParticipant();
+        },
+
+        saveParticipant:function () {
             var attributes = {};
-            this.$el.find("form input:not('disabled')").each(function (index, value) {
+            this.$el.find("form input[type!='submit']").each(function (index, value) {
                 attributes[value.name] = value.value;
-            });
+                this.model.set(value.name, value.value);
+            }.bind(this));
 
             this.model.save(attributes, {
                 success:this.onSaveSuccess.bind(this),
@@ -73,9 +108,11 @@ define([
         },
 
         onSaveSuccess:function (model, resp) {
+
+            this.model = model;
+
             utils.clearValidationErrors();
 
-            this.model.id = model.attributes.id;
             if (this.pictureFile) {
                 this.uploadFile(self.pictureFile, this.model.id,
                     this.afterSave().bind(this)
@@ -86,10 +123,19 @@ define([
         },
 
         afterSave:function () {
-
-            Backbone.history.navigate('/participant/' + this.model.id, true);
-
             Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Participant saved successfully', 'alert-success']);
+            if (this.focusedField) {
+                $(this.focusedField).focus();
+            }
+            if (this.type == 'add') {
+                Backbone.history.navigate('/participant/' + this.model.id + "/edit", true);
+            }
+        },
+
+        dragOverHandler:function (event) {
+            event.preventDefault(); // allows us to drop
+            event.originalEvent.dataTransfer.dropEffect = 'copy';
+            return false;
         },
 
         dropHandler:function (event) {

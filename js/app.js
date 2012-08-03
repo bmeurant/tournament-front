@@ -13,6 +13,7 @@ define([
     var initialize = function () {
 
         Backbone.View.prototype.close = function () {
+            alert('close '+this.type);
             if (this.beforeClose) {
                 this.beforeClose();
             }
@@ -21,6 +22,9 @@ define([
                     Pubsub.unsubscribe(value);
                 });
             }
+            if (this.model) {
+                this.model.unbind();
+            }
             this.remove();
             this.unbind();
         };
@@ -28,7 +32,7 @@ define([
         classes.Views.HeaderView = new HeaderView();
         $('.header').html(classes.Views.HeaderView.render().el);
         classes.Views.DeletionsView = new DeletionsView();
-        $('#content').html(classes.Views.DeletionsView.render().el);
+        //$('#content').html(classes.Views.DeletionsView.render().el);
         classes.Views.AlertsView = new AlertsView();
         $('.alerts').html(classes.Views.AlertsView.render().el);
         classes.Controllers.KeyboardController = new KeyboardController();

@@ -24,7 +24,7 @@
                         <label for="firstname" class="control-label">First name:</label>
 
                         <div class="controls">
-                            <input type="text" id="firstname" name="firstname" value="<%= participant.firstname ? participant.firstname: '' %>" tabindex="1" autofocus="autofocus"/>
+                            <input type="text" id="firstname" name="firstname" required="true" value="<%= participant.firstname ? participant.firstname: '' %>" tabindex="1" autofocus="autofocus"/>
                             <span class="help-inline"></span>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                         <label for="lastname" class="control-label">Last name:</label>
 
                         <div class="controls">
-                            <input type="text" id="lastname" name="lastname" value="<%= participant.lastname ? participant.lastname: '' %>" tabindex="2"/>
+                            <input type="text" id="lastname" name="lastname" required="true" value="<%= participant.lastname ? participant.lastname: '' %>" tabindex="2"/>
                             <span class="help-inline"></span>
                         </div>
                     </div>
@@ -60,6 +60,8 @@
             </div>
 
         </fieldset>
+
+        <input type="submit" style="display:none" value="Submit" />
 
     </form>
 

@@ -36,6 +36,9 @@ define([
             $('.alert').addClass(klass);
             $('.alert').html('<strong>' + title + '</strong> ' + text);
             $('.alert').show();
+            setTimeout(function () {
+                $('.alert').hide();
+            }.bind(this), 3000);
         }
 
     });

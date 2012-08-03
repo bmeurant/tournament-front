@@ -28,7 +28,7 @@ define([
 
         initialize:function (id, type) {
 
-            this.$el = $("<div>").addClass("row").attr("draggable", "true");
+            this.$el = $("<div>").addClass("row");
             this.el = this.$el.get(0);
 
             // manually bind this event because Backbone does not trigger events directly bind on el !
@@ -91,9 +91,11 @@ define([
          * to unbind events and handlers that should not be triggered anymore
          */
         close:function () {
+
+
             this.navigationView.close();
 
-            if (this.mainView && !this.linkedViewsInstances) {
+            if (this.mainView && (!this.linkedViewsInstances || this.linkedViewsInstances.length == 0 )) {
                 this.mainView.close();
             }
 
@@ -124,6 +126,10 @@ define([
             else {
                 this.renderMainView();
             }
+
+            setTimeout(function () {
+                this.$el.find("form input:not(:disabled)").addClass("test").first().focus();
+            }.bind(this), 1);
         },
 
         mainIsLinkedView:function () {
@@ -132,7 +138,7 @@ define([
 
         renderMainView:function () {
             var $mainView = this.mainView.render().$el;
-            $mainView.appendTo(this.$el.find('#view'));
+            this.$el.find('#view').html($mainView);
         },
 
         renderLinkedViews:function () {
@@ -254,22 +260,20 @@ define([
         },
 
         addTransitionCallbacks:function ($el, $oldView) {
-            $el.off('webkitTransitionEnd');
             $el.on('webkitTransitionEnd', {oldView:$oldView}, this.onTransitionEnd.bind(this));
-
-            $el.off('transitionend');
             $el.on('transitionend', {oldView:$oldView}, this.onTransitionEnd.bind(this));
-
-            $el.off('MSTransitionEnd');
             $el.on('MSTransitionEnd', {oldView:$oldView}, this.onTransitionEnd.bind(this));
-
-            $el.off('oTransitionEnd');
             $el.on('oTransitionEnd', {oldView:$oldView}, this.onTransitionEnd.bind(this));
         },
 
         onTransitionEnd:function (event) {
             event.data.oldView.addClass("hidden");
             window.history.pushState(null, "Tournament", "/participant/" + this.model.id + this.linkedViewsURLFragment[this.linkedViewsTypes.indexOf(this.type)]);
+            this.$el.find("form input:not(:disabled)").first().focus();
+            this.$el.find('#view').off('webkitTransitionEnd');
+            this.$el.find('#view').off('transitionend');
+            this.$el.find('#view').off('MSTransitionEnd');
+            this.$el.find('#view').off('oTransitionEnd');
         },
 
         precedentHandler:function () {
