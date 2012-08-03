@@ -47,7 +47,6 @@ define([
             this.bindings[this.F] = this.find;
             this.bindings[this.ENTER] = this.enter;
             this.bindings[this.ECHAP] = this.echap;
-            this.bindings[this.TAB] = this.tabulation;
 
             $(document).keydown(this.onKeyDown.bind(this));
         },

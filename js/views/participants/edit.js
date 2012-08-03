@@ -30,10 +30,12 @@ define([
         initBindings:function () {
             this.handlers.push(Pubsub.subscribe(Events.SAVE_ELEM, this.submitForm.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ENTER_CALLED, this.submitForm.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.ECHAP_CALLED, this.blur.bind(this)));
+
         },
 
         removeBindings:function () {
-            this.   unbind();
+            this.unbind();
             if (this.handlers) {
                 $.each(this.handlers, function (index, value) {
                     Pubsub.unsubscribe(value);
@@ -172,6 +174,10 @@ define([
                 .fail(function (jqXHR, textStatus, errorMessage) {
                     Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while uploading ' + file.name, 'alert-error']);
                 });
+        },
+
+        blur:function () {
+            this.$el.find("form input:focus").blur();
         }
 
     });

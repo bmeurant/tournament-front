@@ -13,7 +13,6 @@ define([
     var initialize = function () {
 
         Backbone.View.prototype.close = function () {
-            alert('close '+this.type);
             if (this.beforeClose) {
                 this.beforeClose();
             }

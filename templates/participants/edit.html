@@ -9,13 +9,13 @@
                     <div class="control-group">
 
                         <% if (participant.id) { %>
-                            <label for="participantId" class="control-label">Id:</label>
+                        <label for="participantId" class="control-label">Id:</label>
 
-                            <div class="controls">
-                                <input id="participantId" name="id" type="text"
-                                       value="<%= participant.id %>"
-                                       disabled/>
-                            </div>
+                        <div class="controls">
+                            <input id="participantId" name="id" type="text"
+                                   value="<%= participant.id %>"
+                                   disabled/>
+                        </div>
                         <% } %>
 
                     </div>
@@ -24,7 +24,9 @@
                         <label for="firstname" class="control-label">First name:</label>
 
                         <div class="controls">
-                            <input type="text" id="firstname" name="firstname" required="true" value="<%= participant.firstname ? participant.firstname: '' %>" tabindex="1" autofocus="autofocus"/>
+                            <input type="text" id="firstname" name="firstname" required="true"
+                                   value="<%= participant.firstname ? participant.firstname: '' %>" tabindex="1"
+                                   autofocus="autofocus"/>
                             <span class="help-inline"></span>
                         </div>
                     </div>
@@ -33,7 +35,18 @@
                         <label for="lastname" class="control-label">Last name:</label>
 
                         <div class="controls">
-                            <input type="text" id="lastname" name="lastname" required="true" value="<%= participant.lastname ? participant.lastname: '' %>" tabindex="2"/>
+                            <input type="text" id="lastname" name="lastname" required="true"
+                                   value="<%= participant.lastname ? participant.lastname: '' %>" tabindex="2"/>
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="email" class="control-label">email address:</label>
+
+                        <div class="controls">
+                            <input type="email" id="email" name="email"
+                                   value="<%= participant.email ? participant.email: '' %>" tabindex="3"/>
                             <span class="help-inline"></span>
                         </div>
                     </div>
@@ -44,13 +57,15 @@
                     <div class="well">
                         <p class="photo">
                             <% if (!participant.picture_url) { %>
-                                <img class="photo" src="/img/participants/no-photo.jpg" alt="" draggable="false"/>
+                            <img class="photo" src="/img/participants/no-photo.jpg" alt="" draggable="false"/>
                             <% }
                             else
                             { %>
-                                <img class="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
-                                <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
-                            <% } %>
+                            <img class="photo" src="<%= server_url %><%= participant.picture_url %>" alt=""
+                                 draggable="false"/>
+
+                        <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
+                        <% } %>
                         </p>
 
                         <p>To change the picture, drag a new picture from your file system onto the box above.</p>
@@ -61,7 +76,7 @@
 
         </fieldset>
 
-        <input type="submit" style="display:none" value="Submit" />
+        <input type="submit" style="display:none" value="Submit"/>
 
     </form>
 
