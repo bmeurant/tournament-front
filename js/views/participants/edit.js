@@ -4,8 +4,9 @@ define([
     'backbone',
     'models/participant',
     'text!templates/participants/edit.html',
+    'backbone-validation',
     'pubsub'
-], function ($, _, Backbone, Participant, participantEditTemplate, Pubsub) {
+], function ($, _, Backbone, Participant, participantEditTemplate, BackoneValidation, Pubsub) {
 
     var ParticipantEditView = Backbone.View.extend({
 
@@ -28,6 +29,9 @@ define([
         },
 
         initBindings:function () {
+
+            Backbone.Validation.bind(this);
+
             this.handlers.push(Pubsub.subscribe(Events.SAVE_ELEM, this.submitForm.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ENTER_CALLED, this.submitForm.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ECHAP_CALLED, this.blur.bind(this)));
@@ -80,6 +84,7 @@ define([
                 event.stopPropagation();
                 event.preventDefault();
             }
+
             this.saveParticipant();
         },
 
@@ -97,15 +102,15 @@ define([
         },
 
         onSaveError:function (model, resp) {
-            utils.clearValidationErrors();
+            //utils.clearValidationErrors();
             // error is an http one
             if (resp.hasOwnProperty("status")) {
                 Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to update this item', 'alert-error']);
             }
-            else {
+            /*else {
                 // validation errors
                 utils.displayValidationErrors(resp);
-            }
+            } */
         },
 
         onSaveSuccess:function (model, resp) {

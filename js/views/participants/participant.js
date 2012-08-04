@@ -129,7 +129,7 @@ define([
             }
 
             setTimeout(function () {
-                this.$el.find("form input:not(:disabled)").addClass("test").first().focus();
+                this.$el.find("form input:not(:disabled)").first().focus();
             }.bind(this), 1);
         },
 
@@ -260,6 +260,7 @@ define([
                 this.renderNext = false;
             }
             this.$el.find('.view-elem#' + this.type).removeClass("hidden");
+            this.$el.find('#navigation .nav-pills').addClass("hidden");
             this.addTransitionCallbacks(this.$el.find('#view'), this.$el.find('.view-elem#' + oldType));
 
             Pubsub.publish(Events.VIEW_CHANGED, [this.type]);
@@ -275,6 +276,7 @@ define([
 
         onTransitionEnd:function (event) {
             event.data.oldView.addClass("hidden");
+            this.$el.find('#navigation .nav-pills').removeClass("hidden");
             window.history.pushState(null, "Tournament", "/participant/" + this.model.id + this.linkedViewsURLFragment[this.linkedViewsTypes.indexOf(this.type)]);
             this.$el.find("form input:not(:disabled)").first().focus();
             this.$el.find('#view').off('webkitTransitionEnd');

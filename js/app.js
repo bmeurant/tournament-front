@@ -24,9 +24,27 @@ define([
             if (this.model) {
                 this.model.unbind();
             }
+
+            if (Backbone.Validation) {
+                Backbone.Validation.unbind(this);
+            }
+
             this.remove();
             this.unbind();
         };
+
+        _.extend(Backbone.Validation.callbacks, {
+            valid:function (view, attr, selector) {
+                var attrSelector = '[' + selector + '~=' + attr + ']';
+                view.$(attrSelector).parent().parent().removeClass('error');
+                view.$(attrSelector + ' + span.help-inline').text('');
+            },
+            invalid:function (view, attr, error, selector) {
+                var attrSelector = '[' + selector + '~=' + attr + ']';
+                view.$(attrSelector).parent().parent().addClass('error');
+                view.$(attrSelector + ' + span.help-inline').text(error);
+            }
+        });
 
         classes.Views.HeaderView = new HeaderView();
         $('.header').html(classes.Views.HeaderView.render().el);

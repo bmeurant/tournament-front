@@ -1,13 +1,24 @@
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
+    'backbone',
+    'backbone-validation'
+], function (_, Backbone, BackboneValidation) {
     var participantModel = Backbone.Model.extend({
         urlRoot:"http://localhost:3000/api/participant",
         defaults:{
 
         },
-        errors:{},
+        validation:{
+            firstname:{
+                required:true
+            },
+            lastname:{
+                required:true
+            },
+            email:{
+                pattern:'email'
+            }
+        },
 
         initialize:function () {
         }
