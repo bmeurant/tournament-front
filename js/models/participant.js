@@ -16,6 +16,7 @@ define([
                 required:true
             },
             email:{
+                required:false,
                 pattern:'email'
             }
         },

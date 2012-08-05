@@ -95,10 +95,12 @@ define([
                 this.model.set(value.name, value.value);
             }.bind(this));
 
-            this.model.save(attributes, {
-                success:this.onSaveSuccess.bind(this),
-                error:this.onSaveError.bind(this)
-            });
+            if (this.model.isValid()) {
+                this.model.save(null, {
+                    success:this.onSaveSuccess.bind(this),
+                    error:this.onSaveError.bind(this)
+                });
+            }
         },
 
         onSaveError:function (model, resp) {
@@ -108,9 +110,9 @@ define([
                 Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to update this item', 'alert-error']);
             }
             /*else {
-                // validation errors
-                utils.displayValidationErrors(resp);
-            } */
+             // validation errors
+             utils.displayValidationErrors(resp);
+             } */
         },
 
         onSaveSuccess:function (model, resp) {

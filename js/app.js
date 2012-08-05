@@ -49,7 +49,6 @@ define([
         classes.Views.HeaderView = new HeaderView();
         $('.header').html(classes.Views.HeaderView.render().el);
         classes.Views.DeletionsView = new DeletionsView();
-        //$('#content').html(classes.Views.DeletionsView.render().el);
         classes.Views.AlertsView = new AlertsView();
         $('.alerts').html(classes.Views.AlertsView.render().el);
         classes.Controllers.KeyboardController = new KeyboardController();

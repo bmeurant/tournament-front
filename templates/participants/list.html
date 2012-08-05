@@ -2,19 +2,19 @@
     if (_.indexOf(deleted, participant.id) < 0) { %>
         <li id="<%= participant.id %>" class="thumbnail <% if (id_selected == participant.id) {print ('selected');}%>" draggable="true">
             <input type="hidden" value="<%= index %>"/>
-            <a href="/participant/<%= participant.id %>" class="plain participant-thumb">
-                <div class="participant-thumb">
-                    <% if (!participant.picture_url) { %>
-                    <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
-                    <% }
-                    else
-                    { %>
-                    <img class="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
-                    <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
-                    <% } %>
-                </div>
-                <h5><%= participant.firstname %>&nbsp;<%= participant.lastname %></h5>
-            </a>
+                <a href="/participant/<%= participant.id %>" class="plain participant-thumb">
+                    <div class="participant-thumb">
+                        <% if (!participant.picture_url) { %>
+                        <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
+                        <% }
+                        else
+                        { %>
+                        <img class="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
+                        <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
+                        <% } %>
+                    </div>
+                    <h5><%= participant.firstname %>&nbsp;<%= participant.lastname %></h5>
+                </a>
         </li>
     <% }
 }); %>

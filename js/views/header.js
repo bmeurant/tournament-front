@@ -68,7 +68,7 @@ define([
         clearMenu:function () {
             if (this.menuView)
                 this.menuView.close();
-            $('.actions-menu').html("&nbsp;").css("width", "189px");
+            $('.actions-menu').html("&nbsp;");
         },
 
         menuClicked:function () {

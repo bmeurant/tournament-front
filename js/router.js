@@ -51,7 +51,7 @@ define([
             }
             classes.Views.HeaderView.clearMenu();
             classes.Views.HeaderView.selectMenuItem('delete-menu');
-            classes.Views.DeletionsView.render();
+            $('#content').html(classes.Views.DeletionsView.render().el);
         },
 
         defaultAction:function (actions) {

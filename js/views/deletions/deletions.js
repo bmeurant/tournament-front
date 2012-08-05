@@ -16,7 +16,8 @@ define([
         handlers:[],
 
         events:{
-            "click #deletions-container li.thumbnail":"cancelElementDeletion"
+            "click #deletions-container li.thumbnail":"cancelElementDeletion",
+            "click #deletions-container li.thumbnail a":"stopAction"
         },
 
         errors:{},
@@ -29,7 +30,7 @@ define([
             this.handlers = _.extend([], AbstractView.prototype.handlers, this.handlers);
 
             // override this.el because of abstract inheritance
-            this.$el = $("<div>");
+            this.$el = $("<div>").attr("id", "deletions-container");
             this.el = this.$el.get(0);
 
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_TO_CANCEL, this.cancelDeletions.bind(this)));
@@ -63,14 +64,16 @@ define([
                 callback();
             }
             else {
-                $.each(this.collection, function (type, idArray) {
+                $.each(this.collection, function (elemType, idArray) {
                     $.each(idArray, function (index, id) {
 
                         var currentModel;
                         var errorsCount = 0;
 
-                        switch (type) {
+
+                        switch (elemType) {
                             case 'participant':
+                                var elemClass = _.capitalize(elemType);
                                 currentModel = new Participant;
                         }
 
@@ -80,12 +83,12 @@ define([
                         currentModel.fetch({
                             success:function (model) {
                                 nbWaintingCallbacks -= 1;
-                                self.modelsCollection[type].push(model);
+                                self.modelsCollection[elemType].push(model);
                                 self.afterPopulate(nbWaintingCallbacks, callback, errorsCount);
                             },
                             error:function (model, response) {
                                 if (response.status == 404) {
-                                    self.collection[type].splice(index, 1);
+                                    self.collection[elemType].splice(index, 1);
                                 }
                                 nbWaintingCallbacks -= 1;
                                 errorsCount += 1;
@@ -277,6 +280,10 @@ define([
             this.storeInLocalStorage();
             this.render();
             Pubsub.publish(Events.DELETION_CANCELED);
+        },
+
+        stopAction:function (event) {
+            event.preventDefault();
         }
 
     });

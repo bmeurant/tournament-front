@@ -139,7 +139,7 @@ define([
 
         renderMainView:function () {
             var $mainView = this.mainView.render().$el;
-            this.$el.find('#view #edit').html($mainView);
+            this.$el.find('#view #edit').html($mainView).removeClass("hidden");
         },
 
         renderLinkedViews:function () {

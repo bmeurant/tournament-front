@@ -20,7 +20,6 @@ div.participant-thumb {
     text-align: center;
     width: 125px;
     height: 125px;
-    display: table-cell;
     vertical-align: middle;
 }
 
@@ -61,7 +60,6 @@ div.participant-thumb {
 
 html body {
     padding-top: 65px;
-    overflow: hidden;
 }
 
 form .well {
@@ -140,6 +138,10 @@ ul.thumbnails li.thumbnail a:focus {
 }
 
 .element-separator {
+}
+
+.actions-menu {
+    width: 190px;
 }
 
 a.brand {
