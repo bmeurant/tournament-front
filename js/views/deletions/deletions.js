@@ -16,8 +16,7 @@ define([
         handlers:[],
 
         events:{
-            "click #deletions-container li.thumbnail":"cancelElementDeletion",
-            "click #deletions-container li.thumbnail a":"stopAction"
+            "click #deletions-container li.thumbnail":"cancelElementDeletion"
         },
 
         errors:{},
@@ -280,10 +279,6 @@ define([
             this.storeInLocalStorage();
             this.render();
             Pubsub.publish(Events.DELETION_CANCELED);
-        },
-
-        stopAction:function (event) {
-            event.preventDefault();
         }
 
     });

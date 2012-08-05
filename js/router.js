@@ -5,8 +5,9 @@ define([
     'views/participants/list',
     'views/participants/participant',
     'views/participants/menu',
+    'views/deletions/deletions',
     'pubsub'
-], function ($, _, Backbone, ParticipantListView, ParticipantView, ParticipantsMenuView, Pubsub) {
+], function ($, _, Backbone, ParticipantListView, ParticipantView, ParticipantsMenuView, DeletionsView, Pubsub) {
 
     var AppRouter = Backbone.Router.extend({
         routes:{
