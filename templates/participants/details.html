@@ -1,16 +1,14 @@
-    <h2><%= participant.firstname %> <%= participant.lastname %></h2>
+{{#with participant}}
+    <h2>{{firstname}} blah {{lastname}}</h2>
     <br>
     <div class="span2">
         <p>
-            <% if (!participant.picture_url) { %>
-            <img class="photo" src="/img/participants/no-photo.jpg" alt="" draggable="false"/>
-            <% }
-            else
-            { %>
-            <img class="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
-
-        <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
-        <% } %>
+            {{#if picture_url}}
+                <img class="photo" src="{{photo_link picture_url}}" alt="" draggable="false"/>
+                <p hidden><img src="{{photo_link pict_min}}"/></p>
+            {{else}}
+                <img class="photo" src="/img/participants/no-photo.jpg" alt="" draggable="false"/>
+            {{/if}}
         </p>
 
     </div>
@@ -19,7 +17,9 @@
         <table class="table table-striped">
             <tr>
                 <td><h6>Email:</h6></td>
-                <td><i class="icon-envelope"></i> <a href="mailto:<%= participant.email %>"><%= participant.email %></a></td>
+                <td><i class="icon-envelope"></i> <a href="mailto:<%= participant.email %>">{{email}}</a>
+                </td>
             </tr>
         </table>
     </div>
+{{/with}}

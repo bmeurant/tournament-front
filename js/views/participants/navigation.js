@@ -2,17 +2,18 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'handlebars',
     'models/participant',
     'text!templates/participants/navigation.html',
     'pubsub'
-], function ($, _, Backbone, Participant, navigationTemplate, Pubsub) {
+], function ($, _, Backbone, Handlebars, Participant, navigationTemplate, Pubsub) {
 
     /**
      * Manage sub view to navigate between participants details and edit views
      */
     var ParticipantNavigationView = Backbone.View.extend({
 
-        template:_.template(navigationTemplate),
+        template:Handlebars.compile(navigationTemplate),
 
         events:{
             "click .nav-pills":"navClicked"
@@ -32,6 +33,12 @@ define([
             this.id = id;
             this.type = type;
             this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.updatePills.bind(this)));
+
+            var self = this;
+
+            Handlebars.registerHelper('active', function (id) {
+                return self.type == id ? "active" : "";
+            });
         },
 
         /**
@@ -54,7 +61,8 @@ define([
         },
 
         render:function () {
-            this.$el.html(this.template({id:this.id, type:this.type}));
+            var navigable = ((this.type == 'details') || (this.type == 'edit'));
+            this.$el.html(this.template({id:this.id, navigable: navigable}));
             return this;
         },
 
@@ -63,13 +71,13 @@ define([
          *
          * @param type main view type
          */
-        updatePills: function (type) {
+        updatePills:function (type) {
 
             // clear pills
             $('ul.nav-pills li').removeClass('active');
 
             // active the current type
-            $('ul.nav-pills li > a#'+type).parent().addClass('active');
+            $('ul.nav-pills li > a#' + type).parent().addClass('active');
         }
 
     });

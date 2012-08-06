@@ -13,7 +13,8 @@ require.config({
         localstorage:"libs/localstorage",
         text:"libs/text",
         i18n:"libs/i18n",
-        templates:"/templates"
+        templates:"/templates",
+        handlebars:"libs/handlebars"
     }
 
 });
@@ -38,7 +39,7 @@ require([
     'events'
     // Some plugins have to be loaded in order due to their non AMD compliance
     // Because these scripts are not "modules" they do not pass any values to the definition function below
-], function (App, $, _, _s, util, events) {
+], function (App, $, _, _s) {
 
     // Merge Underscore and Underscore.String
     _.str = _s;

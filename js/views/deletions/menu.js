@@ -2,14 +2,15 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'handlebars',
     'text!templates/deletions/menu.html',
     'views/deletions/abstract',
     'models/participant',
     'pubsub'
-], function ($, _, Backbone, deletionsMenuTemplate, AbstractView, Participant, Pubsub) {
+], function ($, _, Backbone, Handlebars, deletionsMenuTemplate, AbstractView, Participant, Pubsub) {
     var DeletionsMenuView = AbstractView.extend({
 
-        menuTemplate:_.template(deletionsMenuTemplate),
+        menuTemplate:Handlebars.compile(deletionsMenuTemplate),
         nbDelsSelector:".nb-dels",
 
         handlers:[],
@@ -50,6 +51,7 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CALLED, this.moveToDeletionsView.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.CONFIRM_DELS_CALLED, this.confirmDeletions.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.CANCEL_DELS_CALLED, this.cancelDeletions.bind(this)));
+
         },
 
         /**
@@ -67,7 +69,7 @@ define([
         },
 
         render:function () {
-            this.$el.html(this.menuTemplate({type:this.type}));
+            this.$el.html(this.menuTemplate());
             this.initCollection();
             this.renderDels();
             return this;

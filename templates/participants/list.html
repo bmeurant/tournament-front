@@ -1,20 +1,19 @@
-<% _.each(participants, function(participant, index){
-    if (_.indexOf(deleted, participant.id) < 0) { %>
-        <li id="<%= participant.id %>" class="thumbnail <% if (id_selected == participant.id) {print ('selected');}%>" draggable="true">
-            <input type="hidden" value="<%= index %>"/>
-                <a href="/participant/<%= participant.id %>" class="plain participant-thumb">
+{{#each participants}}
+    {{#with this}}
+        {{#unless_deleted id}}
+            <li id="{{id}}" class="thumbnail {{selected id}}" draggable="true">
+                <a href="/participant/{{id}}" class="plain participant-thumb">
                     <div class="participant-thumb">
-                        <% if (!participant.picture_url) { %>
-                        <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
-                        <% }
-                        else
-                        { %>
-                        <img class="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
-                        <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
-                        <% } %>
+                        {{#if picture_url}}
+                            <img class="photo" src="{{photo_link picture_url}}" alt="" draggable="false"/>
+                            <p hidden><img src="{{photo_link pict_min}}"/></p>
+                        {{else}}
+                            <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
+                        {{/if}}
                     </div>
-                    <h5><%= participant.firstname %>&nbsp;<%= participant.lastname %></h5>
+                    <h5>{{firstname}}&nbsp;{{lastname}}</h5>
                 </a>
-        </li>
-    <% }
-}); %>
+            </li>
+        {{/unless_deleted}}
+    {{/with}}
+{{/each}}

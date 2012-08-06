@@ -2,15 +2,16 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'handlebars',
     'models/participant',
     'text!templates/participants/edit.html',
     'backbone-validation',
     'pubsub'
-], function ($, _, Backbone, Participant, participantEditTemplate, BackoneValidation, Pubsub) {
+], function ($, _, Backbone, Handlebars, Participant, participantEditTemplate, BackoneValidation, Pubsub) {
 
     var ParticipantEditView = Backbone.View.extend({
 
-        template:_.template(participantEditTemplate),
+        template:Handlebars.compile(participantEditTemplate),
         handlers:[],
         type:'edit',
 
@@ -56,7 +57,7 @@ define([
         },
 
         render:function () {
-            this.$el.html(this.template({participant:this.model.toJSON(), server_url:'http://localhost:3000/api'}));
+            this.$el.html(this.template({participant:this.model.toJSON()}));
             return this;
         },
 

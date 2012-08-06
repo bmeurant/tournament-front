@@ -1,14 +1,14 @@
-<div class="title">Participant&nbsp;<img src="/img/crop.png" class="icon" draggable="false"/></div>
-<% if ((type == 'details') || (type == 'edit')) { %>
-<ul class="nav-pills">
-    <li class="<% if (type == 'details') { print('active');} %>">
-        <a id="details" href="/participant/<%= id %>">Details</a>
-    </li>
-    <li class="<% if (type == 'edit') { print('active');} %>">
-        <a id="edit" href="/participant/<%= id %>/edit">Edit</a>
-    </li>
-    <!--li id="teams">
-        <a href="#teams?participant-id=<%= id %>">Teams</a>
-    </li-->
-</ul>
-<% } %>
+<div class='title'>Participant&nbsp;<img src='/img/crop.png' class='icon' draggable='false'/></div>
+{{#if navigable}}
+    <ul class='nav-pills'>
+        <li class='{{active "details"}}'>
+            <a id='details' href='/participant/{{participant.id}}'>Details</a>
+        </li>
+        <li class='{{active "edit"}}'>
+            <a id='edit' href='/participant/{{participant.id}}/edit'>Edit</a>
+        </li>
+        <!--li id='teams'>
+            <a href='#teams?participant-id=<%= id %>'>Teams</a>
+        </li-->
+    </ul>
+{{/if}}

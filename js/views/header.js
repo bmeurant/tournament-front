@@ -2,17 +2,18 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'handlebars',
     'bootstrap-dropdown',
     'text!templates/header.html',
     'views/deletions/menu',
     'views/search/menu',
     'pubsub'
-], function ($, _, Backbone, bdd, headerTemplate, DeletionsMenuView,  SearchMenuView, Pubsub) {
+], function ($, _, Backbone, Handlebars, bdd, headerTemplate, DeletionsMenuView,  SearchMenuView, Pubsub) {
 
     var HeaderView = Backbone.View.extend({
 
         // Cache the template function for a single item.
-        template:_.template(headerTemplate),
+        template:Handlebars.compile(headerTemplate),
 
         events:{
             "click div":"menuClicked",

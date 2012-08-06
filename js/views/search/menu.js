@@ -2,11 +2,12 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'handlebars',
     'text!templates/search/menu.html'
-], function ($, _, Backbone, searchMenuTemplate) {
+], function ($, _, Backbone, Handlebars, searchMenuTemplate) {
     var SearchMenuView = Backbone.View.extend({
 
-        menuTemplate:_.template(searchMenuTemplate),
+        menuTemplate:Handlebars.compile(searchMenuTemplate),
 
         handlers:[],
 

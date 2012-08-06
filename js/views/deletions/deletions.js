@@ -2,20 +2,21 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'handlebars',
     'text!templates/deletions/list.html',
     'views/deletions/abstract',
     'text!templates/participants/list.html',
     'models/participant',
     'pubsub'
-], function ($, _, Backbone, deletionsTemplate, AbstractView, participantTemplate, Participant, Pubsub) {
+], function ($, _, Backbone, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, Pubsub) {
 
     /**
      * Main view for displaying deletions
      */
     var DeletionsView = AbstractView.extend({
 
-        template:_.template(deletionsTemplate),
-        participantsTemplate:_.template(participantTemplate),
+        template:Handlebars.compile(deletionsTemplate),
+        participantsTemplate:Handlebars.compile(participantTemplate),
 
         handlers:[],
 
@@ -42,6 +43,18 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CANCELED, this.render.bind(this)));
 
             this.emptyModelsCollection();
+
+            Handlebars.registerHelper('unless_deleted', function (id, options) {
+                if (true) {
+                    return options.fn(this);
+                } else {
+                    return options.inverse(this);
+                }
+            });
+
+            Handlebars.registerHelper('selected', function (id) {
+                return "";
+            });
         },
 
         /**
@@ -193,7 +206,8 @@ define([
         },
 
         showTemplate:function () {
-            this.$el.html(this.template({'participants':this.collectionToJSON(this.modelsCollection, 'participant'), server_url:'http://localhost:3000/api', 'deleted':[], 'id_selected':'no', 'participants_template':this.participantsTemplate}));
+            var participants_template = this.participantsTemplate({'participants':this.collectionToJSON(this.modelsCollection, 'participant')});
+            this.$el.html(this.template({'participants':this.collectionToJSON(this.modelsCollection, 'participant'), 'participants_template':new Handlebars.SafeString(participants_template)}));
         },
 
         /**

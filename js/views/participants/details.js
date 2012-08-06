@@ -1,14 +1,15 @@
 define([
     'jquery',
     'underscore',
+    'handlebars',
     'backbone',
     'models/participant',
     'text!templates/participants/details.html'
-], function ($, _, Backbone, Participant, detailsTemplate) {
+], function ($, _, Handlebars, Backbone, Participant, detailsTemplate) {
 
     var ParticipantDetailsView = Backbone.View.extend({
 
-        template:_.template(detailsTemplate),
+        template:Handlebars.compile(detailsTemplate),
 
         handlers:[],
 
@@ -27,7 +28,7 @@ define([
         },
 
         render:function () {
-            this.$el.html(this.template({participant:this.model.toJSON(), 'server_url':"http://localhost:3000/api"}));
+            this.$el.html(this.template({participant:this.model.toJSON()}));
 
             return this;
         }

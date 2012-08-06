@@ -1,12 +1,12 @@
-<li id="<%= participant.id %>" class="thumbnail">
-    <a href="/participant/<%= participant.id %>" class="plain participant-thumb">
-        <% if (!participant.pict_min) { %>
-        <img src="/img/participants/no-photo.jpg" draggable="false" alt="">
-        <% }
-        else
-        { %>
-        <img class="photo" src="<%= server_url %><%= participant.pict_min %>" draggable="false" alt="">
-        <% } %>
-        <h5><%= participant.firstname %> <%= participant.lastname %></h5>
-    </a>
-</li>
+{{#with participant}}
+    <li id="{{id}}" class="thumbnail">
+        <a href="/participant/{{id}}" class="plain participant-thumb">
+            {{#if pict_min}}
+                <img class="photo" src="{{photo_link pict_min}}" draggable="false" alt="">
+            {{else}}
+                <img src="/img/participants/no-photo.jpg" draggable="false" alt="">
+            {{/if}}
+            <h5>{{firstname}} {{lastname}}</h5>
+        </a>
+    </li>
+{{/with}}

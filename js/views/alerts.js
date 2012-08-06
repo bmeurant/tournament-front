@@ -2,14 +2,15 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'handlebars',
     'text!templates/alerts.html',
     'pubsub'
-], function ($, _, Backbone, alertsTemplate, Pubsub) {
+], function ($, _, Backbone, Handlebars, alertsTemplate, Pubsub) {
 
     var AlertsView = Backbone.View.extend({
 
         // Cache the template function for a single item.
-        template:_.template(alertsTemplate),
+        template:Handlebars.compile(alertsTemplate),
 
         events:{
         },

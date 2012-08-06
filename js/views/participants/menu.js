@@ -2,14 +2,15 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'handlebars',
     'text!templates/participants/menu.html',
     'pubsub'
-], function ($, _, Backbone, menuTemplate, Pubsub) {
+], function ($, _, Backbone, Handlebars, menuTemplate, Pubsub) {
 
     var MenuView = Backbone.View.extend({
 
         // Cache the template function for a single item.
-        template:_.template(menuTemplate),
+        template:Handlebars.compile(menuTemplate),
 
         events:{
             "click .save":"saveElement"
@@ -39,6 +40,12 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.ADD_CALLED, this.addElement.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.LIST_CALLED, this.backToListElement.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ECHAP_CALLED, this.backToElementHome.bind(this)));
+
+            var self = this;
+
+            Handlebars.registerHelper('hidden', function (type) {
+                return _.indexOf(self.actions[self.type], type) < 0 ? "hidden" : "";
+            });
         },
 
         /**
@@ -63,7 +70,7 @@ define([
         },
 
         render:function () {
-            this.$el.html(this.template({actions:this.actions[this.type]}));
+            this.$el.html(this.template());
             return this;
         },
 

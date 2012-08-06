@@ -5,13 +5,12 @@
 </div>
 <div class="row">
     <div class="span12 deleted-elements">
-        <% if (participants.length != 0) { %>
+        {{#if participants}}
             <ul class="thumbnails span12">
-                <%= participants_template({ participants: participants, server_url:server_url, deleted:deleted,
-                                            id_selected:id_selected}) %>
-        <% }
-        else { %>
+                {{participants_template}}
+            </ul>
+        {{else}}
             <h3>No Participant to delete</h3>
-        <% } %>
+        {{/if}}
     </div>
 </div>

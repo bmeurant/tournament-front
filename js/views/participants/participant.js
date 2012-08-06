@@ -2,6 +2,7 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'handlebars',
     'models/participant',
     'text!templates/participants/participant.html',
     'views/participants/navigation',
@@ -10,15 +11,15 @@ define([
     'views/participants/edit',
     'views/participants/add',
     'pubsub'
-], function ($, _, Backbone, Participant, participantTemplate, NavigationView, miniatureTemplate, DetailsView, EditView, AddView, Pubsub) {
+], function ($, _, Backbone, Handlebars, Participant, participantTemplate, NavigationView, miniatureTemplate, DetailsView, EditView, AddView, Pubsub) {
 
     /**
      * Manage global view surrounding all unitary participants views
      */
     var ParticipantView = Backbone.View.extend({
 
-        template:_.template(participantTemplate),
-        miniatureTemplate:_.template(miniatureTemplate),
+        template:Handlebars.compile(participantTemplate),
+        miniatureTemplate:Handlebars.compile(miniatureTemplate),
 
         events:{
         },
@@ -103,7 +104,7 @@ define([
             // To embed remote image, this should be cacheable and the remote server should implement the
             // corresponding cache politic
             var dragIcon = $("#dragIcon");
-            dragIcon.html(this.miniatureTemplate({participant:this.model.toJSON(), server_url:"http://localhost:3000/api"}));
+            dragIcon.html(this.miniatureTemplate({participant:this.model.toJSON()}));
             event.originalEvent.dataTransfer.setDragImage(dragIcon.get(0), 50, 50);
 
             Pubsub.publish(Events.DRAG_START);
