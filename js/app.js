@@ -16,17 +16,16 @@ define([
             if (this.beforeClose) {
                 this.beforeClose();
             }
+
             if (this.handlers) {
                 $.each(this.handlers, function (index, value) {
                     Pubsub.unsubscribe(value);
                 });
             }
-            if (this.model) {
-                this.model.unbind();
-            }
 
-            if (Backbone.Validation) {
+            if (this.model) {
                 Backbone.Validation.unbind(this);
+                this.model.unbind();
             }
 
             this.remove();
@@ -48,7 +47,6 @@ define([
 
         classes.Views.HeaderView = new HeaderView();
         $('.header').html(classes.Views.HeaderView.render().el);
-        classes.Views.DeletionsView = new DeletionsView();
         classes.Views.AlertsView = new AlertsView();
         $('.alerts').html(classes.Views.AlertsView.render().el);
         classes.Controllers.KeyboardController = new KeyboardController();

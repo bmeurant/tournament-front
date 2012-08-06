@@ -52,7 +52,7 @@ define([
             }
             classes.Views.HeaderView.clearMenu();
             classes.Views.HeaderView.selectMenuItem('delete-menu');
-            $('#content').html(classes.Views.DeletionsView.render().el);
+            utils.showView($('#content'), DeletionsView, []);
         },
 
         defaultAction:function (actions) {

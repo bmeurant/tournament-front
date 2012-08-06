@@ -19,11 +19,11 @@ define([
             "click #deletions-container li.thumbnail":"cancelElementDeletion"
         },
 
-        errors:{},
         modelsCollection:{},
 
         initialize:function () {
 
+            // merge members of inherited abstract class with 'this'
             AbstractView.prototype.initialize.apply(this, arguments);
             this.events = _.extend({}, AbstractView.prototype.events, this.events);
             this.handlers = _.extend([], AbstractView.prototype.handlers, this.handlers);
@@ -32,16 +32,12 @@ define([
             this.$el = $("<div>").attr("id", "deletions-container");
             this.el = this.$el.get(0);
 
-            this.handlers.push(Pubsub.subscribe(Events.DELETIONS_TO_CANCEL, this.cancelDeletions.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CONFIRMED, this.confirmDeletions.bind(this)));
+            // init PubSub bindings
             this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM_FROM_VIEW, this.deleteElem.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CONFIRMED, this.render.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CANCELED, this.render.bind(this)));
 
-            this.emptyErrors();
             this.emptyModelsCollection();
-        },
-
-        emptyErrors:function () {
-            this.errors.participant = [];
         },
 
         emptyModelsCollection:function () {
@@ -59,7 +55,7 @@ define([
             var nbWaintingCallbacks = 0;
             var self = this;
             if (utils.mapLength(this.collection) == 0) {
-                this.showConditionalTemplate();
+                this.showTemplate();
                 callback();
             }
             else {
@@ -69,10 +65,8 @@ define([
                         var currentModel;
                         var errorsCount = 0;
 
-
                         switch (elemType) {
                             case 'participant':
-                                var elemClass = _.capitalize(elemType);
                                 currentModel = new Participant;
                         }
 
@@ -82,7 +76,7 @@ define([
                         currentModel.fetch({
                             success:function (model) {
                                 nbWaintingCallbacks -= 1;
-                                self.modelsCollection[elemType].push(model);
+                                self.addToModelsCollection(elemType, model);
                                 self.afterPopulate(nbWaintingCallbacks, callback, errorsCount);
                             },
                             error:function (model, response) {
@@ -122,28 +116,6 @@ define([
             }
         },
 
-        cancelDeletions:function () {
-            this.emptyErrors();
-            this.emptyModelsCollection();
-            this.initCollection();
-            this.populateCollection(this.afterCancel.bind(this));
-        },
-
-        afterCancel:function () {
-            // if active view
-            this.showConditionalTemplate();
-
-            Pubsub.publish(Events.DELETIONS_CANCELED);
-            Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Deletion canceled', 'alert-success']);
-
-        },
-
-        showConditionalTemplate:function () {
-            if ($("#deletions-container").length != 0) {
-                this.showTemplate();
-            }
-        },
-
         addToModelsCollection:function (type, model) {
             if (this.modelsCollection[type].indexOf(model) < 0) {
                 this.modelsCollection[type].push(model);
@@ -160,103 +132,6 @@ define([
 
         showTemplate:function () {
             this.$el.html(this.template({'participants':this.collectionToJSON(this.modelsCollection, 'participant'), server_url:'http://localhost:3000/api', 'deleted':[], 'id_selected':'no', 'participants_template':this.participantsTemplate}));
-        },
-
-        renderDels:function () {
-            this.getFromLocalStorage();
-            var nbDels = this.countElements(this.collection);
-            $(this.nbDelsSelector).text(nbDels);
-            nbDels > 0 ? $(".delete-actions").removeClass("hidden") : $(".delete-actions").addClass("hidden");
-        },
-
-        countElements:function (collection) {
-            var elements = 0;
-            $.each(collection, function (index, value) {
-                elements += value.length;
-            });
-            return elements;
-        },
-
-        confirmDeletions:function () {
-
-            this.initCollection();
-            this.emptyModelsCollection();
-            this.populateCollection(this.deleteElements.bind(this));
-        },
-
-        deleteElements:function () {
-
-            var self = this;
-            var nbWaitingCallbacks = 0;
-
-            $.each(this.modelsCollection, function (type, idArray) {
-                $.each(idArray, function (index, currentModel) {
-                    nbWaitingCallbacks += 1;
-                    currentModel.destroy({
-                        success:function () {
-                            nbWaitingCallbacks -= 1;
-                            self.afterRemove(nbWaitingCallbacks);
-                        },
-                        error:function (model, response) {
-                            if (response.status != 404) {
-                                self.recordError(type, currentModel);
-                            }
-                            nbWaitingCallbacks -= 1;
-                            self.afterRemove(nbWaitingCallbacks);
-                        }
-                    });
-                });
-            });
-        },
-
-        afterRemove:function (nbWaitingCallbacks) {
-
-            if (nbWaitingCallbacks == 0) {
-                this.reintegrateErrors();
-
-                // if active view
-                this.showConditionalTemplate();
-            }
-
-        },
-
-        reintegrateErrors:function () {
-
-            var initialCollectionLength = this.countElements(this.collection);
-
-            this.emptyCollection();
-            this.emptyModelsCollection();
-
-            var countErrors = this.countElements(this.errors);
-            if (countErrors != 0) {
-
-                var self = this;
-
-                $.each(this.errors, function (type, idArray) {
-                    $.each(idArray, function (index, model) {
-                        self.addToCollection(type, model.id);
-                        self.addToModelsCollection(type, model);
-                    });
-                });
-
-                if (countErrors == initialCollectionLength) {
-                    Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'Error occured while deleting these elements', 'alert-error']);
-                }
-                else {
-                    Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Error occured while deleting some elements', 'alert-warning']);
-                }
-            }
-            else {
-                Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Elements successfully deleted', 'alert-success']);
-            }
-
-            this.storeInLocalStorage();
-            Pubsub.publish(Events.DELETIONS_DONE);
-        },
-
-        recordError:function (type, id) {
-            if (this.errors[type].indexOf(id) < 0)
-                this.errors[type].push(id);
         },
 
         cancelElementDeletion:function (event) {
