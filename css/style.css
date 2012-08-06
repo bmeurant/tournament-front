@@ -60,6 +60,7 @@ div.participant-thumb {
 
 html body {
     padding-top: 65px;
+    overflow-x: hidden;
 }
 
 form .well {
@@ -211,6 +212,7 @@ body input, textarea, select, .uneditable-input {
     margin: 10px;
     position: absolute;
     left: 10000px;
+    top:0px;
 }
 
 #dragIcon div.participant-thumb {
