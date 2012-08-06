@@ -101,18 +101,16 @@ define([
                     error:this.onSaveError.bind(this)
                 });
             }
+            else {
+                Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Fix validation errors and try again', 'alert-warning']);
+            }
         },
 
         onSaveError:function (model, resp) {
-            //utils.clearValidationErrors();
             // error is an http one
             if (resp.hasOwnProperty("status")) {
                 Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to update this item', 'alert-error']);
             }
-            /*else {
-             // validation errors
-             utils.displayValidationErrors(resp);
-             } */
         },
 
         onSaveSuccess:function (model, resp) {
