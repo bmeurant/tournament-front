@@ -9,7 +9,7 @@ define([
     'pubsub'
 ], function ($, _, Backbone, bdd, headerTemplate, DeletionsMenuView,  SearchMenuView, Pubsub) {
 
-    var headerView = Backbone.View.extend({
+    var HeaderView = Backbone.View.extend({
 
         // Cache the template function for a single item.
         template:_.template(headerTemplate),
@@ -37,8 +37,6 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.TEAMS_HOME_CALLED, this.moveToTeamsHome.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.GT_HOME_CALLED, this.moveToGTHome.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.FIND_CALLED, this.focusOnSearch.bind(this)));
-
-            //this.render();
 
             this.deletionMenu = new DeletionsMenuView();
             this.searchMenu = new SearchMenuView();
@@ -112,5 +110,5 @@ define([
         }
 
     });
-    return headerView;
+    return HeaderView;
 });

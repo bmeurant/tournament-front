@@ -2,9 +2,8 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'text!templates/search/menu.html',
-    'pubsub'
-], function ($, _, Backbone, searchMenuTemplate, Pubsub) {
+    'text!templates/search/menu.html'
+], function ($, _, Backbone, searchMenuTemplate) {
     var SearchMenuView = Backbone.View.extend({
 
         menuTemplate:_.template(searchMenuTemplate),

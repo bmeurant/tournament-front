@@ -3,7 +3,10 @@ define([
     'pubsub'
 ], function ($, PubSub) {
 
-    var KeyboardController = function (event) {
+    /**
+     * Global controller allowing to map and publish keyboard events and controls
+     */
+    var KeyboardController = function () {
 
         this.LEFT_ARROW = 37;
         this.RIGHT_ARROW = 39;
@@ -29,7 +32,7 @@ define([
 
     $.extend(KeyboardController.prototype, {
 
-        init:function (event) {
+        init:function () {
 
             this.bindings[this.LEFT_ARROW] = this.precedent;
             this.bindings[this.RIGHT_ARROW] = this.next;
@@ -60,11 +63,9 @@ define([
         },
 
         targetIsInput:function (event) {
-            if (typeof event.target !== "undefined" &&
+            return (typeof event.target !== "undefined" &&
                 (event.target.nodeName == "INPUT" ||
                     event.target.nodeName == "TEXTAREA"))
-                return true;
-            return false;
         },
 
         precedent:function (event) {
@@ -87,7 +88,8 @@ define([
         },
 
         echap:function (event) {
-            PubSub.publish(Events.ECHAP_CALLED, [event]);
+            if (!this.targetIsInput(event))
+                PubSub.publish(Events.ECHAP_CALLED, [event]);
         },
 
         home:function (event) {

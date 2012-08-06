@@ -28,7 +28,7 @@ define([
 
         initialize:function () {
 
-            // merge members of inherited abstract class with 'this'
+            // call inherited constructor
             AbstractView.prototype.initialize.apply(this, arguments);
             this.events = _.extend({}, AbstractView.prototype.events, this.events);
             this.handlers = _.extend([], AbstractView.prototype.handlers, this.handlers);
@@ -37,7 +37,7 @@ define([
             this.el = this.$el.get(0);
 
             // Default type
-            this.type = "no"
+            this.type = "no";
 
 
             // Register PubSub bindings
@@ -54,7 +54,7 @@ define([
 
         /**
          * Redraw deletions menu when main view change
-         * @param type: type of the main view
+         * @param type type of the main view
          */
         onViewChanged:function (type) {
             this.type = type;
@@ -104,8 +104,8 @@ define([
         /**
          * Delete the given element
          *
-         * @param type: type of the element to delete
-         * @param id: id of the element to delete
+         * @param type type of the element to delete
+         * @param id id of the element to delete
          */
         deleteElement:function (type, id) {
             this.initCollection();
@@ -116,8 +116,8 @@ define([
         /**
          * Refresh view after drop
          *
-         * @param type: type of the deleted element
-         * @param id: if of the deleted element
+         * @param type type of the deleted element
+         * @param id if of the deleted element
          */
         onDragEnd:function (type, id) {
             $('.drop-zone').removeClass('emphasize');
@@ -128,22 +128,28 @@ define([
 
         /**
          * Handles drag over drop zone
-         * @param event: event raised
+         *
+         * @param event event raised
+         * @return {Boolean} false to prevent default browser behaviour
          */
         onDragOver:function (event) {
             event.preventDefault(); // allows us to drop
             event.originalEvent.dataTransfer.dropEffect = 'move';
             this.emphasizeDropZone();
+            return false;
         },
 
         /**
          * Handles drag leave from drop zone
-         * @param event: event raised
+         *
+         * @param event event raised
+         * @return {Boolean} false to prevent default browser behaviour
          */
         onDragLeave:function (event) {
             event.preventDefault(); // allows us to drop
             event.originalEvent.dataTransfer.dropEffect = 'move';
             this.clearDropZone();
+            return false;
         },
 
         /**
@@ -175,7 +181,7 @@ define([
         /**
          * Handles deletion confirmation (example: confirm button click)
          *
-         * @param event: event raised
+         * @param event event raised
          */
         confirmDeletions:function (event) {
             if (event) {
@@ -205,11 +211,11 @@ define([
                         url:'http://localhost:3000/api/participant/' + currentId,
                         type:'DELETE'
                     })
-                        .done(function (response) {
+                        .done(function () {
                             nbWaitingCallbacks -= 1;
                             self.afterRemove(nbWaitingCallbacks);
                         })
-                        .fail(function (jqXHR, textStatus, errorMessage) {
+                        .fail(function (jqXHR) {
                             if (jqXHR.status != 404) {
                                 self.recordError(type, currentId);
                             }
@@ -223,7 +229,7 @@ define([
         /**
          * Callback called after an ajax deletion request
          *
-         * @param nbWaitingCallbacks: number of callbacks that we have still to wait before close request
+         * @param nbWaitingCallbacks number of callbacks that we have still to wait before close request
          */
         afterRemove:function (nbWaitingCallbacks) {
 
@@ -239,6 +245,9 @@ define([
 
         },
 
+        /**
+         * Handles errors and reintegrate elements ids that could not be deleted into the main collection
+         */
         reintegrateErrors:function () {
 
             var initialCollectionLength = this.countElements(this.collection);
@@ -250,12 +259,15 @@ define([
 
                 var self = this;
 
+                // each element in error is added to main collection in order to keep it synchonized with server
+                // state
                 $.each(this.errors, function (type, idArray) {
                     $.each(idArray, function (index, model) {
                         self.addToCollection(type, model.id);
                     });
                 });
 
+                // adapt error messages
                 if (countErrors == initialCollectionLength) {
                     Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'Error occured while deleting these elements', 'alert-error']);
                 }
@@ -267,6 +279,8 @@ define([
                 Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Elements successfully deleted', 'alert-success']);
             }
 
+
+            // save collection
             this.storeInLocalStorage();
 
             this.render();
@@ -275,7 +289,7 @@ define([
         /**
          * Handles deletions cancelation (example: cancel button clicked)
          *
-         * @param event: event raised
+         * @param event event raised
          */
         cancelDeletions:function (event) {
             if (event) {
@@ -294,7 +308,7 @@ define([
 
         /**
          * Handles a click on delete button
-         * @param event: event raised
+         * @param event event raised
          */
         removeElement:function (event) {
             event.stopPropagation();

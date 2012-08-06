@@ -6,7 +6,7 @@ define([
     'pubsub'
 ], function ($, _, Backbone, menuTemplate, Pubsub) {
 
-    var menuView = Backbone.View.extend({
+    var MenuView = Backbone.View.extend({
 
         // Cache the template function for a single item.
         template:_.template(menuTemplate),
@@ -15,6 +15,7 @@ define([
             "click .save":"saveElement"
         },
 
+        // displayable actions on menu depending of the current view type
         actions:{
             'list':['add'],
             'details':['list', 'add'],
@@ -30,18 +31,31 @@ define([
             this.$el = $("<ul>").addClass("nav");
             this.el = this.$el.get(0);
 
+            // default type
             this.type = "";
 
             this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.SAVE_CALLED, this.saveElement.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ADD_CALLED, this.addElement.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.LIST_CALLED, this.backToListElement.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.ECHAP_CALLED, this.backToElementHome.bind(this)));
         },
 
+        /**
+         * Handles main view changed by re-rendering this menu
+         *
+         * @param type main view type
+         */
         onViewChanged:function (type) {
             this.type = type;
             this.render();
         },
 
+        /**
+         * Propagate save order
+         *
+         * @param event event raised
+         */
         saveElement:function (event) {
             event.stopPropagation();
             event.preventDefault();
@@ -57,10 +71,14 @@ define([
             Backbone.history.navigate("/participants", true);
         },
 
+        backToListElement:function () {
+            Backbone.history.navigate("/participants", true);
+        },
+
         addElement:function () {
             Backbone.history.navigate("/participant/add", true);
         }
 
     });
-    return menuView;
+    return MenuView;
 });

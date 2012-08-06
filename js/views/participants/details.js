@@ -3,9 +3,8 @@ define([
     'underscore',
     'backbone',
     'models/participant',
-    'text!templates/participants/details.html',
-    'pubsub'
-], function ($, _, Backbone, Participant, detailsTemplate, Pubsub) {
+    'text!templates/participants/details.html'
+], function ($, _, Backbone, Participant, detailsTemplate) {
 
     var ParticipantDetailsView = Backbone.View.extend({
 

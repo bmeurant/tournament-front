@@ -1,12 +1,14 @@
 define([
     'jquery',
     'underscore',
-    'backbone',
-    'models/participant',
-    'text!templates/participants/miniature.html',
-    'pubsub'
-], function ($, _, Backbone, Participant, participantMiniatureTemplate, Pubsub) {
+    'backbone'
+], function ($, _, Backbone) {
 
+    /**
+     * 'Abstract' view defining global controls, events, handlers and methods for 'concrete'
+     * deletion views
+     *
+     */
     var AbstractDeletionView = Backbone.View.extend({
 
         events:{
@@ -14,8 +16,7 @@ define([
 
         handlers:[],
 
-        initialize:function (el) {
-            this.setElement(el);
+        initialize:function () {
             this.initCollection();
             this.emptyErrors();
         },
@@ -64,8 +65,8 @@ define([
         /**
          * Add a given element to the current collection if not already contained
          *
-         * @param type: type of the element to add
-         * @param id: id of the element to add
+         * @param type type of the element to add
+         * @param id id of the element to add
          */
         addToCollection:function (type, id) {
 
@@ -83,8 +84,8 @@ define([
         /**
          * Record a new error for a given element
          *
-         * @param type: type of the element to record
-         * @param id: id of the element to record
+         * @param type type of the element to record
+         * @param id id of the element to record
          */
         recordError:function (type, id) {
             if (this.errors[type].indexOf(id) < 0)
@@ -93,7 +94,7 @@ define([
 
         /**
          * @param collection
-         * @return {Number} : the number of elements of the given collection
+         * @return {Number} the number of elements of the given collection
          */
         countElements:function (collection) {
             var elements = 0;

@@ -6,7 +6,7 @@ define([
     'pubsub'
 ], function ($, _, Backbone, alertsTemplate, Pubsub) {
 
-    var alertsView = Backbone.View.extend({
+    var AlertsView = Backbone.View.extend({
 
         // Cache the template function for a single item.
         template:_.template(alertsTemplate),
@@ -42,6 +42,6 @@ define([
         }
 
     });
-    return alertsView;
+    return AlertsView;
 })
 ;

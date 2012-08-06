@@ -6,6 +6,10 @@ define([
     'text!templates/participants/navigation.html',
     'pubsub'
 ], function ($, _, Backbone, Participant, navigationTemplate, Pubsub) {
+
+    /**
+     * Manage sub view to navigate between participants details and edit views
+     */
     var ParticipantNavigationView = Backbone.View.extend({
 
         template:_.template(navigationTemplate),
@@ -18,16 +22,28 @@ define([
 
         handlers:[],
 
+        /**
+         * Initialize view
+         *
+         * @param id id of the participant
+         * @param type type of the main view
+         */
         initialize:function (id, type) {
             this.id = id;
             this.type = type;
             this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.updatePills.bind(this)));
         },
 
+        /**
+         * Handles actions on navigation bar buttons
+         *
+         * @param event event raised
+         */
         navClicked:function (event) {
             event.stopPropagation();
             event.preventDefault();
 
+            // get asked main view type and, if different of the current one, ask for a change view
             var type = event.target.id;
 
             if (this.type != type) {
@@ -42,6 +58,11 @@ define([
             return this;
         },
 
+        /**
+         * update navigation bar depending on the main view type
+         *
+         * @param type main view type
+         */
         updatePills: function (type) {
 
             // clear pills

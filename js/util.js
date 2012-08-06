@@ -1,41 +1,54 @@
 define([
-    'jquery',
-    'pubsub'
-], function ($, Pubsub) {
-    utils = {
-        displayValidationErrors:function (errors) {
-            for (var key in errors) {
-                if (errors.hasOwnProperty(key)) {
-                    this.addValidationError(key, errors[key]);
-                }
-            }
-            Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Fix validation errors and try again', 'alert-warning']);
-        },
+    'jquery'
+], function ($) {
 
-        addValidationError:function (field, message) {
-            var controlGroup = $('#' + field).parent().parent();
-            controlGroup.addClass('error');
-            $('.help-inline', controlGroup).html(message);
-        },
+    // global utility methods
+    utils = {
 
         clearValidationErrors:function () {
             $('.control-group').removeClass("error");
             $('.help-inline').empty();
         },
 
-        showView:function (selector, View, args) {
+        /**
+         * This methods wrap initialization and rendering of main view in order to guarantee
+         * that any previous main view is properly closed and unbind.
+         *
+         * Otherwise events and listeners are raise twice or more and the application becomes unstable
+         *
+         * @param $selector jquery selector in which the view has to be rendered
+         * @param View View to create
+         * @param args optional view constructor arguments
+         * @return {Object} create View
+         */
+        showView:function ($selector, View, args) {
+            // initialize args if null
             args = args || [];
 
+            // clean previous view
             if (classes.Views.currentView) {
                 classes.Views.currentView.close();
             }
+
+            // insertion of this in arguments in order to perform dynamic constructor call
             args.splice(0,0, this);
+
+            // call constructor and initialize view
             var view = new (Function.prototype.bind.apply (View, args));
-            $(selector).html(view.render().el);
+
+            // render view
+            $selector.html(view.render().el);
+
+            // replace global accessor of current view
             classes.Views.currentView = view;
+
             return view;
         },
 
+        /**
+         * @param map
+         * @return {Number}: number of effective elements in a given map
+         */
         mapLength:function (map) {
             var length = 0;
             $.each(map, function (index, value) {

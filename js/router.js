@@ -5,9 +5,8 @@ define([
     'views/participants/list',
     'views/participants/participant',
     'views/participants/menu',
-    'views/deletions/deletions',
-    'pubsub'
-], function ($, _, Backbone, ParticipantListView, ParticipantView, ParticipantsMenuView, DeletionsView, Pubsub) {
+    'views/deletions/deletions'
+], function ($, _, Backbone, ParticipantListView, ParticipantView, ParticipantsMenuView, DeletionsView) {
 
     var AppRouter = Backbone.Router.extend({
         routes:{
@@ -55,7 +54,7 @@ define([
             utils.showView($('#content'), DeletionsView, []);
         },
 
-        defaultAction:function (actions) {
+        defaultAction:function () {
             this.navigate("participants", true);
         }
 

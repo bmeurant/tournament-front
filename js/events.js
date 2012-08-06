@@ -1,3 +1,4 @@
+// Defines globally all existing Events that can be raised between views
 Events = {
     SAVE_ELEM:"SaveElement",
     VIEW_CHANGED:"ViewChanged",
@@ -31,7 +32,6 @@ Events = {
     TEAMS_HOME_CALLED:"TeamsHomeCalled",
     GT_HOME_CALLED:"GTHomeCalled",
     FIND_CALLED:"FindCalled",
-    TAB_CALLED:"TabCalled",
-    MODEL_CHANGED:"ModelChanged"
+    TAB_CALLED:"TabCalled"
 };
 
