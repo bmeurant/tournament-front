@@ -28,6 +28,7 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CANCELED, this.cancelDeletions.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.NEXT_CALLED, this.selectNext.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.PREVIOUS_CALLED, this.selectPrevious.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ENTER_CALLED, this.showSelected.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_VIEW, this.participantDeleted.bind(this)));
@@ -135,9 +136,9 @@ define([
             this.$el.html(this.template({participants:this.collection.toJSON()}));
 
             // if no element is currently select, select the first one
-            var $selected = this.findSelected();
+            var $selected = utils.findSelected(this.$el, "li.thumbnail");
             if (!$selected || $selected.length == 0) {
-                this.selectFirst();
+                utils.selectFirst(this.$el, "li.thumbnail");
             }
 
             this.handlers.push(Pubsub.publish(Events.VIEW_CHANGED, ['list']));
@@ -150,10 +151,10 @@ define([
         cancelDeletions:function () {
 
             // retrieve and save the currently selected element, if any
-            var $selected = this.findSelected();
+            var $selected = utils.findSelected(this.$el, "li.thumbnail");
 
             if ($selected && $selected.length > 0) {
-                this.idSelected = this.findSelected().get(0).id;
+                this.idSelected = utils.findSelected(this.$el, "li.thumbnail").get(0).id;
             }
 
             // re-render view selecting the previously selected element
@@ -170,83 +171,18 @@ define([
 
             // if the deleted element is selected, select previous
             if ($element.hasClass("selected")) {
-                this.selectPrevious();
+                utils.selectPrevious(this.$el, "li.thumbnail");
             }
 
             // remove deleted element
             $element.remove();
 
             // if no element is currently select, select the first one
-            var $selected = this.findSelected();
+            var $selected = utils.findSelected(this.$el, "li.thumbnail");
             if (!$selected || $selected.length == 0) {
-                this.selectFirst();
+                utils.selectFirst(this.$el, "li.thumbnail");
             }
 
-        },
-
-        /**
-         * Select an element
-         *
-         * @param type optional selection type : 'previous' or 'next'. Otherwise or null : 'next'
-         */
-        selectElement:function (type) {
-
-            // get currently selected element. If no, select the first one
-            var $selected = this.findSelected();
-            if (!$selected || $selected.length == 0) {
-                this.selectFirst();
-                return;
-            }
-
-            // get the element to select and, if any, select it and give it focus
-            var $toSelect = (type == 'previous') ? this.findPreviousSelect() : this.findNextSelect();
-
-            if ($toSelect && $toSelect.length > 0) {
-                $toSelect.addClass("selected");
-                $selected.removeClass("selected");
-                $('*:focus').blur();
-                $toSelect.focus();
-            }
-
-        },
-
-        selectNext:function () {
-            this.selectElement("next");
-        },
-
-        selectPrevious:function () {
-            this.selectElement("previous");
-        },
-
-        selectFirst:function () {
-            var $toselect = this.$el.find("li.thumbnail:first-child");
-            // select the element, remove focus from others and give it focus
-            if ($toselect && $toselect.length != 0) {
-                $('*:focus').blur();
-                $toselect.addClass("selected").focus();
-            }
-        },
-
-        findSelected:function () {
-            return this.$el.find("li.thumbnail.selected");
-        },
-
-        /**
-         * @return {*} the first element after the currently selected one
-         */
-        findNextSelect:function () {
-            return this.$el.find("li.thumbnail.selected + li.thumbnail");
-        },
-
-        /**
-         * @return {*} the first element before the currently selected one
-         */
-        findPreviousSelect:function () {
-            var previous = this.$el.find("li.thumbnail.selected").get(0).previousElementSibling;
-            if (previous) {
-                return this.$el.find('#' + previous.id);
-            }
-            return null;
         },
 
         /**
@@ -254,19 +190,25 @@ define([
          */
         deleteParticipant:function () {
 
-            var $selected = this.findSelected();
+            var $selected = utils.findSelected(this.$el, "li.thumbnail");
             if ($selected && $selected.length > 0) {
-                this.participantDeleted($selected.get(0).id);
-
                 Pubsub.publish(Events.DELETE_ELEM_FROM_VIEW, ['participant', $selected.get(0).id]);
             }
+        },
+
+        selectNext:function () {
+            utils.selectElement(this.$el, "li.thumbnail", "next");
+        },
+
+        selectPrevious:function () {
+            utils.selectElement(this.$el, "li.thumbnail", "previous");
         },
 
         /**
          * Navigates to the details view of the currently selected element
          */
         showSelected:function () {
-            var $selected = this.findSelected();
+            var $selected = utils.findSelected(this.$el, "li.thumbnail");
             if ($selected && $selected.length > 0) {
                 Backbone.history.navigate('/participant/' + $selected.get(0).id, true);
             }
@@ -280,7 +222,7 @@ define([
          */
         elemFocused:function (event) {
             if (event && event.currentTarget) {
-                var $selected = this.findSelected();
+                var $selected = utils.findSelected(this.$el, "li.thumbnail");
                 if ($selected && $selected.length != 0) {
                     $selected.removeClass('selected');
                 }

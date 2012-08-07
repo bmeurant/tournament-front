@@ -38,9 +38,11 @@ define([
             this.el = this.$el.get(0);
 
             // init PubSub bindings
-            this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM_FROM_VIEW, this.deleteElem.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CONFIRMED, this.render.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CANCELED, this.render.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.NEXT_CALLED, this.selectNext.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.PREVIOUS_CALLED, this.selectPrevious.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM, this.cancelSelectedDeletion.bind(this)));
 
             this.emptyModelsCollection();
 
@@ -52,9 +54,12 @@ define([
                 }
             });
 
+            var self = this;
+
             Handlebars.registerHelper('selected', function (id) {
-                return "";
+                return (self.idSelected && self.idSelected == id) ? "selected" : "";
             });
+
         },
 
         /**
@@ -62,19 +67,6 @@ define([
          */
         emptyModelsCollection:function () {
             this.modelsCollection.participant = [];
-        },
-
-        /**
-         * Remove a given element from the list of elements to delete and from the current view
-         *
-         * @param type type of the current element
-         * @param id id of the current element
-         */
-        deleteElem:function (type, id) {
-            this.initCollection();
-            this.addToCollection(type, id);
-            this.storeInLocalStorage();
-            Pubsub.publish(Events.ELEM_DELETED_FROM_VIEW, [id, type]);
         },
 
         /**
@@ -208,11 +200,16 @@ define([
         showTemplate:function () {
             var participants_template = this.participantsTemplate({'participants':this.collectionToJSON(this.modelsCollection, 'participant')});
             this.$el.html(this.template({'participants':this.collectionToJSON(this.modelsCollection, 'participant'), 'participants_template':new Handlebars.SafeString(participants_template)}));
+
+            // if no element is currently select, select the first one
+            var $selected = utils.findSelected(this.$el, "li.thumbnail");
+            if (!$selected || $selected.length == 0) {
+                utils.selectFirst(this.$el, "li.thumbnail");
+            }
         },
 
         /**
-         * Cancel element deletion by removing it from current deletions collection and from the current view
-         * (example: on an element click)
+         * Cancel deletion of the current element
          *
          * @param event event raised if any
          */
@@ -221,6 +218,26 @@ define([
             event.preventDefault();
             var idElem = event.currentTarget.getAttribute("id");
 
+            this.cancelDeletion(id);
+        },
+
+        /**
+         * Cancel deletion of the selected element
+         */
+        cancelSelectedDeletion:function () {
+
+            var $selected = utils.findSelected(this.$el, "li.thumbnail");
+            if ($selected && $selected.length > 0) {
+                this.cancelDeletion($selected.attr("id"));
+            }
+        },
+
+        /**
+         * Cancel element deletion by removing it from current deletions collection and from the current view
+         *
+         * @param id id of the element to delete
+         */
+        cancelDeletion:function (idElem) {
             // get collection from local storage
             this.initCollection();
 
@@ -235,6 +252,13 @@ define([
                 });
             });
 
+            // retrieve and save the currently selected element, if any
+            var $selected = utils.findSelected(this.$el, "li.thumbnail");
+
+            if ($selected && $selected.length > 0) {
+                this.idSelected = utils.findSelected(this.$el, "li.thumbnail").get(0).id;
+            }
+
             // remove element from the current view
             $("#" + idElem).remove();
 
@@ -243,6 +267,14 @@ define([
             this.render();
 
             Pubsub.publish(Events.DELETION_CANCELED);
+        },
+
+        selectNext:function () {
+            utils.selectElement(this.$el, "li.thumbnail", "next");
+        },
+
+        selectPrevious:function () {
+            utils.selectElement(this.$el, "li.thumbnail", "previous");
         }
 
     });

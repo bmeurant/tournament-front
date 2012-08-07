@@ -80,7 +80,7 @@ define([
 
         del:function (event) {
             if (!this.targetIsInput(event))
-                PubSub.publish(Events.DELETE_ELEM_FROM_BAR, [event]);
+                PubSub.publish(Events.DELETE_ELEM, [event]);
         },
 
         enter:function (event) {

@@ -44,13 +44,13 @@ define([
             // Register PubSub bindings
             this.handlers.push(Pubsub.subscribe(Events.DRAG_START, this.onDragStart.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DRAG_END, this.onDragEnd.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_VIEW, this.renderDels.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_POPULATED, this.render.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETION_CANCELED, this.render.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CALLED, this.moveToDeletionsView.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.CONFIRM_DELS_CALLED, this.confirmDeletions.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.CANCEL_DELS_CALLED, this.cancelDeletions.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM_FROM_VIEW, this.deleteElem.bind(this)));
 
         },
 
@@ -73,6 +73,21 @@ define([
             this.initCollection();
             this.renderDels();
             return this;
+        },
+
+        /**
+         * Remove a given element from the list of elements to delete and from the current view
+         *
+         * @param type type of the current element
+         * @param id id of the current element
+         */
+        deleteElem:function (type, id) {
+            this.initCollection();
+            this.addToCollection(type, id);
+            this.storeInLocalStorage();
+            this.renderDels();
+
+            Pubsub.publish(Events.ELEM_DELETED_FROM_BAR, [id]);
         },
 
         /**
