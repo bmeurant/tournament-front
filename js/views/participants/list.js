@@ -3,14 +3,18 @@ define([
     'underscore',
     'backbone',
     'handlebars',
+    'backbone-paginator',
     'collections/participants',
+    'text!templates/participants/list-container.html',
     'text!templates/participants/list.html',
+    'views/participants/pagination',
     'text!templates/participants/miniature.html',
     'pubsub'
-], function ($, _, Backbone, Handlebars, participantsCollection, participantListTemplate, participantMiniatureTemplate, Pubsub) {
+], function ($, _, Backbone, Handlebars, BackbonePaginator, participantsCollection, participantListContainerTemplate, participantListTemplate, PaginationView, participantMiniatureTemplate, Pubsub) {
     var ParticipantListView = Backbone.View.extend({
 
         template:Handlebars.compile(participantListTemplate),
+        containerTemplate:Handlebars.compile(participantListContainerTemplate),
         miniatureTemplate:Handlebars.compile(participantMiniatureTemplate),
 
         events:{
@@ -20,9 +24,11 @@ define([
         },
 
         handlers:[],
+        askedPage:1,
 
-        initialize:function () {
+        initialize:function (params) {
             this.collection = participantsCollection;
+            this.paginationView = new PaginationView();
 
             this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_BAR, this.participantDeleted.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CANCELED, this.cancelDeletions.bind(this)));
@@ -32,53 +38,55 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ENTER_CALLED, this.showSelected.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_VIEW, this.participantDeleted.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.NEW_PAGE, this.newPage.bind(this)));
+
+            // get the list of current deleted elements from local storage in order to exclude these
+            // elements from rendered view
+            this.deleted = JSON.parse(localStorage.getItem('deletedElements')).participant;
+            if (!this.deleted) {
+                this.deleted = [];
+            }
+
+            var self = this;
 
             Handlebars.registerHelper('if_deleted', function (id, options) {
 
-                // get the list of current deleted elements from local storage in order to exclude these
-                // elements from rendered view
-                var deleted = JSON.parse(localStorage.getItem('deletedElements')).participant;
-                if (!deleted) {
-                    deleted = [];
-                }
-
-                if (deleted.indexOf(id) >= 0) {
+                if (self.deleted.indexOf(id) >= 0) {
                     return options.fn(this);
                 } else {
                     return options.inverse(this);
                 }
             });
 
-            Handlebars.registerHelper('unless_deleted', function (id, options) {
-                var fn = options.fn, inverse = options.inverse;
-                options.fn = inverse;
-                options.inverse = fn;
-
-                return Handlebars.helpers['if_deleted'].call(this, id, options);
+            Handlebars.registerHelper('disabled', function (id) {
+                return (self.deleted.indexOf(id) >= 0) ? 'disabled' : '';
             });
-
-            var self = this;
 
             Handlebars.registerHelper('selected', function (id) {
                 return (self.idSelected && self.idSelected == id) ? "selected" : "";
             });
+
+            if (params) {
+                if (params.page && utils.isValidPageNumber(params.page)) this.askedPage = parseInt(params.page);
+            }
         },
 
         /**
          * Render this view
          *
-         * @param idSelected optional id of the participant element to select
+         * @param partials optional object containing partial views elements to render. if null, render all
          * @return {*} the current view
          */
-        render:function () {
+        render:function (partials) {
 
             // get the participants collection from server
             this.collection.fetch(
                 {
                     success:function () {
-                        this.showTemplate();
+                        this.collection.goTo(this.askedPage);
+                        this.showTemplate(partials);
                     }.bind(this),
-                    error:function () {
+                    error:function (collection, response) {
                         Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
                     }
                 });
@@ -129,17 +137,31 @@ define([
         },
 
         /**
-         * @param idSelected optional id of the participant element to select
+         * @param partials optional object containing partial views elements to display. if null, display all
          */
-        showTemplate:function () {
+        showTemplate:function (partials) {
 
-            this.$el.html(this.template({participants:this.collection.toJSON()}));
+            if (!partials || (partials.participants && partials.pagination)) {
+                this.$el.html(this.containerTemplate());
+            }
+
+            if (!partials || partials.participants) {
+                this.$el.find(".elements").html(this.template({participants:this.collection.toJSON()}));
+            }
+            if (!partials || partials.pagination) {
+                this.$el.find(".pagination").html(this.paginationView.render(this.collection).$el);
+            }
+            else {
+                this.paginationView.render(this.collection);
+            }
 
             // if no element is currently select, select the first one
             var $selected = utils.findSelected(this.$el, "li.thumbnail");
             if (!$selected || $selected.length == 0) {
                 utils.selectFirst(this.$el, "li.thumbnail");
             }
+
+            window.history.pushState(null, "Tournament", "/participants" + ((this.collection.info().currentPage != 1) ? "?page=" + this.collection.info().currentPage : ""));
 
             this.handlers.push(Pubsub.publish(Events.VIEW_CHANGED, ['list']));
         },
@@ -175,7 +197,8 @@ define([
             }
 
             // remove deleted element
-            $element.remove();
+            $element.addClass("disabled");
+            $("<div>").addClass("foreground").appendTo($element);
 
             // if no element is currently select, select the first one
             var $selected = utils.findSelected(this.$el, "li.thumbnail");
@@ -228,6 +251,22 @@ define([
                 }
                 $(event.currentTarget).parent().addClass("selected");
             }
+        },
+
+        /**
+         * Close the current view and any of its embedded components in order
+         * to unbind events and handlers that should not be triggered anymore
+         */
+        close:function () {
+
+            this.paginationView.close();
+
+            Backbone.View.prototype.close.apply(this, arguments);
+        },
+
+        newPage:function (id) {
+            this.askedPage = id;
+            this.render({participants:true});
         }
 
     });

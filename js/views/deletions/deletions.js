@@ -46,12 +46,12 @@ define([
 
             this.emptyModelsCollection();
 
-            Handlebars.registerHelper('unless_deleted', function (id, options) {
-                if (true) {
-                    return options.fn(this);
-                } else {
-                    return options.inverse(this);
-                }
+            Handlebars.registerHelper('if_deleted', function (id, options) {
+                return false;
+            });
+
+            Handlebars.registerHelper('disabled', function (id) {
+                return '';
             });
 
             var self = this;

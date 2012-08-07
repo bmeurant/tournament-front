@@ -72,7 +72,7 @@ define([
             }
 
             // get the element to select and, if any, select it and give it focus
-            var $toSelect = (type == 'previous') ? this.findPreviousSelect($el, selector) : this.findNextSelect($el, selector);
+            var $toSelect = (type == 'previous') ? this.findPreviousSelect($el, selector, true) : this.findNextSelect($el, selector, true);
 
             if ($toSelect && $toSelect.length > 0) {
                 $toSelect.addClass("selected");
@@ -92,7 +92,7 @@ define([
         },
 
         selectFirst:function ($el, selector) {
-            var $toselect = $el.find(selector + ":first-child");
+            var $toselect = $el.find(selector + ":first-child:not(.disabled)");
             // select the element, remove focus from others and give it focus
             if ($toselect && $toselect.length != 0) {
                 $('*:focus').blur();
@@ -107,20 +107,63 @@ define([
         /**
          * @return {*} the first element after the currently selected one
          */
-        findNextSelect:function ($el, selector) {
-            return $el.find(selector + ".selected + " + selector);
+        findNextSelect:function ($el, selector, findSelected) {
+            var $next;
+            if (findSelected) {
+                $next = $el.find(selector + ".selected + " + selector);
+            }
+            else {
+                $next = $($el.get(0).nextElementSibling);
+            }
+            if ($next) {
+                if ($next.hasClass("disabled")) {
+                    return this.findNextSelect($next, selector);
+                }
+                else {
+                    return $next;
+                }
+            }
+            return null;
         },
 
         /**
          * @return {*} the first element before the currently selected one
          */
-        findPreviousSelect:function ($el, selector) {
-            var previous = $el.find(selector + ".selected").get(0).previousElementSibling;
-            if (previous) {
-                return $el.find('#' + previous.id);
+        findPreviousSelect:function ($el, selector, findSelected) {
+            var $previous;
+            if (findSelected) {
+                $previous = $($el.find(selector + ".selected").get(0).previousElementSibling);
+            }
+            else {
+                $previous = $($el.get(0).previousElementSibling);
+            }
+            if ($previous) {
+                if ($previous.hasClass("disabled")) {
+                    return this.findPreviousSelect($previous, selector);
+                }
+                else {
+                    return $previous;
+                }
             }
             return null;
+        },
+
+        isValidPageNumber:function (value) {
+            if (value.length == 0) {
+                return false;
+            }
+
+            var intValue = parseInt(value);
+            if (isNaN(intValue)) {
+                return false;
+            }
+
+            if (intValue <= 0) {
+                return false;
+            }
+            return true;
         }
 
     };
-});
+})
+;

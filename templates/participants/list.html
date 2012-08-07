@@ -1,33 +1,23 @@
 <ul class="thumbnails span12">
     {{#each participants}}
         {{#with this}}
-            {{#unless_deleted id}}
-                <li id="{{id}}" class="thumbnail {{selected id}}" draggable="true">
-                    <a href="/participant/{{id}}" class="plain participant-thumb">
-                        <div class="participant-thumb">
-                            {{#if picture_url}}
-                                <img class="photo" src="{{photo_link picture_url}}" alt="" draggable="false"/>
-                                <p hidden><img src="{{photo_link pict_min}}"/></p>
-                            {{else}}
-                                <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
-                            {{/if}}
-                        </div>
-                        <h5>{{firstname}}&nbsp;{{lastname}}</h5>
-                    </a>
-                </li>
-            {{/unless_deleted}}
+            <li id="{{id}}" class="thumbnail {{selected id}} {{disabled id}}" draggable="true">
+                <a href="/participant/{{id}}" class="plain participant-thumb">
+                    <div class="participant-thumb">
+                        {{#if picture_url}}
+                            <img class="photo" src="{{photo_link picture_url}}" alt="" draggable="false"/>
+                            <p hidden><img src="{{photo_link pict_min}}"/></p>
+                        {{else}}
+                            <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
+                        {{/if}}
+                    </div>
+                    <h5>{{firstname}}&nbsp;{{lastname}}</h5>
+                </a>
+                {{#if_deleted id}}
+                    <div class="foreground"></div>
+                {{/if_deleted}}
+            </li>
         {{/with}}
     {{/each}}
 </ul>
-<div class="pagination">
-  <ul>
-    <li><a href="#">Prev</a></li>
-    <li class="active">
-      <a href="#">1</a>
-    </li>
-    <li><a href="#">2</a></li>
-    <li><a href="#">3</a></li>
-    <li><a href="#">4</a></li>
-    <li><a href="#">Next</a></li>
-  </ul>
-</div>
+

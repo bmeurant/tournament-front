@@ -38,7 +38,7 @@ define([
                 }
 
                 // unbind all model (if exists) and validation events
-                if (this.model) {
+                if (this.model && this.model.unbind) {
                     Backbone.Validation.unbind(this);
                     this.model.unbind();
                 }

@@ -2,11 +2,12 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'backbone-queryparams',
     'views/participants/list',
     'views/participants/participant',
     'views/participants/menu',
     'views/deletions/deletions'
-], function ($, _, Backbone, ParticipantListView, ParticipantView, ParticipantsMenuView, DeletionsView) {
+], function ($, _, Backbone, BackboneQueryParams, ParticipantListView, ParticipantView, ParticipantsMenuView, DeletionsView) {
 
     var AppRouter = Backbone.Router.extend({
         routes:{
@@ -21,10 +22,10 @@ define([
             '*path':'defaultAction'
         },
 
-        listParticipants:function () {
+        listParticipants:function (params) {
             classes.Views.HeaderView.setMenu(ParticipantsMenuView);
             classes.Views.HeaderView.selectMenuItem('element-menu');
-            utils.showView($('#content'), ParticipantListView);
+            utils.showView($('#content'), ParticipantListView, [params]);
         },
 
         showParticipant:function (id) {
@@ -57,7 +58,6 @@ define([
         defaultAction:function () {
             this.navigate("participants", true);
         }
-
     });
 
     var initialize = function () {
@@ -67,8 +67,10 @@ define([
         // force all links to be handled by Backbone pushstate - no get will be send to server
         $(document).on('click', 'a:not([data-bypass])', function (evt) {
 
-            var href = $(this).attr('href');
+            var href = this.href;
             var protocol = this.protocol + '//';
+            href = href.slice(protocol.length);
+            href = href.slice(href.indexOf("/") + 1 );
 
             if (href.slice(protocol.length) !== protocol) {
                 evt.preventDefault();
@@ -79,4 +81,5 @@ define([
     return {
         initialize:initialize
     };
-});
+})
+;

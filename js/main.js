@@ -7,6 +7,8 @@ require.config({
         'underscore.string':"libs/underscore.string",
         backbone:'libs/backbone',
         'backbone-validation':'libs/backbone-validation-amd',
+        'backbone-paginator':'libs/backbone.paginator',
+        'backbone-queryparams':'libs/backbone.queryparams',
         'bootstrap-dropdown':'libs/bootstrap-dropdown',
         use:"libs/use",
         pubsub:'libs/pubsub',

@@ -33,6 +33,7 @@ Events = {
     TEAMS_HOME_CALLED:"TeamsHomeCalled",
     GT_HOME_CALLED:"GTHomeCalled",
     FIND_CALLED:"FindCalled",
-    TAB_CALLED:"TabCalled"
+    TAB_CALLED:"TabCalled",
+    NEW_PAGE:"NewPage"
 };
 
