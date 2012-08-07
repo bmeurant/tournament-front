@@ -26,6 +26,7 @@ define([
         this.ECHAP = 27;
         this.PAGE_UP = 33;
         this.PAGE_DOWN = 34;
+        this.QUESTION_MARK = 188;
 
         this.bindings = {};
 
@@ -54,6 +55,7 @@ define([
             this.bindings[this.ECHAP] = this.echap;
             this.bindings[this.PAGE_UP] = this.pageUp;
             this.bindings[this.PAGE_DOWN] = this.pageDown;
+            this.bindings[this.QUESTION_MARK] = this.questionMark;
 
             $(document).keydown(this.onKeyDown.bind(this));
         },
@@ -157,6 +159,11 @@ define([
 
         pageDown:function (event) {
             PubSub.publish(Events.PAGE_DOWN_CALLED, [event]);
+        },
+
+        questionMark:function (event) {
+            if (!this.targetIsInput(event))
+                PubSub.publish(Events.QUESTION_MARK_CALLED, [event]);
         }
 
     });

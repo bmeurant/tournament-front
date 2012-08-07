@@ -75,7 +75,10 @@ define([
         },
 
         backToElementHome:function () {
-            Backbone.history.navigate("/participants", true);
+            // do not trigger if modal help is actually active
+            if (!$('#help').is(":visible")) {
+                Backbone.history.navigate("/participants", true);
+            }
         },
 
         backToListElement:function () {

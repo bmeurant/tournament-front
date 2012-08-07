@@ -8,9 +8,10 @@ define([
     'views/deletions/menu',
     'views/deletions/deletions',
     'views/alerts',
+    'views/help',
     'controllers/keyboard',
     'pubsub'
-], function ($, _, Backbone, Handlebars, Router, HeaderView, DeletionsMenuView, DeletionsView, AlertsView, KeyboardController, Pubsub) {
+], function ($, _, Backbone, Handlebars, Router, HeaderView, DeletionsMenuView, DeletionsView, AlertsView, HelpView, KeyboardController, Pubsub) {
         var initialize = function () {
 
             /**
@@ -97,6 +98,7 @@ define([
 
             // Define global singleton views
             classes.Views.HeaderView = new HeaderView();
+            classes.Views.HelpView = new HelpView();
             $('.header').html(classes.Views.HeaderView.render().el);
             classes.Views.AlertsView = new AlertsView();
             $('.alerts').html(classes.Views.AlertsView.render().el);
