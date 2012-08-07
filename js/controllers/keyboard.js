@@ -24,6 +24,8 @@ define([
         this.DEL = 46;
         this.ENTER = 13;
         this.ECHAP = 27;
+        this.PAGE_UP = 33;
+        this.PAGE_DOWN = 34;
 
         this.bindings = {};
 
@@ -50,6 +52,8 @@ define([
             this.bindings[this.F] = this.find;
             this.bindings[this.ENTER] = this.enter;
             this.bindings[this.ECHAP] = this.echap;
+            this.bindings[this.PAGE_UP] = this.pageUp;
+            this.bindings[this.PAGE_DOWN] = this.pageDown;
 
             $(document).keydown(this.onKeyDown.bind(this));
         },
@@ -145,6 +149,14 @@ define([
         find:function (event) {
             if (!this.targetIsInput(event))
                 PubSub.publish(Events.FIND_CALLED, [event]);
+        },
+
+        pageUp:function (event) {
+            PubSub.publish(Events.PAGE_UP_CALLED, [event]);
+        },
+
+        pageDown:function (event) {
+            PubSub.publish(Events.PAGE_DOWN_CALLED, [event]);
         }
 
     });

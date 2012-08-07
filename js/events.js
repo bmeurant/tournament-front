@@ -6,7 +6,7 @@ Events = {
     DRAG_END:"DragEnd",
     DELETE_ELEM:"DeleteElement",
     DELETE_ELEM_FROM_BAR:"DeleteElemFromBar",
-    DELETE_ELEM_FROM_VIEW: "DeleteElemFromView",
+    DELETE_ELEM_FROM_VIEW:"DeleteElemFromView",
     ELEM_DELETED_FROM_BAR:"ElementDeletedFromBar",
     ELEM_DELETED_FROM_VIEW:"ElementDeletedFromView",
     ALERT_RAISED:"AlertRaised",
@@ -34,6 +34,8 @@ Events = {
     GT_HOME_CALLED:"GTHomeCalled",
     FIND_CALLED:"FindCalled",
     TAB_CALLED:"TabCalled",
-    NEW_PAGE:"NewPage"
+    NEW_PAGE:"NewPage",
+    PAGE_UP_CALLED:"PageUpCalled",
+    PAGE_DOWN_CALLED:"PageDownCalled"
 };
 

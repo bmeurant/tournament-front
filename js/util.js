@@ -74,7 +74,11 @@ define([
             // get the element to select and, if any, select it and give it focus
             var $toSelect = (type == 'previous') ? this.findPreviousSelect($el, selector, true) : this.findNextSelect($el, selector, true);
 
-            if ($toSelect && $toSelect.length > 0) {
+            if (!$toSelect || $selected.length == 0) {
+                this.selectFirst($el, selector);
+                return;
+            }
+            else {
                 $toSelect.addClass("selected");
                 $selected.removeClass("selected");
                 $('*:focus').blur();
@@ -92,7 +96,12 @@ define([
         },
 
         selectFirst:function ($el, selector) {
-            var $toselect = $el.find(selector + ":first-child:not(.disabled)");
+            var $toselect = $el.find(selector + ":first-child");
+
+            if ($toselect.hasClass("disabled")) {
+                $toselect = this.findNextSelect($toselect, selector);
+            }
+
             // select the element, remove focus from others and give it focus
             if ($toselect && $toselect.length != 0) {
                 $('*:focus').blur();
@@ -115,7 +124,7 @@ define([
             else {
                 $next = $($el.get(0).nextElementSibling);
             }
-            if ($next) {
+            if ($next || $next.length == 0) {
                 if ($next.hasClass("disabled")) {
                     return this.findNextSelect($next, selector);
                 }
@@ -137,7 +146,7 @@ define([
             else {
                 $previous = $($el.get(0).previousElementSibling);
             }
-            if ($previous) {
+            if ($previous || $previous.length == 0) {
                 if ($previous.hasClass("disabled")) {
                     return this.findPreviousSelect($previous, selector);
                 }

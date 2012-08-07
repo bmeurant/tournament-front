@@ -23,6 +23,9 @@ define([
 
         initialize:function () {
 
+            this.handlers.push(Pubsub.subscribe(Events.PAGE_UP_CALLED, this.previousPage.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.PAGE_DOWN_CALLED, this.nextPage.bind(this)));
+
             var self = this;
 
             Handlebars.registerHelper('pages', function (items, options) {
@@ -69,6 +72,18 @@ define([
 
             Pubsub.publish(Events.NEW_PAGE, [pageId]);
 
+        },
+
+        previousPage:function () {
+            if (this.collection.info().prev) {
+                Pubsub.publish(Events.NEW_PAGE, [this.collection.info().prev]);
+            }
+        },
+
+        nextPage:function () {
+            if (this.collection.info().next) {
+                Pubsub.publish(Events.NEW_PAGE, [this.collection.info().next]);
+            }
         }
 
     });

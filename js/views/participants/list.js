@@ -40,12 +40,7 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_VIEW, this.participantDeleted.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.NEW_PAGE, this.newPage.bind(this)));
 
-            // get the list of current deleted elements from local storage in order to exclude these
-            // elements from rendered view
-            this.deleted = JSON.parse(localStorage.getItem('deletedElements')).participant;
-            if (!this.deleted) {
-                this.deleted = [];
-            }
+            this.initDeleted();
 
             var self = this;
 
@@ -179,6 +174,8 @@ define([
                 this.idSelected = utils.findSelected(this.$el, "li.thumbnail").get(0).id;
             }
 
+            this.initDeleted();
+
             // re-render view selecting the previously selected element
             this.render();
         },
@@ -267,6 +264,15 @@ define([
         newPage:function (id) {
             this.askedPage = id;
             this.render({participants:true});
+        },
+
+        initDeleted:function () {
+            // get the list of current deleted elements from local storage in order to exclude these
+            // elements from rendered view
+            this.deleted = JSON.parse(localStorage.getItem('deletedElements')).participant;
+            if (!this.deleted) {
+                this.deleted = [];
+            }
         }
 
     });
