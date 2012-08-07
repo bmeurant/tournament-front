@@ -22,9 +22,6 @@ define([
         handlers:[],
 
         initialize:function () {
-            this.$el = $("<ul>").addClass("thumbnails").addClass("span12");
-            this.el = this.$el.get(0);
-
             this.collection = participantsCollection;
 
             this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_BAR, this.participantDeleted.bind(this)));

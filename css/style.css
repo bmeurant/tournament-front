@@ -311,3 +311,7 @@ i.icon-unchecked {
     height: 500px;
     margin-right: 50px;
 }
+
+.pagination {
+    text-align: center;
+}
