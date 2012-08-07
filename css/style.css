@@ -100,6 +100,7 @@ form.form-horizontal {
 
 ul.thumbnails {
     overflow: hidden;
+    min-height: 345px;
 }
 
 .thumbnails > li.thumbnail {
@@ -288,7 +289,7 @@ i.icon-unchecked {
 }
 
 #content {
-    min-height: 600px;
+    min-height: 420px;
 }
 
 #content .slide {
@@ -307,7 +308,7 @@ i.icon-unchecked {
 }
 
 .linked-views .view-elem {
-    height: 500px;
+    height: 350px;
     margin-right: 50px;
 }
 
