@@ -25,7 +25,6 @@ Events = {
     HOME_CALLED:"HomeCalled",
     LIST_CALLED:"ListCalled",
     DELETIONS_CALLED:"DeletionsCalled",
-    SAVE_CALLED:"SaveCalled",
     ADD_CALLED:"AddCalled",
     CONFIRM_DELS_CALLED:"ConfirmDelsCalled",
     CANCEL_DELS_CALLED:"CancelDelsCalled",

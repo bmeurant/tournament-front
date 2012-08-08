@@ -10,7 +10,7 @@ define([
     'views/participants/pagination',
     'text!templates/participants/miniature.html',
     'pubsub'
-], function ($, _, Backbone, Handlebars, BackbonePaginator, participantsCollection, participantListContainerTemplate, participantListTemplate, PaginationView, participantMiniatureTemplate, Pubsub) {
+], function ($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, participantListContainerTemplate, participantListTemplate, PaginationView, participantMiniatureTemplate, Pubsub) {
     var ParticipantListView = Backbone.View.extend({
 
         template:Handlebars.compile(participantListTemplate),
@@ -27,7 +27,7 @@ define([
         askedPage:1,
 
         initialize:function (params) {
-            this.collection = participantsCollection;
+            this.collection = new ParticipantsCollection;
             this.paginationView = new PaginationView();
 
             this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_BAR, this.participantDeleted.bind(this)));
@@ -39,6 +39,7 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.ENTER_CALLED, this.showSelected.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_VIEW, this.participantDeleted.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.NEW_PAGE, this.newPage.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CONFIRMED, this.render.bind(this)));
 
             this.initDeleted();
 
@@ -73,6 +74,11 @@ define([
          * @return {*} the current view
          */
         render:function (partials) {
+
+            this.initDeleted();
+
+            // reinit collection to force refresh
+            this.collection = new ParticipantsCollection();
 
             // get the participants collection from server
             this.collection.fetch(

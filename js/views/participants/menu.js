@@ -36,7 +36,6 @@ define([
             this.type = "";
 
             this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.SAVE_CALLED, this.saveElement.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ADD_CALLED, this.addElement.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.LIST_CALLED, this.backToListElement.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ECHAP_CALLED, this.backToElementHome.bind(this)));
@@ -75,10 +74,7 @@ define([
         },
 
         backToElementHome:function () {
-            // do not trigger if modal help is actually active
-            if (!$('#help').is(":visible")) {
-                Backbone.history.navigate("/participants", true);
-            }
+            Backbone.history.navigate("/participants", true);
         },
 
         backToListElement:function () {

@@ -255,9 +255,6 @@ define([
             if (nbWaitingCallbacks == 0) {
                 this.reintegrateErrors();
 
-                this.render();
-
-                Pubsub.publish(Events.DELETIONS_CONFIRMED);
             }
 
         },
@@ -301,6 +298,8 @@ define([
             this.storeInLocalStorage();
 
             this.render();
+
+            Pubsub.publish(Events.DELETIONS_CONFIRMED);
         },
 
         /**

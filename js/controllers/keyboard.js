@@ -12,7 +12,7 @@ define([
         this.RIGHT_ARROW = 39;
         this.H = 72;
         this.L = 76;
-        this.D = 68;
+        this.Z = 90;
         this.S = 83;
         this.A = 65;
         this.X = 88;
@@ -27,8 +27,10 @@ define([
         this.PAGE_UP = 33;
         this.PAGE_DOWN = 34;
         this.QUESTION_MARK = 188;
+        this.CTRL = 17;
 
         this.bindings = {};
+        this.ctrlDown = false;
 
         this.init();
     };
@@ -43,10 +45,9 @@ define([
             this.bindings[this.L] = this.list;
             this.bindings[this.DEL] = this.del;
             this.bindings[this.D] = this.deletions;
-            this.bindings[this.S] = this.save;
             this.bindings[this.A] = this.add;
             this.bindings[this.X] = this.confirmDeletions;
-            this.bindings[this.C] = this.cancelDeletions;
+            this.bindings[this.Z] = this.cancelDeletions;
             this.bindings[this.P] = this.participants;
             this.bindings[this.T] = this.teams;
             this.bindings[this.G] = this.gamesAndTurnaments;
@@ -57,14 +58,25 @@ define([
             this.bindings[this.PAGE_DOWN] = this.pageDown;
             this.bindings[this.QUESTION_MARK] = this.questionMark;
 
-            $(document).keydown(this.onKeyDown.bind(this));
+            $(document).on("keydown", this.onKeyDown.bind(this));
+            $(document).on("keyup", this.onKeyUp.bind(this));
         },
 
         onKeyDown:function (event) {
-            //alert(event.which);
 
-            if (this.bindings[event.which]) {
+            //alert(event.which);
+            if (event.which == this.CTRL) {
+                this.ctrlDown = true;
+            }
+
+            if (this.bindings[event.which] && !this.isModalActive()) {
                 this.bindings[event.which].apply(this, arguments);
+            }
+        },
+
+        onKeyUp:function (event) {
+            if (event.which == this.CTRL) {
+                this.ctrlDown = false;
             }
         },
 
@@ -72,6 +84,10 @@ define([
             return (typeof event.target !== "undefined" &&
                 (event.target.nodeName == "INPUT" ||
                     event.target.nodeName == "TEXTAREA"))
+        },
+
+        isModalActive:function () {
+            return $(".modal").is(":visible");
         },
 
         precedent:function (event) {
@@ -113,23 +129,18 @@ define([
                 PubSub.publish(Events.DELETIONS_CALLED, [event]);
         },
 
-        save:function (event) {
-            if (!this.targetIsInput(event))
-                PubSub.publish(Events.SAVE_CALLED, [event]);
-        },
-
         add:function (event) {
             if (!this.targetIsInput(event))
                 PubSub.publish(Events.ADD_CALLED, [event]);
         },
 
         confirmDeletions:function (event) {
-            if (!this.targetIsInput(event))
+            if (!this.targetIsInput(event) && this.ctrlDown)
                 PubSub.publish(Events.CONFIRM_DELS_CALLED, [event]);
         },
 
         cancelDeletions:function (event) {
-            if (!this.targetIsInput(event))
+            if (!this.targetIsInput(event) && this.ctrlDown)
                 PubSub.publish(Events.CANCEL_DELS_CALLED, [event]);
         },
 
