@@ -12,6 +12,7 @@ define([
         handlers:[],
 
         events:{
+            "keydown #searchText":"onKeyDown"
         },
 
         initialize:function () {
@@ -22,6 +23,16 @@ define([
         render:function () {
             this.$el.html(this.menuTemplate());
             return this;
+        },
+
+        onKeyDown:function (event) {
+            if (event.which == 27) {
+                event.stopPropagation();
+                event.preventDefault();
+
+                $(event.currentTarget).blur();
+                $('.container').focus();
+            }
         }
 
     });

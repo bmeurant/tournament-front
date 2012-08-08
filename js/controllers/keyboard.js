@@ -16,7 +16,7 @@ define([
         this.S = 83;
         this.A = 65;
         this.X = 88;
-        this.C = 67;
+        this.D = 68;
         this.F = 70;
         this.P = 80;
         this.T = 84;
@@ -39,7 +39,7 @@ define([
 
         init:function () {
 
-            this.bindings[this.LEFT_ARROW] = this.precedent;
+            this.bindings[this.LEFT_ARROW] = this.previous;
             this.bindings[this.RIGHT_ARROW] = this.next;
             this.bindings[this.H] = this.home;
             this.bindings[this.L] = this.list;
@@ -90,14 +90,16 @@ define([
             return $(".modal").is(":visible");
         },
 
-        precedent:function (event) {
+        previous:function (event) {
             if (!this.targetIsInput(event))
                 PubSub.publish(Events.PREVIOUS_CALLED, [event]);
+            console.log("previous");
         },
 
         next:function (event) {
             if (!this.targetIsInput(event))
                 PubSub.publish(Events.NEXT_CALLED, [event]);
+            console.log("next");
         },
 
         del:function (event) {

@@ -74,16 +74,22 @@ define([
             // get the element to select and, if any, select it and give it focus
             var $toSelect = (type == 'previous') ? this.findPreviousSelect($selected, selector) : this.findNextSelect($selected, selector);
 
+            $selected.removeClass("selected");
+
             if (!$toSelect || $selected.length == 0) {
-                this.selectFirst($el, selector);
-                return;
+
+                switch (type) {
+                    case 'previous':
+                        this.selectFirst($el, selector);
+                        return;
+                    case 'next':
+                        $toSelect = $selected;
+                }
             }
-            else {
-                $selected.removeClass("selected");
-                $toSelect.addClass("selected");
-                $('*:focus').blur();
-                $toSelect.focus();
-            }
+
+            $toSelect.addClass("selected");
+            $('*:focus').blur();
+            $toSelect.find("a").focus();
 
         },
 
@@ -126,7 +132,7 @@ define([
                     return $next;
                 }
             }
-            return $el;
+            return null;
         },
 
         /**
@@ -142,7 +148,7 @@ define([
                     return $previous;
                 }
             }
-            return $el;
+            return null;
         },
 
         isValidPageNumber:function (value) {

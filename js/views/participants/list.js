@@ -194,14 +194,14 @@ define([
         participantDeleted:function (id) {
             var $element = $('#' + id);
 
+            // remove deleted element
+            $element.addClass("disabled");
+            $("<div>").addClass("foreground").appendTo($element);
+
             // if the deleted element is selected, select previous
             if ($element.hasClass("selected")) {
                 utils.selectPrevious(this.$el, "li.thumbnail");
             }
-
-            // remove deleted element
-            $element.addClass("disabled");
-            $("<div>").addClass("foreground").appendTo($element);
 
             // if no element is currently select, select the first one
             var $selected = utils.findSelected(this.$el, "li.thumbnail");

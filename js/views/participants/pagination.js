@@ -74,13 +74,21 @@ define([
 
         },
 
-        previousPage:function () {
+        previousPage:function (event) {
+
+            event.stopPropagation();
+            event.preventDefault();
+
             if (this.collection.info().prev) {
                 Pubsub.publish(Events.NEW_PAGE, [this.collection.info().prev]);
             }
         },
 
-        nextPage:function () {
+        nextPage:function (event) {
+
+            event.stopPropagation();
+            event.preventDefault();
+
             if (this.collection.info().next) {
                 Pubsub.publish(Events.NEW_PAGE, [this.collection.info().next]);
             }

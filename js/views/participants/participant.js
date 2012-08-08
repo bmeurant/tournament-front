@@ -54,6 +54,13 @@ define([
             this.model = new Participant();
             this.model.id = id;
 
+            // get the list of current deleted elements from local storage in order to exclude these
+            // elements from rendered view
+            this.deleted = JSON.parse(localStorage.getItem('deletedElements')).participant;
+            if (!this.deleted) {
+                this.deleted = [];
+            }
+
             // create sub navigation component
             this.navigationView = new NavigationView(this.model.id, this.type);
 
@@ -67,6 +74,16 @@ define([
         },
 
         render:function () {
+
+            if (this.model.id && this.deleted.indexOf(this.model.id) >= 0) {
+                Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'This participant is currently being deleted', 'alert-error']);
+
+                setTimeout(function () {
+                    Backbone.history.navigate("/participants", true);
+                }.bind(this), 100);
+
+                return this;
+            }
 
             // retrieve model from server and render view
             if (this.model.id) {
