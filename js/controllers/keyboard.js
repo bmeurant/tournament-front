@@ -21,6 +21,7 @@ define([
         this.P = 80;
         this.T = 84;
         this.G = 71;
+        this.K = 75;
         this.DEL = 46;
         this.ENTER = 13;
         this.ECHAP = 27;
@@ -57,6 +58,7 @@ define([
             this.bindings[this.PAGE_UP] = this.pageUp;
             this.bindings[this.PAGE_DOWN] = this.pageDown;
             this.bindings[this.QUESTION_MARK] = this.questionMark;
+            this.bindings[this.K] = this.keyboard;
 
             $(document).on("keydown", this.onKeyDown.bind(this));
             $(document).on("keyup", this.onKeyUp.bind(this));
@@ -177,6 +179,10 @@ define([
         questionMark:function (event) {
             if (!this.targetIsInput(event))
                 PubSub.publish(Events.QUESTION_MARK_CALLED, [event]);
+        },
+
+        keyboard:function (event) {
+            PubSub.publish(Events.KEYBOARD_CALLED, [event]);
         }
 
     });

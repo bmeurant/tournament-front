@@ -146,7 +146,7 @@ ul.thumbnails li.thumbnail a:focus {
 }
 
 a.brand {
-    width: 145px;
+    width: 175px;
 }
 
 body .navbar .nav > li > a {
@@ -181,9 +181,13 @@ body .navbar .nav {
     margin: 0;
 }
 
-.navbar .nav img.icon {
+img.icon {
     max-height: 14px;
     vertical-align: text-top;
+}
+
+footer p[class*="-menu"] {
+    margin-left: 10px;
 }
 
 body .navbar .nav.pull-right {

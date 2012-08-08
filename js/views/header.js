@@ -18,7 +18,6 @@ define([
         events:{
             "click div":"menuClicked",
             "click .navbar-search .dropdown-menu li a":"toggleSearchOption",
-            "click li.help-menu a":"showHelp"
         },
 
         handlers:[],
@@ -108,12 +107,6 @@ define([
             event.stopPropagation();
             event.preventDefault();
             $('#searchText').focus();
-        },
-
-        showHelp: function (event) {
-            event.stopPropagation();
-            event.preventDefault();
-            Pubsub.publish(Events.QUESTION_MARK_CALLED);
         }
 
     });

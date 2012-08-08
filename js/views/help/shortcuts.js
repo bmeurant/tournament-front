@@ -4,14 +4,14 @@ define([
     'backbone',
     'handlebars',
     'bootstrap-modal',
-    'text!templates/help.html',
+    'text!templates/help/shortcuts.html',
     'pubsub'
-], function ($, _, Backbone, Handlebars, BootstrapModal, helpTemplate, Pubsub) {
+], function ($, _, Backbone, Handlebars, BootstrapModal, shortcutsTemplate, Pubsub) {
 
     var HelpView = Backbone.View.extend({
 
         // Cache the template function for a single item.
-        template:Handlebars.compile(helpTemplate),
+        template:Handlebars.compile(shortcutsTemplate),
 
         events:{
             "keydown": "modalKeydown"
@@ -20,8 +20,8 @@ define([
         handlers:[],
 
         initialize:function () {
-            this.$el = $('#help');
-            this.handlers.push(Pubsub.subscribe(Events.QUESTION_MARK_CALLED, this.render.bind(this)));
+            this.$el = $('#shortcuts');
+            this.handlers.push(Pubsub.subscribe(Events.KEYBOARD_CALLED, this.render.bind(this)));
         },
 
         render:function () {
@@ -33,7 +33,6 @@ define([
         modalKeydown:function (event) {
             event.stopPropagation();
             event.preventDefault();
-            console.log('echap');
         }
 
     });
