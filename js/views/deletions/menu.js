@@ -207,7 +207,6 @@ define([
             }
 
             this.initCollection();
-            this.emptyErrors();
             this.deleteElements();
 
         },
@@ -217,82 +216,67 @@ define([
          */
         deleteElements:function () {
 
-            var self = this;
-            var nbWaitingCallbacks = 0;
+            var elements = [];
 
             $.each(this.collection, function (type, idArray) {
                 $.each(idArray, function (index, currentId) {
-                    nbWaitingCallbacks += 1;
+                    elements.push({type:type, id:currentId, index:index});
+                }.bind(this));
+            }.bind(this));
 
-                    $.ajax({
-                        url:'http://localhost:3000/api/participant/' + currentId,
-                        type:'DELETE'
-                    })
-                        .done(function () {
-                            nbWaitingCallbacks -= 1;
-                            self.afterRemove(nbWaitingCallbacks);
-                        })
-                        .fail(function (jqXHR) {
-                            if (jqXHR.status != 404) {
-                                self.recordError(type, currentId);
-                            }
-                            nbWaitingCallbacks -= 1;
-                            self.afterRemove(nbWaitingCallbacks);
-                        });
-                });
-            });
+            async.map(elements, this.deleteFromServer.bind(this), this.afterRemove.bind(this));
+        },
+
+        deleteFromServer:function (elem, deleteCallback) {
+            $.ajax({
+                url:'http://localhost:3000/api/' + elem.type + '/' + elem.id,
+                type:'DELETE'
+            })
+            .done(function () {
+                deleteCallback(null, {type:"success", elem:elem});
+            })
+            .fail(function (jqXHR) {
+                if (jqXHR.status == 404) {
+                    // element obviously already deleted from server. Ignore it and remove from local collection
+                    this.collection[elem.type].splice(elem.index, 1);
+                }
+
+                // callback is called with null error parameter because otherwise it breaks the
+                // loop and top on first error :-(
+                deleteCallback(null, {type:"error", elem:elem});
+            }.bind(this));
         },
 
         /**
-         * Callback called after an ajax deletion request
+         * Callback called after all ajax deletion requests
          *
-         * @param nbWaitingCallbacks number of callbacks that we have still to wait before close request
+         * @param err always null because default behaviour break map on first error
+         * @param results array of fetched models : contain null value in cas of error
          */
-        afterRemove:function (nbWaitingCallbacks) {
-
-            // if there is still callbacks waiting, do nothing. Otherwise it means that all request have
-            // been performed : we can manage global behaviours
-            if (nbWaitingCallbacks == 0) {
-                this.reintegrateErrors();
-
-            }
-
-        },
-
-        /**
-         * Handles errors and reintegrate elements ids that could not be deleted into the main collection
-         */
-        reintegrateErrors:function () {
+        afterRemove:function (err, results) {
 
             var initialCollectionLength = this.countElements(this.collection);
-
             this.emptyCollection();
 
-            var countErrors = this.countElements(this.errors);
-            if (countErrors != 0) {
+            $.each(results, function (index, result) {
 
-                var self = this;
-
-                // each element in error is added to main collection in order to keep it synchonized with server
-                // state
-                $.each(this.errors, function (type, idArray) {
-                    $.each(idArray, function (index, model) {
-                        self.addToCollection(type, model.id);
-                    });
-                });
-
-                // adapt error messages
-                if (countErrors == initialCollectionLength) {
-                    Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'Error occured while deleting these elements', 'alert-error']);
+                if (result.type == "error") {
+                    this.addToCollection(result.elem.type, result.elem.id);
                 }
-                else {
-                    Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Error occured while deleting some elements', 'alert-warning']);
-                }
-            }
-            else {
+
+            }.bind(this));
+
+            var finalCollectionLength = this.countElements(this.collection);
+
+            if (finalCollectionLength == 0) {
                 Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Elements successfully deleted', 'alert-success']);
             }
-
+            else if (finalCollectionLength == initialCollectionLength) {
+                Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'Error occurred while deleting these elements', 'alert-error']);
+            }
+            else {
+                Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Error occurred while deleting some elements', 'alert-warning']);
+            }
 
             // save collection
             this.storeInLocalStorage();
@@ -300,6 +284,7 @@ define([
             this.render();
 
             Pubsub.publish(Events.DELETIONS_CONFIRMED);
+
         },
 
         /**

@@ -18,7 +18,6 @@ define([
 
         initialize:function () {
             this.initCollection();
-            this.emptyErrors();
         },
 
         /**
@@ -30,14 +29,6 @@ define([
                 this.emptyCollection();
             }
             this.storeInLocalStorage();
-        },
-
-        /**
-         * Creates an empty errors collection with the correct format
-         */
-        emptyErrors:function () {
-            this.errors = {};
-            this.errors.participant = [];
         },
 
         /**
@@ -79,17 +70,6 @@ define([
             if (this.collection[type].indexOf(id) < 0) {
                 this.collection[type].push(id);
             }
-        },
-
-        /**
-         * Record a new error for a given element
-         *
-         * @param type type of the element to record
-         * @param id id of the element to record
-         */
-        recordError:function (type, id) {
-            if (this.errors[type].indexOf(id) < 0)
-                this.errors[type].push(id);
         },
 
         /**

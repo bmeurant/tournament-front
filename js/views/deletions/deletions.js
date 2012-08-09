@@ -24,7 +24,7 @@ define([
                 "click #deletions-container li.thumbnail":"cancelElementDeletion"
             },
 
-            modelsCollection:{},
+            JSONCollection:{},
 
             initialize:function () {
 
@@ -44,7 +44,7 @@ define([
                 this.handlers.push(Pubsub.subscribe(Events.PREVIOUS_CALLED, this.selectPrevious.bind(this)));
                 this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM, this.cancelSelectedDeletion.bind(this)));
 
-                this.emptyModelsCollection();
+                this.emptyJSONCollection();
 
                 Handlebars.registerHelper('if_deleted', function (id, options) {
                     return false;
@@ -65,8 +65,8 @@ define([
             /**
              * Creates an empty models collection with the correct format
              */
-            emptyModelsCollection:function () {
-                this.modelsCollection.participant = [];
+            emptyJSONCollection:function () {
+                this.JSONCollection.participant = [];
             },
 
             /**
@@ -76,115 +76,77 @@ define([
              *
              * @param callback function to call after population completion
              */
-            populateCollection:function (callback) {
-                // Store the number of callbacks that are wainting to be called in order to be
-                // able to perform an unique action after population and fetching all elements
-                // and not only after fetching each one : due to asynchronous call
-                var nbWaintingCallbacks = 0;
-                var self = this;
+            populateCollection:function () {
 
                 // if collection is empty, don't do anything but rendering view
                 if (utils.mapLength(this.collection) == 0) {
                     this.showTemplate();
                 }
                 else {
-                    var models = [];
+                    var elements = [];
                     $.each(this.collection, function (elemType, idArray) {
                         $.each(idArray, function (index, id) {
-                            var currentModel;
-
-                            // Build new empty model from the given type
-                            switch (elemType) {
-                                case 'participant':
-                                    currentModel = new Participant;
-                            }
-
-                            currentModel.id = id;
-
-                            models.push({type:elemType, model:currentModel, index:index});
+                            elements.push({type:elemType, id:id, index:index});
 
                         }.bind(this));
                     }.bind(this));
 
-                    async.map(models, this.fetchModel.bind(this), this.afterPopulate.bind(this));
+                    async.map(elements, this.fetchElement.bind(this), this.afterPopulate.bind(this));
                 }
             },
 
-            fetchModel:function (elem, fetchCallback) {
-                elem.model.fetch({
-                    success:function (newModel) {
-
-                        // add model to current collection and call callback
-                        this.addToModelsCollection(elem.type, elem.model);
-                        fetchCallback(null, newModel);
-                    }.bind(this),
-                    error:function (newModel, response) {
-                        if (response.status == 404) {
-                            // elemnt obviously already deleted from server. Ignore it and remove from local collection
-                            this.collection[elem.type].splice(elem.index, 1);
-                        }
-
-                        fetchCallback(null, null);
-                    }.bind(this)
-                });
-            },
-
-            /**
-             * Render a collection of model objects of a given type to JSON
-             *
-             * @param collection collection to render
-             * @param type element object type filter
-             * @return {*} a JSON representation of the type sub collection of this collection
-             */
-            collectionToJSON:function (collection, type) {
-                return collection[type].map(function (model) {
-                    return model.toJSON();
-                });
-            },
-
-            /**
-             * Method called after any fetch operation from populate.
-             * Display global operation result (successes or errors) if only there is no more callback to call
-             *
-             * @param nbWaintingCallbacks number of callbacks still waiting to be called
-             * @param callback final callback to be called
-             * @param errorsCount number of current stored errors
-             */
-            afterPopulate:function (err, result) {
-
-                    this.storeInLocalStorage();
-
-                    result = result.filter(function(e){return e});
-
-                    // if the number of errors is strictly equal to the number of elements to fetch
-                    if (result.length == 0) {
-                        Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
-                    }
-                    // there is at least on error
-                    else if (result.length < this.countElements(this.collection)) {
-                        Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Some participants could not be retrived', 'alert-warning']);
+            fetchElement:function (elem, fetchCallback) {
+                $.getJSON('http://localhost:3000/api/' + elem.type + '/' + elem.id)
+                .done(function (data) {
+                    // add model to current collection and call callback
+                    this.JSONCollection[elem.type].push(data);
+                    fetchCallback(null, elem);
+                }.bind(this))
+                .fail(function (jqXHR) {
+                    if (jqXHR.status == 404) {
+                        // element obviously already deleted from server. Ignore it and remove from local collection
+                        this.collection[elem.type].splice(elem.index, 1);
                     }
 
-                    this.showTemplate();
-
-                    Pubsub.publish(Events.DELETIONS_POPULATED);
+                    // callback is called with null error parameter because otherwise it breaks the
+                    // loop and top on first error :-(
+                    fetchCallback(null, null);
+                }.bind(this));
             },
 
             /**
-             * Add a given element to the current model collection if not already contained
+             * Method called after all fetch operations from populate.
+             * Display global operation result (successes or errors)
              *
-             * @param type type of the element to add
-             * @param model element to add
+             * @param err always null because default behaviour break map on first error
+             * @param results array of fetched models : contain null value in cas of error
              */
-            addToModelsCollection:function (type, model) {
-                if (this.modelsCollection[type].indexOf(model) < 0) {
-                    this.modelsCollection[type].push(model);
+            afterPopulate:function (err, results) {
+
+                this.storeInLocalStorage();
+
+                // remove null elements i.e. models that could not be fetched
+                var successes = results.filter(function (e) {
+                    return e;
+                });
+
+                // if the number of errors is strictly equal to the number of elements to fetch
+                if (successes.length == 0) {
+                    Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
                 }
+                // there is at least on error
+                else if (successes.length < this.countElements(this.collection)) {
+                    Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Some participants could not be retrived', 'alert-warning']);
+                }
+
+                this.showTemplate();
+
+                Pubsub.publish(Events.DELETIONS_POPULATED);
             },
 
             render:function () {
                 this.initCollection();
-                this.emptyModelsCollection();
+                this.emptyJSONCollection();
                 this.populateCollection();
 
                 Pubsub.publish(Events.VIEW_CHANGED, ['deletions']);
@@ -192,8 +154,8 @@ define([
             },
 
             showTemplate:function () {
-                var participants_template = this.participantsTemplate({'participants':this.collectionToJSON(this.modelsCollection, 'participant')});
-                this.$el.html(this.template({'participants':this.collectionToJSON(this.modelsCollection, 'participant'), 'participants_template':new Handlebars.SafeString(participants_template)}));
+                var participants_template = this.participantsTemplate({'participants':this.JSONCollection['participant']});
+                this.$el.html(this.template({'participants':this.JSONCollection['participant'], 'participants_template':new Handlebars.SafeString(participants_template)}));
 
                 // if no element is currently select, select the first one
                 var $selected = utils.findSelected(this.$el, "li.thumbnail");

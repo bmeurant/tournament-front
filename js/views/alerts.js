@@ -37,9 +37,14 @@ define([
             $('.alert').addClass(klass);
             $('.alert').html('<strong>' + title + '</strong> ' + text);
             $('.alert').show();
-            setTimeout(function () {
-                $('.alert').hide();
-            }.bind(this), 3000);
+            if (klass != "alert-error") {
+                this.timeout = setTimeout(function () {
+                    $('.alert').hide();
+                }.bind(this), 4000);
+            }
+            else {
+                clearTimeout(this.timeout);
+            }
         }
 
     });

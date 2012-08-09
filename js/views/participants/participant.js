@@ -307,7 +307,7 @@ define([
                     callbackSuccess();
                 })
                 .fail(function () {
-                    Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Error occured while deleting ' + id + 'photo', 'alert-warning']);
+                    Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Error occurred while deleting ' + id + 'photo', 'alert-warning']);
                 });
         },
 
