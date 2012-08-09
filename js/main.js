@@ -12,6 +12,7 @@ require.config({
         'bootstrap-modal':'libs/bootstrap-modal',
         'bootstrap-dropdown':'libs/bootstrap-dropdown',
         use:"libs/use",
+        async:"libs/async",
         pubsub:'libs/pubsub',
         localstorage:"libs/localstorage",
         text:"libs/text",
@@ -39,6 +40,7 @@ require([
     'underscore',
     'underscore.string',
     'util',
+    'async',
     'events'
     // Some plugins have to be loaded in order due to their non AMD compliance
     // Because these scripts are not "modules" they do not pass any values to the definition function below
