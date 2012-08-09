@@ -43,24 +43,22 @@ define([
 
             this.initDeleted();
 
-            var self = this;
-
             Handlebars.registerHelper('if_deleted', function (id, options) {
 
-                if (self.deleted.indexOf(id) >= 0) {
+                if (this.deleted.indexOf(id) >= 0) {
                     return options.fn(this);
                 } else {
                     return options.inverse(this);
                 }
-            });
+            }.bind(this));
 
             Handlebars.registerHelper('disabled', function (id) {
-                return (self.deleted.indexOf(id) >= 0) ? 'disabled' : '';
-            });
+                return (this.deleted.indexOf(id) >= 0) ? 'disabled' : '';
+            }.bind(this));
 
             Handlebars.registerHelper('selected', function (id) {
-                return (self.idSelected && self.idSelected == id) ? "selected" : "";
-            });
+                return (this.idSelected && this.idSelected == id) ? "selected" : "";
+            }.bind(this));
 
             if (params) {
                 if (params.page && utils.isValidPageNumber(params.page)) this.askedPage = parseInt(params.page);

@@ -26,11 +26,10 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.PAGE_UP_CALLED, this.previousPage.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.PAGE_DOWN_CALLED, this.nextPage.bind(this)));
 
-            var self = this;
 
             Handlebars.registerHelper('pages', function (items, options) {
 
-                var info = self.collection.info();
+                var info = this.collection.info();
                 var klass;
 
                 var out = "<ul>";
@@ -43,7 +42,7 @@ define([
                 out = out + "<li class=" + (info.next ? '' : 'disabled') + "><a href='?page=" + info.next + "' >Next ></a></li>";
 
                 return new Handlebars.SafeString(out + "</ul>");
-            });
+            }.bind(this));
         },
 
         initBindings:function () {

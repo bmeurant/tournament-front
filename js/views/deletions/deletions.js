@@ -54,11 +54,9 @@ define([
                     return '';
                 });
 
-                var self = this;
-
                 Handlebars.registerHelper('selected', function (id) {
-                    return (self.idSelected && self.idSelected == id) ? "selected" : "";
-                });
+                    return (this.idSelected && this.idSelected == id) ? "selected" : "";
+                }.bind(this));
 
             },
 
