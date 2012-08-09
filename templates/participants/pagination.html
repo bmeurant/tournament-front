@@ -1,1 +1,7 @@
-{{pages}}
+<ul>
+    <li class="{{#unless info.prev}}disabled{{/unless}}"><a href='?page={{info.prev}}'>< Prev</a></li>
+    {{#each info.pageSet}}
+        <li class="{{#ifequals this ../info.currentPage}}active{{/ifequals}}"><a href='?page={{this}}'>{{this}}</a></li>
+    {{/each}}
+    <li class="{{#unless info.next}}disabled{{/unless}}"><a href='?page={{info.next}}'>Next ></a></li>
+</ul>

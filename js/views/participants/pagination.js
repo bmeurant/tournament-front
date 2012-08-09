@@ -26,23 +26,6 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.PAGE_UP_CALLED, this.previousPage.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.PAGE_DOWN_CALLED, this.nextPage.bind(this)));
 
-
-            Handlebars.registerHelper('pages', function (items, options) {
-
-                var info = this.collection.info();
-                var klass;
-
-                var out = "<ul>";
-
-                out = out + "<li class=" + (info.prev ? '' : 'disabled') + "><a href='?page=" + info.prev + "' >< Prev</a></li>";
-                for (var i = 1; i <= info.totalPages; i++) {
-                    klass = (info.currentPage == i) ? "active" : "";
-                    out = out + "<li class=" + klass + "><a href='?page=" + i + "' >" + i + "</a></li>";
-                }
-                out = out + "<li class=" + (info.next ? '' : 'disabled') + "><a href='?page=" + info.next + "' >Next ></a></li>";
-
-                return new Handlebars.SafeString(out + "</ul>");
-            }.bind(this));
         },
 
         initBindings:function () {
@@ -52,7 +35,7 @@ define([
         render:function (collection) {
             this.collection = collection;
 
-            this.$el.html(this.template());
+            this.$el.html(this.template({info:this.collection.info(), firstPage:this.collection.paginator_ui.firstPage}));
 
             return this;
         },
