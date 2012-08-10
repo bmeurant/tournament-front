@@ -1,10 +1,11 @@
-Tournament-front
-----------------
 
-Ce projet est une application exemple et exploratoire basée sur `Resthub js`_.
+Tournament-front
+================
+
+Ce projet est une **application exemple et exploratoire** basée sur **[Resthub js][resthubjs]**.
 
 Je travaille actuellement sur cette application pour me familiariser avec cette stack et les frameworks
-qu'elle embarque, découvrir leurs patterns et anti-patterns et me forger ma propre opinion sur ces outils.
+qu'elle embarque, découvrir leurs **patterns et anti-patterns** et me forger ma propre opinion sur ces outils.
 Du coup, le code est en refactoring permanent.
 
 Un autre objectif majeur est d'être au final en capacité de fournir des conseils, des bonnes pratiques et d'apporter
@@ -20,31 +21,30 @@ du support aux projets reposant sur cette stack. en particulier :
 Cette application exemple devrait fonctionnellement permettre de créer, gérer et planifier des tournois et des jeux
 constitués de participants et/ou d'équipes et reposant sur un ensemble de règles définies dynamiquement.
 
+---
 Outils complémentaires
-++++++++++++++++++++++
+----------------------
 
-En plus des outils standards embarqués par `Resthub js`_, j'ai progressivement ajouté des libs et frameworks complémentaires
+En plus des outils standards embarqués par **[Resthub js][resthubjs]**, j'ai progressivement ajouté des libs et frameworks complémentaires
 pour répondre à des besoins particuliers que j'estime récurrents.
 
 **Question** : Le choix de ces outils est-il pertinent ? Existe-t-il des alternatives préférables ?
 
-**Question Bonus** : Ces outils peuvent-ils / doivent-ils être intégrés à la stack `Resthub js`_ ?
+**Question Bonus** : Ces outils peuvent-ils / doivent-ils être intégrés à la stack **[Resthub js][resthubjs]** ?
 
 Ces outils sont les suivants :
 
-- **Moteur de template :** Handlebars_
-- **Validation de formulaire :** `Backbone Validation`_
-- **Support des paramètres pour les vues :** `Backbone Query Parameters`_
-- **Pagination de liste :** Backbone Pagination
-- **Liste d'appels asynchrones :** Async.js
+- **Moteur de template : [Handlebars][handlebars]**
+- **Validation de formulaire : [Backbone Validation][backbone-validation]**
+- **Support des paramètres pour les vues : [Backbone Query Parameters][backbone-query-parameters]**
+- **Pagination de liste : [Backbone Paginator][backbone-paginator]**
+- **Liste d'appels asynchrones : [Async][async]**
 
-Moteur de template : Handlebars
-*******************************
+---
+### Moteur de template : Handlebars
 
-Le moteur de template par défaut est fournit par `Underscore.js`_ qui embarque du micro templating javascript
+Le moteur de template par défaut est fournit par **[Underscore js][underscore]** qui embarque du micro templating javascript
 combiné aux helpers underscore. Il repose sur une syntaxe à la JSP :
-
-::
 
     <% _.each(participants, function(participant, index){
         if (_.indexOf(deleted, participant.id) < 0) { %>
@@ -70,7 +70,7 @@ combiné aux helpers underscore. Il repose sur une syntaxe à la JSP :
 Cela peut paraître initialement simple mais ce n'est **vraiment pas très élégant** et conduit rapidement à **déplacer une bonne
 partie de la logique de la vue vers le template** et rend très difficile la réutilisation de ces templates.
 
-Je suis donc rapidement passé à un **moteur de template logic-less**, en l'occurrence Handlebars_. ::
+Je suis donc rapidement passé à un **moteur de template logic-less**, en l'occurrence **[Handlebars][handlebars]**.
 
     {{#each participants}}
         {{#with this}}
@@ -95,7 +95,7 @@ Je suis donc rapidement passé à un **moteur de template logic-less**, en l'occ
 
 ... Ça a quand même plus de gueule :-)
 
-Évidemment, cette opération a nécessité de définir des **Helpers** Handlebars_ afin d'implémenter, au sein de la vue,
+Évidemment, cette opération a nécessité de définir des **Helpers [Handlebars][handlebars]** afin d'implémenter, au sein de la vue,
 la logique qui n'est plus dans le template.
 
 Dans notre exemple :
@@ -105,7 +105,7 @@ Dans notre exemple :
 - Déterminer si l'élément courant est en cours de suppression
 - Afficher un lien personnalisé pour la photo
 
-**Helpers spécifiques à la vue**::
+**Helpers spécifiques à la vue**:
 
     initialize:function () {
 
@@ -130,7 +130,7 @@ Dans notre exemple :
         ...
     }
 
-**Helpers globaux (`handlebars-helpers.js`)**::
+**Helpers globaux (`handlebars-helpers.js`) :**
 
     initialize:function () {
 
@@ -150,14 +150,13 @@ boilerplate.
 Et **la logique a réellement été déplacée dans la vue**, ce qui est sa juste place et va nous faciliter grandement la
 maintenance et la réutilisation.
 
+---
+### Validation de formulaire : Backbone Validation
 
-Validation de formulaire : Backbone Validation
-**********************************************
-
-`Backbone.js`_ ne fournit **aucun outillage pour la gestion de formulaires ou leur validation**. Les attributs du
+**[Backbone][backbone]** ne fournit **aucun outillage pour la gestion de formulaires ou leur validation**. Les attributs du
 modèle n'ont pas à être précisés, encore moins leur format ou les contraintes qui leur sont liées.
 
-En termes de validation, `Backbone.js`_ fournit seulement des méthodes vides `validate` et `isValid` qui peuvent
+En termes de validation, **[Backbone][backbone]** fournit seulement des méthodes vides `validate` et `isValid` qui peuvent
 être implémentées par chaque développeur. La seule garantie est que la méthode `validate` est appelée avant un `save`
 qu'elle empêche en cas d'erreur. Et encore ... la validation d'un formulaire complet n'est pas évidente (gestion
 d'un tableau d'erreur custom ... ) et les erreurs ne sont pas dissociées des erreurs propres à la méthode `save`.
@@ -170,9 +169,9 @@ suivants :
 - possibilité de gérer des **formulaires complexes**
 - un ensemble de validateurs built-in conséquent
 - compatible html5
-- compatible twitter bootstrap
+- compatible **[Twitter Bootstrap][twitter-bootstrap]**
 
-J'ai commencé par tester backbone-forms_ qui semble un très bon outil. Mais il est en fait composé de deux parties :
+J'ai commencé par tester **[Backbone Forms][backbone-forms]** qui semble un très bon outil. Mais il est en fait composé de deux parties :
 **la logique de validation et un outil complet de génération dynamique de formulaire**. On fournit juste la description
 des champs du model avec leurs contraintes et le formulaire est auto généré.
 
@@ -185,21 +184,21 @@ formulaire de manière différente sans surcharger le coeur de la lib.
 J'ai même essayé de récupérer le code généré pour "débrancher" ensuite la génération mais celle-ci semble se faire
 dynamiquement avant chaque validation et ne peut pas (en tout cas facilement) être "bypassée".
 
-**J'ai donc abandonné** backbone-forms_ qui me paraît un très bon candidat pour une application devant être capable de
+**J'ai donc abandonné [Backbone Forms][backbone-forms]** qui me paraît un très bon candidat pour une application devant être capable de
 générer des formulaires dynamiquement mais pas du tout adapté à une personnalisation avancée.
 
-Je me suis donc tourné vers `Backbone Validation`_ qui m'a bien plus convaincu. Cette lib se concentre en effet **uniquement
+Je me suis donc tourné vers **[Backbone Validation][backbone-validation]** qui m'a bien plus convaincu. Cette lib se concentre en effet **uniquement
 sur l'aspect validation** et nous laisse la main libre sur le formulaire. Cette approche me convient bien mieux, ne représente
 au final pas plus de travail que la customisation d'un formulaire auto-généré (voire moins) et n'impose **aucune limite**.
 La lib dispose d'un **nombre très important de validateurs built-in** et propose des **mécanismes de personnalidation et
 d'extension** de validateurs efficaces.
 
-`Backbone Validation`_ ne propose pas non plus de lien automatique entre le formulaire et le modèle et nous laisse le choix
+**[Backbone Validation][backbone-validation]** ne propose pas non plus de lien automatique entre le formulaire et le modèle et nous laisse le choix
 d'utiliser une lib dédiée ou d'implémenter nous, avant la validation, le traitement qui va récupérer les valeurs du formulaire
-pour les setter au modèle. Le fonctionnement de `Backbone Validation`_ **s'inscrit parfaitement dans le workflow standard
+pour les setter au modèle. Le fonctionnement de **[Backbone Validation][backbone-validation]** **s'inscrit parfaitement dans le workflow standard
 de** `Backbone.js`_ via les méthodes `validate` et `is valid`.
 
-**Model** : définition des contraintes::
+**Model** : définition des contraintes:
 
     define([
         'underscore',
@@ -238,7 +237,7 @@ de** `Backbone.js`_ via les méthodes `validate` et `is valid`.
 
     });
 
-**Vue** : initialisation et utilisation ::
+**Vue** : initialisation et utilisation :
 
     initialize:function () {
 
@@ -276,9 +275,9 @@ de** `Backbone.js`_ via les méthodes `validate` et `is valid`.
         }
     },
 
-Et enfin, globalement, extension des callbacks pour mise à jour des erreurs de validation pour un formulaire avec `Twitter Bootstrap`_
+Et enfin, globalement, extension des callbacks pour mise à jour des erreurs de validation pour un formulaire avec **[Twitter Bootstrap][twitter-bootstrap]**
 
-backbone-validation.ext.js::
+backbone-validation.ext.js:
 
     /**
      * Backbone Validation extension: Defines custom callbacks for valid and invalid
@@ -301,12 +300,11 @@ backbone-validation.ext.js::
         }
     });
 
-
-Support des paramètres pour les vues  : Backbone Query Parameters
-*****************************************************************
+---
+###Support des paramètres pour les vues  : Backbone Query Parameters
 
 Lorsque j'ai souhaité ajouter un paramètre à ma vue liste sous la forme `participants?page=2` j'ai été confronté
-au problème suivant : la gestion des routes `Backbone.js`_ permet de définir les routes
+au problème suivant : la gestion des routes **[Backbone][backbone]** permet de définir les routes
 `"participants":"listParticipants"` et `"participants?:param":"listParticipantsParameters"`. Cependant le
 fonctionnement standard me semble insuffisant :
 
@@ -317,12 +315,12 @@ fonctionnement standard me semble insuffisant :
 Le fonctionnement que j'attendais était plutôt la **définition d'une unique route vers une méthode prenant en
 paramètre optionnel un tableau des paramètres de requêtes**.
 
-La librairie `Backbone Query Parameters`_ fournit justement ce fonctionnel ainsi qu'un gestionnaire d'expressions
+La librairie **[Backbone Query Parameters][backbone-query-parameters]** fournit justement ce fonctionnel ainsi qu'un gestionnaire d'expressions
 régulière applicable à la gestion des routes.
 
 Grâce à cette lib, incluse une fois pour toute dans mon router principal, j'ai pu obtenir le résultat suivant :
 
-**router.js** ::
+**router.js** :
 
     routes:{
         // Define some URL routes
@@ -346,7 +344,7 @@ Ainsi, le tableau des paramètres de requête est récupéré automatiquement sa
 ce, **quelque soit le nombre de ces paramètres**. Il peut ensuite être passé au constructeur de la vue pour
 initialisation :
 
-**list.js** ::
+**list.js** :
 
     askedPage:1,
 
@@ -364,18 +362,114 @@ initialisation :
 Cette lib est assez légère et bien foutue et, franchement, **je vois mal comment se passer du fonctionnel qu'elle
 propose**.
 
+---
+### Pagination de liste : Backbone Paginator
 
-Pagination de liste : Backbone Pagination
-*****************************************
+J'ai également cherché une lib qui me permette de proposer une pagination de mes listes. Je suis très vite tombé
+sur **[Backbone Paginator][backbone-paginator]**. La lib  propose des
+mécanismes de pagination coté client (`Paginator.clientPager`) ou de se brancher sur une api
+server paginée (`Paginator.requestPager`). La configuration de ces objets et très complète : gestion de filtres,
+d'ordre, etc.
 
-Pour l'instant : pagination client uniquement.
+J'ai pour le moment mis en place la pagination côté client en attendant une api paginée sur mon server :
 
-Liste d'appels asynchrones : Async.js
-*************************************
+Cette lib repose sur l'**extension des collections [Backbone][backbone]**. Il faut donc ajouter les options
+nécessaires à la collection :
+
+    var participantsCollection = Backbone.Paginator.clientPager.extend({
+        model:participantModel,
+        paginator_core:{
+            // the type of the request (GET by default)
+            type:'GET',
+
+            // the type of reply (jsonp by default)
+            dataType:'json',
+
+            // the URL (or base URL) for the service
+            url:'http://localhost:3000/api/participants'
+        },
+        paginator_ui:{
+            // the lowest page index your API allows to be accessed
+            firstPage:1,
+
+            // which page should the paginator start from
+            // (also, the actual page the paginator is on)
+            currentPage:1,
+
+            // how many items per page should be shown
+            perPage:12,
+
+            // a default number of total pages to query in case the API or
+            // service you are using does not support providing the total
+            // number of pages for us.
+            // 10 as a default in case your service doesn't return the total
+            totalPages:10
+        },
+        parse:function (response) {
+            return response;
+        }
+    });
+
+On récupère ensuite la collection de manière classique : s'agissant d'un pagination client on exécute un
+fetch complet puis on choisit la page courante :
+
+    /**
+     * Render this view
+     *
+     * @param partials optional object containing partial views elements to render. if null, render all
+     * @return {*} the current view
+     */
+    render:function (partials) {
+
+        this.initDeleted();
+
+        // reinit collection to force refresh
+        this.collection = new ParticipantsCollection();
+
+        // get the participants collection from server
+        this.collection.fetch(
+            {
+                success:function () {
+                    this.collection.goTo(this.askedPage);
+                    this.showTemplate(partials);
+                }.bind(this),
+                error:function (collection, response) {
+                    Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
+                }
+            });
+        return this;
+    },
+
+A noter q'une fois la collection récupérée `collection.info()` permet d'obtenir tout un tas d'information sur
+l'état courant de la collection :
+
+    info = {
+        totalUnfilteredRecords:self.origModels.length,
+        totalRecords:totalRecords,
+        currentPage:self.currentPage,
+        perPage:this.perPage,
+        totalPages:totalPages,
+        lastPage:totalPages,
+        previous:false,
+        next:false,
+        startRecord:totalRecords === 0 ? 0 : (self.currentPage - 1) * this.perPage + 1,
+        endRecord:Math.min(totalRecords, self.currentPage * this.perPage)
+    };
 
 
+Cette lib me convient donc tout à fait et se montre efficace, intuitive et simple d'utilisation pour le moment.
+
+L'étape suivante consistera à implémenter une api de pagination côté server et mettre en place un requestPager en
+lieu et place du clientPager puis à ajouter des fonctionnalités de filtrage des requêtes afin de tester le
+comportement de l'outil et sa pertinence sur ce type de besoins.
+
+---
+### Liste d'appels asynchrones : Async.js
+
+
+---
 Considérations d'architecture et questions ouvertes
-+++++++++++++++++++++++++++++++++++++++++++++++++++
+---------------------------------------------------
 
 Pendant ce travail, j'ai eu successivement à résoudre un certain nombre de **problématiques d'architecture et de
 conception** ainsi qu'à **expérimenter différentes solutions et stratégies**. Suite à cela, j'ai finallement choisit,
@@ -389,39 +483,41 @@ notamment de `Backbone.js`_.
 
 Alternatives, propositions et discussions sont bien évidemment bienvenues.
 
-'Intelligence' des routers
-**************************
+---
+### 'Intelligence' des routers
 
-Le problème des vues zombies
-****************************
+---
+### Le problème des vues zombies
+
 close
 unbind events
 unbind Pubsub subscribers
 close nested views
 
-Vues Singleton
-**************
+---
+### Vues Singleton
 
-Stratégie globale et cohérente de rendering
-*******************************************
+---
+### Stratégie globale et cohérente de rendering
 
-gestion effective du PushState
-******************************
+---
+### gestion effective du PushState
 
-Extension des libs
-******************
+---
+### Extension des libs
 
-Helpers Handlebars
-******************
+---
+### Helpers Handlebars
 
-Routers multiples
-*****************
+---
+### Routers multiples
 
-.. _Resthub js: http://resthub.org/2/backbone-stack.html
-.. _Underscore.js: http://underscorejs.org/
-.. _Handlebars: https://github.com/wycats/handlebars.js
-.. _Backbone.js: http://backbonejs.org/
-.. _backbone-forms: https://github.com/powmedia/backbone-forms
-.. _Backbone Validation: https://github.com/thedersen/backbone.validation
-.. _Twitter Bootstrap: http://twitter.github.com/bootstrap/
-.. _Backbone Query Parameters: https://github.com/jhudson8/backbone-query-parameters
+[resthubjs]: http://resthub.org/2/backbone-stack.html "Resthub js"
+[underscore]: http://underscorejs.org/ "Underscore"
+[handlebars]: https://github.com/wycats/handlebars.js "Handlebars"
+[backbone]: http://backbonejs.org/ "Backbone"
+[backbone-forms]: https://github.com/powmedia/backbone-forms "Backbone Forms"
+[backbone-validation]: https://github.com/thedersen/backbone.validation "Backbone Validation"
+[twitter-bootstrap]: http://twitter.github.com/bootstrap/ "Twitter Bootsrap"
+[backbone-query-parameters]: https://github.com/jhudson8/backbone-query-parameters "Backbone Query Parameters"
+[backbone-paginator]: http://addyosmani.github.com/backbone.paginator/ "Backbone Paginator"
