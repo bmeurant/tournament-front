@@ -529,6 +529,203 @@ comportement de l'outil et sa pertinence sur ce type de besoins.
 ---
 ### Liste d'appels asynchrones : Async.js
 
+Autre problématique récurrente : les appels asynchones successifs pour lesquels on souhaite disposer d'un
+traitement final permettant d'afficher le résultat de l'ensemble des appels : nombre d'erreurs, tous successfull,
+etc.
+
+Basiquement, chaque appel asynchrone dispose d'un callback appelé à la fin de son traitement propre (succes ou erreur).
+Sans outillage, on est donc obligé de mettre en place un **comptage manuel des fonctions appellées et un décomptage lors
+de l'appel du callback de chacune d'entre elles**. Le callback final est alors appelé à la fin de chaque appel unitaire
+mais ne s'execute que si plus aucun callback ne reste à appeler. Cela donne :
+
+    /**
+     * Effective deletion of all element ids stored in the collection
+     */
+    deleteElements:function () {
+
+        var self = this;
+        var nbWaitingCallbacks = 0;
+
+        $.each(this.collection, function (type, idArray) {
+            $.each(idArray, function (index, currentId) {
+                nbWaitingCallbacks += 1;
+
+                $.ajax({
+                    url:'http://localhost:3000/api/participant/' + currentId,
+                    type:'DELETE'
+                })
+                    .done(function () {
+                        nbWaitingCallbacks -= 1;
+                        self.afterRemove(nbWaitingCallbacks);
+                    })
+                    .fail(function (jqXHR) {
+                        if (jqXHR.status != 404) {
+                            self.recordError(type, currentId);
+                        }
+                        nbWaitingCallbacks -= 1;
+                        self.afterRemove(nbWaitingCallbacks);
+                    });
+            });
+        });
+    },
+
+    /**
+     * Callback called after an ajax deletion request
+     *
+     * @param nbWaitingCallbacks number of callbacks that we have still to wait before close request
+     */
+    afterRemove:function (nbWaitingCallbacks) {
+
+        // if there is still callbacks waiting, do nothing. Otherwise it means that all request have
+        // been performed : we can manage global behaviours
+        if (nbWaitingCallbacks == 0) {
+            this.reintegrateErrors();
+        }
+    },
+
+    /**
+     * Handles errors and reintegrate elements ids that could not be deleted into the main collection
+     */
+    reintegrateErrors:function () {
+
+        var initialCollectionLength = this.countElements(this.collection);
+        this.emptyCollection();
+
+        var countErrors = this.countElements(this.errors);
+        if (countErrors != 0) {
+
+            var self = this;
+
+            // each element in error is added to main collection in order to keep it synchonized with server
+            // state
+            $.each(this.errors, function (type, idArray) {
+                $.each(idArray, function (index, model) {
+                    self.addToCollection(type, model.id);
+                });
+            });
+
+            // adapt error messages
+            if (countErrors == initialCollectionLength) {
+                Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'Error occured while deleting these elements', 'alert-error']);
+            }
+            else {
+                Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Error occured while deleting some elements', 'alert-warning']);
+            }
+        }
+        else {
+            Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Elements successfully deleted', 'alert-success']);
+        }
+
+        // save collection
+        this.storeInLocalStorage();
+
+        this.render();
+
+        Pubsub.publish(Events.DELETIONS_CONFIRMED);
+    },
+
+C'est fonctionnel mais c'est quane même ** beaucoup de boilerplate** !!!
+
+Suite à des conseils avisés, je me suis donc intéressé à la lib **[Async][async]**. Cette lib propose un ensemble de
+helpers pour effectuer des **traitements asynchrone en parallèle** et resynchroniser la fin de ces traitements via un callback
+final.
+
+Cette lib est initialement destinée à un server nodeJs mais est également **implémentée côté browser**.
+
+Sur le papier, la méthode dont j'avais besoin était le `forEach`. Je me suis cependant rapidement confronté au problème
+suivant : tous les helpers de cette lib sont conçus pour tout arréter (et passer au callback final) à la première erreur.
+Or j'avais besoin d'exécuter toutes mes fonctions puis, qu'elles aient réussi ou échouer, de dresser un bilan à remonter
+à l'utilisateur.
+
+Il n'existe malheureusement aucune option dans cette lib ni dans une autre (à ma connaissance) qui implémente cette
+fonctionnalité (malgré des demandes similaires sur les mailings lists) ...
+
+J'ai donc du twicker un peu et utiliser, en lieu et place du `forEach`, la fonction `map` qui renvoie, elle, un tableau
+de résultats dans lequel je peux enregistrer les succes. Le paramètre error du callback final ne peut être utilisé sous
+peine de voir l'ensemble des appels stoppé. Le callback est donc systématiquement appelé avec un parametre err à `null`,
+le modèle en cas de succès et null en cas d'echec. Je peux ainsi en déduire le nombre d'erreurs sans pour autant
+interrompre mes traitements :
+
+    /**
+     * Effective deletion of all element ids stored in the collection
+     */
+    deleteElements:function () {
+
+        var elements = [];
+
+        $.each(this.collection, function (type, idArray) {
+            $.each(idArray, function (index, currentId) {
+                elements.push({type:type, id:currentId, index:index});
+            }.bind(this));
+        }.bind(this));
+
+        async.map(elements, this.deleteFromServer.bind(this), this.afterRemove.bind(this));
+    },
+
+    deleteFromServer:function (elem, deleteCallback) {
+        $.ajax({
+            url:'http://localhost:3000/api/' + elem.type + '/' + elem.id,
+            type:'DELETE'
+        })
+        .done(function () {
+            deleteCallback(null, {type:"success", elem:elem});
+        })
+        .fail(function (jqXHR) {
+            if (jqXHR.status == 404) {
+                // element obviously already deleted from server. Ignore it and remove from local collection
+                this.collection[elem.type].splice(elem.index, 1);
+            }
+
+            // callback is called with null error parameter because otherwise it breaks the
+            // loop and top on first error :-(
+            deleteCallback(null, {type:"error", elem:elem});
+        }.bind(this));
+    },
+
+    /**
+     * Callback called after all ajax deletion requests
+     *
+     * @param err always null because default behaviour break map on first error
+     * @param results array of fetched models : contain null value in cas of error
+     */
+    afterRemove:function (err, results) {
+
+        var initialCollectionLength = this.countElements(this.collection);
+        this.emptyCollection();
+
+        $.each(results, function (index, result) {
+
+            if (result.type == "error") {
+                this.addToCollection(result.elem.type, result.elem.id);
+            }
+
+        }.bind(this));
+
+        var finalCollectionLength = this.countElements(this.collection);
+
+        if (finalCollectionLength == 0) {
+            Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Elements successfully deleted', 'alert-success']);
+        }
+        else if (finalCollectionLength == initialCollectionLength) {
+            Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'Error occurred while deleting these elements', 'alert-error']);
+        }
+        else {
+            Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Error occurred while deleting some elements', 'alert-warning']);
+        }
+
+        // save collection
+        this.storeInLocalStorage();
+
+        this.render();
+
+        Pubsub.publish(Events.DELETIONS_CONFIRMED);
+
+    },
+
+Le code est ainsi **beaucoup plus élégant, avec beaucoup moins de boilerplate**.
+
+Ainsi, malgré ce twick bien dommage, **je retiens quand même cette lib pour tout ce qui concerne un empilement d'appels
+asynchrone à parraléliser** - que l'on souhaite ou non disposer d'un callback final.
 
 ---
 Considérations d'architecture et questions ouvertes
@@ -584,3 +781,4 @@ close nested views
 [twitter-bootstrap]: http://twitter.github.com/bootstrap/ "Twitter Bootsrap"
 [backbone-query-parameters]: https://github.com/jhudson8/backbone-query-parameters "Backbone Query Parameters"
 [backbone-paginator]: http://addyosmani.github.com/backbone.paginator/ "Backbone Paginator"
+[async]: https://github.com/caolan/async/ "Async"
