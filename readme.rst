@@ -32,6 +32,12 @@ pour répondre à des besoins particuliers que j'estime récurrents.
 
 Ces outils sont les suivants :
 
+- **Moteur de template :** Handlebars_
+- **Validation de formulaire :** `Backbone Validation`_
+- **Support des paramètres pour les vues :** `Backbone Query Parameters`_
+- **Pagination de liste :** Backbone Pagination
+- **Liste d'appels asynchrones :** Async.js
+
 Moteur de template : Handlebars
 *******************************
 
@@ -182,15 +188,15 @@ dynamiquement avant chaque validation et ne peut pas (en tout cas facilement) ê
 **J'ai donc abandonné** backbone-forms_ qui me paraît un très bon candidat pour une application devant être capable de
 générer des formulaires dynamiquement mais pas du tout adapté à une personnalisation avancée.
 
-Je me suis donc tourné vers backbone.validation_ qui m'a bien plus convaincu. Cette lib se concentre en effet **uniquement
+Je me suis donc tourné vers `Backbone Validation`_ qui m'a bien plus convaincu. Cette lib se concentre en effet **uniquement
 sur l'aspect validation** et nous laisse la main libre sur le formulaire. Cette approche me convient bien mieux, ne représente
 au final pas plus de travail que la customisation d'un formulaire auto-généré (voire moins) et n'impose **aucune limite**.
 La lib dispose d'un **nombre très important de validateurs built-in** et propose des **mécanismes de personnalidation et
 d'extension** de validateurs efficaces.
 
-backbone.validation_ ne propose pas non plus de lien automatique entre le formulaire et le modèle et nous laisse le choix
+`Backbone Validation`_ ne propose pas non plus de lien automatique entre le formulaire et le modèle et nous laisse le choix
 d'utiliser une lib dédiée ou d'implémenter nous, avant la validation, le traitement qui va récupérer les valeurs du formulaire
-pour les setter au modèle. Le fonctionnement de backbone.validation_ **s'inscrit parfaitement dans le workflow standard
+pour les setter au modèle. Le fonctionnement de `Backbone Validation`_ **s'inscrit parfaitement dans le workflow standard
 de** `Backbone.js`_ via les méthodes `validate` et `is valid`.
 
 **Model** : définition des contraintes::
@@ -371,13 +377,13 @@ Liste d'appels asynchrones : Async.js
 Considérations d'architecture et questions ouvertes
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Pendant ce travail, j'ai eu successivement à résoudre un certain nombre de problématiques d'architecture et de
-conception ainsi qu'à expérimenter différentes solutions et stratégies. Suite à cela, j'ai finallement choisit,
- pour chaque problématique, un pattern à privilégier.
+Pendant ce travail, j'ai eu successivement à résoudre un certain nombre de **problématiques d'architecture et de
+conception** ainsi qu'à **expérimenter différentes solutions et stratégies**. Suite à cela, j'ai finallement choisit,
+pour chaque problématique, un **pattern à privilégier**.
 
 Ces choix ainsi que les exemples associés sont décrits ci-dessous.
 
-Un certain nombre de questions restent bien évidemment ouvertes sans solution pleinement satisfaisante et
+Un certain nombre de **questions restent bien évidemment ouvertes** sans solution pleinement satisfaisante et
 nécessitent pour certaines, une meilleure compréhension de ma part des mécanismes sous-jacents de ces libs et
 notamment de `Backbone.js`_.
 
@@ -416,6 +422,6 @@ Routers multiples
 .. _Handlebars: https://github.com/wycats/handlebars.js
 .. _Backbone.js: http://backbonejs.org/
 .. _backbone-forms: https://github.com/powmedia/backbone-forms
-.. _backbone.validation: https://github.com/thedersen/backbone.validation
+.. _Backbone Validation: https://github.com/thedersen/backbone.validation
 .. _Twitter Bootstrap: http://twitter.github.com/bootstrap/
 .. _Backbone Query Parameters: https://github.com/jhudson8/backbone-query-parameters
