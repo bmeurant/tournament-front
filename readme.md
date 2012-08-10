@@ -237,6 +237,69 @@ de** `Backbone.js`_ via les méthodes `validate` et `is valid`.
 
     });
 
+** Formulaire HTML5** :
+
+    {{#with participant}}
+        <form class="form-horizontal">
+            <fieldset>
+                <div class="row">
+                    <div class="span8">
+                        <div class="control-group">
+                            {{#if id}}
+                                <label for="participantId" class="control-label">Id:</label>
+                                <div class="controls">
+                                    <input id="participantId" name="id" type="text" value="{{id}}" disabled/>
+                                </div>
+                            {{/if}}
+                        </div>
+
+                        <div class="control-group">
+                            <label for="firstname" class="control-label">First name:</label>
+                            <div class="controls">
+                                <input type="text" id="firstname" name="firstname" required="true" value="{{firstname}}" tabindex="1" autofocus="autofocus"/>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="lastname" class="control-label">Last name:</label>
+                            <div class="controls">
+                                <input type="text" id="lastname" name="lastname" required="true" value="{{lastname}}" tabindex="2"/>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="email" class="control-label">email address:</label>
+                            <div class="controls">
+                                <input type="email" id="email" name="email" value="{{email}}" tabindex="3"/>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="span3">
+                        <div class="well">
+                            <p class="photo">
+                                {{#if picture_url}}
+                                    <img class="photo" src="{{photo_link picture_url}}" alt="" draggable="false"/>
+                                    <p hidden><img src="{{photo_link pict_min}}"/></p>
+                                {{else}}
+                                    <img class="photo" src="/img/participants/no-photo.jpg" alt="" draggable="false"/>
+                                {{/if}}
+                            </p>
+
+                            <p>To change the picture, drag a new picture from your file system onto the box above.</p>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <input type="submit" style="display:none" value="Submit"/>
+        </form>
+    {{/with}}
+
+
 **Vue** : initialisation et utilisation :
 
     initialize:function () {
