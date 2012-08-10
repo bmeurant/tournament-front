@@ -1,6 +1,10 @@
-define([
-    'handlebars'
-], function (Handlebars) {
+(function (factory) {
+    if (typeof exports === 'object') {
+        module.exports = factory(require('handlebars'));
+    } else if (typeof define === 'function' && define.amd) {
+        define(['handlebars'], factory);
+    }
+}(function (Handlebars) {
 
     /**
      * Register global custom handlebars helpers
@@ -58,4 +62,4 @@ define([
 
         return ret;
     });
-});
+}));
