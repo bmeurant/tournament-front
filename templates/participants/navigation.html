@@ -1,10 +1,10 @@
 <div class='title'>Participant&nbsp;<img src='/img/crop.png' class='icon' draggable='false'/></div>
 {{#if navigable}}
     <ul class='nav-pills'>
-        <li class='{{active "details"}}'>
+        <li class='{{ifequalsinline type "details" "active"}}'>
             <a id='details' href='/participant/{{participant.id}}'>Details</a>
         </li>
-        <li class='{{active "edit"}}'>
+        <li class='{{ifequalsinline type "edit" "active"}}'>
             <a id='edit' href='/participant/{{participant.id}}/edit'>Edit</a>
         </li>
         <!--li id='teams'>

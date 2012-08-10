@@ -36,9 +36,6 @@ define([
 
             var self = this;
 
-            Handlebars.registerHelper('active', function (id) {
-                return self.type == id ? "active" : "";
-            });
         },
 
         /**
@@ -62,7 +59,7 @@ define([
 
         render:function () {
             var navigable = ((this.type == 'details') || (this.type == 'edit'));
-            this.$el.html(this.template({id:this.id, navigable: navigable}));
+            this.$el.html(this.template({id:this.id, navigable: navigable, type:this.type}));
             return this;
         },
 

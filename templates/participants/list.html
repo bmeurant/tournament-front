@@ -1,7 +1,7 @@
 <ul class="thumbnails span12">
     {{#each participants}}
         {{#with this}}
-            <li id="{{id}}" class="thumbnail {{selected id}} {{disabled id}}" draggable="true">
+            <li id="{{id}}" class='thumbnail {{ifequalsinline ../id_selected id "selected"}} {{disabled id}}' draggable="true">
                 <a href="/participant/{{id}}" class="plain participant-thumb">
                     <div class="participant-thumb">
                         {{#if picture_url}}

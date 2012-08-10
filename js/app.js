@@ -80,6 +80,22 @@ define([
                 return "http://localhost:3000/api" + picture_url;
             });
 
+            Handlebars.registerHelper('ifinline', function (value, returnVal) {
+                return value ? returnVal : '';
+            });
+
+            Handlebars.registerHelper('unlessinline', function (value, returnVal) {
+                return value ? '' : returnVal;
+            });
+
+            Handlebars.registerHelper('ifequalsinline', function (value1, value2, returnVal) {
+                return (value1 == value2) ? returnVal : '';
+            });
+
+            Handlebars.registerHelper('unlessequalsinline', function (value1, value2, returnVal) {
+                return (value1 == value2) ? '' : returnVal;
+            });
+
             Handlebars.registerHelper('ifequals', function (value1, value2, options) {
 
                 if (value1 == value2) {

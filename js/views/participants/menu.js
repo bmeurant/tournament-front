@@ -40,11 +40,9 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.LIST_CALLED, this.backToListElement.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ECHAP_CALLED, this.backToElementHome.bind(this)));
 
-            var self = this;
-
             Handlebars.registerHelper('hidden', function (type) {
-                return _.indexOf(self.actions[self.type], type) < 0 ? "hidden" : "";
-            });
+                return _.indexOf(this.actions[this.type], type) < 0 ? "hidden" : "";
+            }.bind(this));
         },
 
         /**

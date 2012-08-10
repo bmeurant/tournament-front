@@ -56,10 +56,6 @@ define([
                 return (this.deleted.indexOf(id) >= 0) ? 'disabled' : '';
             }.bind(this));
 
-            Handlebars.registerHelper('selected', function (id) {
-                return (this.idSelected && this.idSelected == id) ? "selected" : "";
-            }.bind(this));
-
             if (params) {
                 if (params.page && utils.isValidPageNumber(params.page)) this.askedPage = parseInt(params.page);
             }
@@ -145,7 +141,7 @@ define([
             }
 
             if (!partials || partials.participants) {
-                this.$el.find(".elements").html(this.template({participants:this.collection.toJSON()}));
+                this.$el.find(".elements").html(this.template({participants:this.collection.toJSON(), 'id_selected':this.idSelected}));
             }
             if (!partials || partials.pagination) {
                 this.$el.find(".pagination").html(this.paginationView.render(this.collection).$el);
