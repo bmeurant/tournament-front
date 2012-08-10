@@ -124,7 +124,7 @@ Dans notre exemple :
         ...
     }
 
-**Helpers globaux (`app.js`)**::
+**Helpers globaux (`handlebars-helpers.js`)**::
 
     initialize:function () {
 
@@ -176,7 +176,7 @@ j'ai atteint très rapidement les limites de la personnalisation : Je n'ai pas p
 (peut-être possible mais très compliqué). Il est par exemple rigoureusement impossible de traiter deux fieldsets du même
 formulaire de manière différente sans surcharger le coeur de la lib.
 
-J'ai même essayé de récupérer le code générer pour "débrancher" ensuite la génération mais celle-ci semble se faire
+J'ai même essayé de récupérer le code généré pour "débrancher" ensuite la génération mais celle-ci semble se faire
 dynamiquement avant chaque validation et ne peut pas (en tout cas facilement) être "bypassée".
 
 **J'ai donc abandonné** backbone-forms_ qui me paraît un très bon candidat pour une application devant être capable de
@@ -272,7 +272,7 @@ de** `Backbone.js`_ via les méthodes `validate` et `is valid`.
 
 Et enfin, globalement, extension des callbacks pour mise à jour des erreurs de validation pour un formulaire avec `Twitter Bootstrap`_
 
-app.js::
+backbone-validation.ext.js::
 
     /**
      * Backbone Validation extension: Defines custom callbacks for valid and invalid
@@ -296,48 +296,120 @@ app.js::
     });
 
 
-Query parameter support : Backbone Query Parameters
-***************************************************
+Support des paramètres pour les vues  : Backbone Query Parameters
+*****************************************************************
 
-List pagination : Backbone Pagination
+Lorsque j'ai souhaité ajouter un paramètre à ma vue liste sous la forme `participants?page=2` j'ai été confronté
+au problème suivant : la gestion des routes `Backbone.js`_ permet de définir les routes
+`"participants":"listParticipants"` et `"participants?:param":"listParticipantsParameters"`. Cependant le
+fonctionnement standard me semble insuffisant :
+
+- la **gestion d'un nombre de paramètres inconnu** (type `?page=2&filter=filtre`) n'est pas évidente
+- il est nécessaire de définir (au moins) 2 routes pour gérer les appels avec ou sans paramètres sans duplication
+  et sans trop de boilerplate
+
+Le fonctionnement que j'attendais était plutôt la **définition d'une unique route vers une méthode prenant en
+paramètre optionnel un tableau des paramètres de requêtes**.
+
+La librairie `Backbone Query Parameters`_ fournit justement ce fonctionnel ainsi qu'un gestionnaire d'expressions
+régulière applicable à la gestion des routes.
+
+Grâce à cette lib, incluse une fois pour toute dans mon router principal, j'ai pu obtenir le résultat suivant :
+
+**router.js** ::
+
+    routes:{
+        // Define some URL routes
+        ...
+
+        "participants":"listParticipants",
+
+        ...
+    },
+
+    ...
+
+    listParticipants:function (params) {
+        ...
+        // creation de la vue via une fonction générique (cf. gestion des zombies et rendering)
+        // le contructeur de la vue prend un paramètre params
+        utils.showView($('#content'), ParticipantListView, [params]);
+    },
+
+Ainsi, le tableau des paramètres de requête est récupéré automatiquement sans **aucun traitement supplémentaire** et
+ce, **quelque soit le nombre de ces paramètres**. Il peut ensuite être passé au constructeur de la vue pour
+initialisation :
+
+**list.js** ::
+
+    askedPage:1,
+
+    initialize:function (params) {
+
+        ...
+
+        if (params) {
+            if (params.page && utils.isValidPageNumber(params.page)) this.askedPage = parseInt(params.page);
+        }
+
+        ..
+    },
+
+Cette lib est assez légère et bien foutue et, franchement, **je vois mal comment se passer du fonctionnel qu'elle
+propose**.
+
+
+Pagination de liste : Backbone Pagination
+*****************************************
+
+Pour l'instant : pagination client uniquement.
+
+Liste d'appels asynchrones : Async.js
 *************************************
 
-Asynchronous calls : Async.js
-*****************************
 
+Considérations d'architecture et questions ouvertes
++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Architectural considerations and questions
-++++++++++++++++++++++++++++++++++++++++++
+Pendant ce travail, j'ai eu successivement à résoudre un certain nombre de problématiques d'architecture et de
+conception ainsi qu'à expérimenter différentes solutions et stratégies. Suite à cela, j'ai finallement choisit,
+ pour chaque problématique, un pattern à privilégier.
 
-During this work I had to resolve some architectural and design problematics and to experiment and finally choose
-a pattern to apply. These choices and eventually their relative code are described below. Some questions are still
-opened and need a better comprehension of underlying technical aspects for me to respond. Arguments and ideas are
-welcomed.
+Ces choix ainsi que les exemples associés sont décrits ci-dessous.
 
-Router 'intelligence'
-*********************
+Un certain nombre de questions restent bien évidemment ouvertes sans solution pleinement satisfaisante et
+nécessitent pour certaines, une meilleure compréhension de ma part des mécanismes sous-jacents de ces libs et
+notamment de `Backbone.js`_.
 
-Zombie views problem
-********************
+Alternatives, propositions et discussions sont bien évidemment bienvenues.
+
+'Intelligence' des routers
+**************************
+
+Le problème des vues zombies
+****************************
 close
 unbind events
 unbind Pubsub subscribers
 close nested views
 
-Singleton views
-***************
+Vues Singleton
+**************
 
-Consistent rendering strategy
-*****************************
+Stratégie globale et cohérente de rendering
+*******************************************
 
-Manage PushState
-****************
+gestion effective du PushState
+******************************
 
-Handlebars helpers
+Extension des libs
 ******************
 
-Multiple routers
-****************
+Helpers Handlebars
+******************
+
+Routers multiples
+*****************
 
 .. _Resthub js: http://resthub.org/2/backbone-stack.html
 .. _Underscore.js: http://underscorejs.org/
@@ -346,3 +418,4 @@ Multiple routers
 .. _backbone-forms: https://github.com/powmedia/backbone-forms
 .. _backbone.validation: https://github.com/thedersen/backbone.validation
 .. _Twitter Bootstrap: http://twitter.github.com/bootstrap/
+.. _Backbone Query Parameters: https://github.com/jhudson8/backbone-query-parameters
