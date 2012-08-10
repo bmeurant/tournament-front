@@ -10,10 +10,9 @@ define([
     'views/help/shortcuts',
     'views/footer',
     'controllers/keyboard',
-    'handlebars',
     'handlebars.helpers',
     'pubsub'
-], function ($, _, Backbone, Router, HeaderView, DeletionsMenuView, DeletionsView, AlertsView, ShortcutsView, FooterView, KeyboardController, Pubsub) {
+], function ($, _, Backbone, Router, HeaderView, DeletionsMenuView, DeletionsView, AlertsView, ShortcutsView, FooterView, KeyboardController, HandleBarsHelpers, Pubsub) {
         var initialize = function () {
 
             /**

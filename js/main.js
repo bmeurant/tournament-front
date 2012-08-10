@@ -18,7 +18,8 @@ require.config({
         text:"libs/text",
         i18n:"libs/i18n",
         templates:"/templates",
-        handlebars:"libs/handlebars"
+        handlebars:"libs/handlebars",
+        'handlebars.helpers':"libs/extensions/handlebars.helpers"
     }
 
 });
