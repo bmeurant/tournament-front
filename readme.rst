@@ -1,39 +1,42 @@
 Tournament-front
 ----------------
 
-This project is a sample application build over `Resthub js`_.
+Ce projet est une application exemple et exploratoire basée sur `Resthub js`_.
 
-This application is currently being developed in order to learn this stack and its frameworks and discover
-their patterns and anti-patterns and build my own opinion on these tools. For these reasons, the source
-code is continuously modified and refactored.
+Je travaille actuellement sur cette application pour me familiariser avec cette stack et les frameworks
+qu'elle embarque, découvrir leurs patterns et anti-patterns et me forger ma propre opinion sur ces outils.
+Du coup, le code est en refactoring permanent.
 
-One of the main goal is also to be able to provide advices, patterns and support to developers building an
-architecture over this stack :
+Un autre objectif majeur est d'être au final en capacité de fournir des conseils, des bonnes pratiques et d'apporter
+du support aux projets reposant sur cette stack. en particulier :
 
-- How to organize views ?
-- What strategy for rendering ?
-- How to manage and navigate between multiple views ?
-- How to manage multiple routers ?
+- Comment organiser ses vues ?
+- Quelle stratégie de rendering ?
+- Comment gérer la navigation entre de multiples vues ?
+- Comment mettre en place du deep linking ?
+- Comment définir plusieurs routeurs et leur contenu ?
 - etc.
 
-The sample application should allow to create, manage and plan games and tournaments made of participants and/or
-teams and dynamic rules descriptions (with a pre existent set of games and tournaments types).
+Cette application exemple devrait fonctionnellement permettre de créer, gérer et planifier des tournois et des jeux
+constitués de participants et/ou d'équipes et reposant sur un ensemble de règles définies dynamiquement.
 
-Complementary tools
-+++++++++++++++++++
+Outils complémentaires
+++++++++++++++++++++++
 
-In addition to the basic tools provides by `Resthub js`_, I progressively discovered that some complementary
-tools had to be considered for some usages.
+En plus des outils standards embarqués par `Resthub js`_, j'ai progressivement ajouté des libs et frameworks complémentaires
+pour répondre à des besoins particuliers que j'estime récurrents.
 
-Bonus question : Do these tools could/should be added to standard `Resthub js`_ distribution ?
+**Question** : Le choix de ces outils est-il pertinent ? Existe-t-il des alternatives préférables ?
 
-These tools are described below :
+**Question Bonus** : Ces outils peuvent-ils / doivent-ils être intégrés à la stack `Resthub js`_ ?
 
-Template engine : Handlebars
-****************************
+Ces outils sont les suivants :
 
-Default template rendering is provided by `Underscore.js`_ embedding a Javascript micro templating combined
-with underscore helpers which allows a JSP-like syntax :
+Moteur de template : Handlebars
+*******************************
+
+Le moteur de template par défaut est fournit par `Underscore.js`_ qui embarque du micro templating javascript
+combiné aux helpers underscore. Il repose sur une syntaxe à la JSP :
 
 ::
 
@@ -58,10 +61,10 @@ with underscore helpers which allows a JSP-like syntax :
         <% }
     }); %>
 
-If this could initially appear easy to use and comfortable, it **looks very ugly** and I realize that **it encouraged
-me to implement a lot of view logic in templates** and made difficult to reuse templates.
+Cela peut paraître initialement simple mais ce n'est **vraiment pas très élégant** et conduit rapidement à **déplacer une bonne
+partie de la logique de la vue vers le template** et rend très difficile la réutilisation de ces templates.
 
-I quickly switch to a **logic-less template with** Handlebars_. ::
+Je suis donc rapidement passé à un **moteur de template logic-less**, en l'occurrence Handlebars_. ::
 
     {{#each participants}}
         {{#with this}}
@@ -84,15 +87,19 @@ I quickly switch to a **logic-less template with** Handlebars_. ::
         {{/with}}
     {{/each}}
 
-Obviously this operation required to define Handlebars_ **Helpers** in order to implement the logic that disappeared
-from the template :
+... Ça a quand même plus de gueule :-)
 
-- **Add element class selected (inline) if needed**
-- **Add element class disabled (inline) if needed**
-- **Is the current element deleted ?**
-- **Display photo_link**
+Évidemment, cette opération a nécessité de définir des **Helpers** Handlebars_ afin d'implémenter, au sein de la vue,
+la logique qui n'est plus dans le template.
 
-**View specific helpers**::
+Dans notre exemple :
+
+- Ajouter la classe css `selected` si nécessaire
+- Ajouter la classe css `disabled` si nécessaire
+- Déterminer si l'élément courant est en cours de suppression
+- Afficher un lien personnalisé pour la photo
+
+**Helpers spécifiques à la vue**::
 
     initialize:function () {
 
@@ -117,7 +124,7 @@ from the template :
         ...
     }
 
-**Global helpers (`app.js`)**::
+**Helpers globaux (`app.js`)**::
 
     initialize:function () {
 
@@ -130,13 +137,163 @@ from the template :
         ...
     }
 
-It could seem heavy but most of these helpers could be reused and finally the logic really moved to view and that
-is a good thing !
+Le fait d'avoir à définir ces templates peut paraître un peu rébarbatif au départ mais la syntaxe est autrement plus
+élégante, la majorité des helpers sont réutilisables et en réfléchissant un peu on réduit très facilement le
+boilerplate.
+
+Et **la logique a réellement été déplacée dans la vue**, ce qui est sa juste place et va nous faciliter grandement la
+maintenance et la réutilisation.
 
 
-Form validation : Backbone Validation
-*************************************
+Validation de formulaire : Backbone Validation
+**********************************************
 
+`Backbone.js`_ ne fournit **aucun outillage pour la gestion de formulaires ou leur validation**. Les attributs du
+modèle n'ont pas à être précisés, encore moins leur format ou les contraintes qui leur sont liées.
+
+En termes de validation, `Backbone.js`_ fournit seulement des méthodes vides `validate` et `isValid` qui peuvent
+être implémentées par chaque développeur. La seule garantie est que la méthode `validate` est appelée avant un `save`
+qu'elle empêche en cas d'erreur. Et encore ... la validation d'un formulaire complet n'est pas évidente (gestion
+d'un tableau d'erreur custom ... ) et les erreurs ne sont pas dissociées des erreurs propres à la méthode `save`.
+
+Comme un solide gestionnaire de validation me parait indispensable, j'ai cherché un outil adapté selon les critères
+suivants :
+
+- facile à utiliser et à comprendre (KISS)
+- **facile à personnaliser et à étendre**
+- possibilité de gérer des **formulaires complexes**
+- un ensemble de validateurs built-in conséquent
+- compatible html5
+- compatible twitter bootstrap
+
+J'ai commencé par tester backbone-forms_ qui semble un très bon outil. Mais il est en fait composé de deux parties :
+**la logique de validation et un outil complet de génération dynamique de formulaire**. On fournit juste la description
+des champs du model avec leurs contraintes et le formulaire est auto généré.
+
+Cela peut sembler prometteur (même si je ne suis pas fan de ces approches 'scaffolding' et encore moins lorsqu'elles sont
+dynamiques. Mais le problème c'est que ces deux outils sont indissociables et qu'en essayant de customiser mon formulaire
+j'ai atteint très rapidement les limites de la personnalisation : Je n'ai pas pu générer un formulaire sur deux colonnes
+(peut-être possible mais très compliqué). Il est par exemple rigoureusement impossible de traiter deux fieldsets du même
+formulaire de manière différente sans surcharger le coeur de la lib.
+
+J'ai même essayé de récupérer le code générer pour "débrancher" ensuite la génération mais celle-ci semble se faire
+dynamiquement avant chaque validation et ne peut pas (en tout cas facilement) être "bypassée".
+
+**J'ai donc abandonné** backbone-forms_ qui me paraît un très bon candidat pour une application devant être capable de
+générer des formulaires dynamiquement mais pas du tout adapté à une personnalisation avancée.
+
+Je me suis donc tourné vers backbone.validation_ qui m'a bien plus convaincu. Cette lib se concentre en effet **uniquement
+sur l'aspect validation** et nous laisse la main libre sur le formulaire. Cette approche me convient bien mieux, ne représente
+au final pas plus de travail que la customisation d'un formulaire auto-généré (voire moins) et n'impose **aucune limite**.
+La lib dispose d'un **nombre très important de validateurs built-in** et propose des **mécanismes de personnalidation et
+d'extension** de validateurs efficaces.
+
+backbone.validation_ ne propose pas non plus de lien automatique entre le formulaire et le modèle et nous laisse le choix
+d'utiliser une lib dédiée ou d'implémenter nous, avant la validation, le traitement qui va récupérer les valeurs du formulaire
+pour les setter au modèle. Le fonctionnement de backbone.validation_ **s'inscrit parfaitement dans le workflow standard
+de** `Backbone.js`_ via les méthodes `validate` et `is valid`.
+
+**Model** : définition des contraintes::
+
+    define([
+        'underscore',
+        'backbone',
+        'backbone-validation'
+    ], function (_, Backbone) {
+
+        /**
+         * Definition of a Participant model object
+         */
+        var ParticipantModel = Backbone.Model.extend({
+            urlRoot:"http://localhost:3000/api/participant",
+            defaults:{
+
+            },
+
+            // Defines validation options (see Backbone-Validation)
+            validation:{
+                firstname:{
+                    required:true
+                },
+                lastname:{
+                    required:true
+                },
+                email:{
+                    required:false,
+                    pattern:'email'
+                }
+            },
+
+            initialize:function () {
+            }
+
+        });
+        return ParticipantModel;
+
+    });
+
+**Vue** : initialisation et utilisation ::
+
+    initialize:function () {
+
+        ...
+
+        // allow backbone-validation view callbacks (for error display)
+        Backbone.Validation.bind(this);
+
+        ...
+    },
+
+    ...
+
+    /**
+     * Save the current participant (update or create depending of the existence of a valid model.id)
+     */
+    saveParticipant:function () {
+
+        // build array of form attributes to refresh model
+        var attributes = {};
+        this.$el.find("form input[type!='submit']").each(function (index, value) {
+            attributes[value.name] = value.value;
+            this.model.set(value.name, value.value);
+        }.bind(this));
+
+        // save model if its valid, display alert otherwise
+        if (this.model.isValid()) {
+            this.model.save(null, {
+                success:this.onSaveSuccess.bind(this),
+                error:this.onSaveError.bind(this)
+            });
+        }
+        else {
+            Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Fix validation errors and try again', 'alert-warning']);
+        }
+    },
+
+Et enfin, globalement, extension des callbacks pour mise à jour des erreurs de validation pour un formulaire avec `Twitter Bootstrap`_
+
+app.js::
+
+    /**
+     * Backbone Validation extension: Defines custom callbacks for valid and invalid
+     * model attributes
+     */
+    _.extend(Backbone.Validation.callbacks, {
+        valid:function (view, attr, selector) {
+
+            // find matching form input and remove error class and text if any
+            var attrSelector = '[' + selector + '~=' + attr + ']';
+            view.$(attrSelector).parent().parent().removeClass('error');
+            view.$(attrSelector + ' + span.help-inline').text('');
+        },
+        invalid:function (view, attr, error, selector) {
+
+            // find matching form input and add error class and text error
+            var attrSelector = '[' + selector + '~=' + attr + ']';
+            view.$(attrSelector).parent().parent().addClass('error');
+            view.$(attrSelector + ' + span.help-inline').text(error);
+        }
+    });
 
 
 Query parameter support : Backbone Query Parameters
@@ -186,3 +343,6 @@ Multiple routers
 .. _Underscore.js: http://underscorejs.org/
 .. _Handlebars: https://github.com/wycats/handlebars.js
 .. _Backbone.js: http://backbonejs.org/
+.. _backbone-forms: https://github.com/powmedia/backbone-forms
+.. _backbone.validation: https://github.com/thedersen/backbone.validation
+.. _Twitter Bootstrap: http://twitter.github.com/bootstrap/
