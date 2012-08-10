@@ -642,8 +642,8 @@ fonctionnalité (malgré des demandes similaires sur les mailings lists) ...
 
 J'ai donc du twicker un peu et utiliser, en lieu et place du `forEach`, la fonction `map` qui renvoie, elle, un tableau
 de résultats dans lequel je peux enregistrer les succes. Le paramètre error du callback final ne peut être utilisé sous
-peine de voir l'ensemble des appels stoppé. Le callback est donc systématiquement appelé avec un parametre err à `null`,
-le modèle en cas de succès et null en cas d'echec. Je peux ainsi en déduire le nombre d'erreurs sans pour autant
+peine de voir l'ensemble des appels stoppé. Le callback est donc systématiquement appelé avec un paramètre err à `null`
+et un wrapper de l'objet associé à un type `success`ou `error`. Je peux ainsi en déduire le nombre d'erreurs sans pour autant
 interrompre mes traitements :
 
     /**
@@ -694,11 +694,9 @@ interrompre mes traitements :
         this.emptyCollection();
 
         $.each(results, function (index, result) {
-
             if (result.type == "error") {
                 this.addToCollection(result.elem.type, result.elem.id);
             }
-
         }.bind(this));
 
         var finalCollectionLength = this.countElements(this.collection);
@@ -715,11 +713,9 @@ interrompre mes traitements :
 
         // save collection
         this.storeInLocalStorage();
-
         this.render();
 
         Pubsub.publish(Events.DELETIONS_CONFIRMED);
-
     },
 
 Le code est ainsi **beaucoup plus élégant, avec beaucoup moins de boilerplate**.
