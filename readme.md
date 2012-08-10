@@ -583,47 +583,6 @@ mais ne s'execute que si plus aucun callback ne reste à appeler. Cela donne :
         }
     },
 
-    /**
-     * Handles errors and reintegrate elements ids that could not be deleted into the main collection
-     */
-    reintegrateErrors:function () {
-
-        var initialCollectionLength = this.countElements(this.collection);
-        this.emptyCollection();
-
-        var countErrors = this.countElements(this.errors);
-        if (countErrors != 0) {
-
-            var self = this;
-
-            // each element in error is added to main collection in order to keep it synchonized with server
-            // state
-            $.each(this.errors, function (type, idArray) {
-                $.each(idArray, function (index, model) {
-                    self.addToCollection(type, model.id);
-                });
-            });
-
-            // adapt error messages
-            if (countErrors == initialCollectionLength) {
-                Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'Error occured while deleting these elements', 'alert-error']);
-            }
-            else {
-                Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Error occured while deleting some elements', 'alert-warning']);
-            }
-        }
-        else {
-            Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Elements successfully deleted', 'alert-success']);
-        }
-
-        // save collection
-        this.storeInLocalStorage();
-
-        this.render();
-
-        Pubsub.publish(Events.DELETIONS_CONFIRMED);
-    },
-
 C'est fonctionnel mais c'est quane même ** beaucoup de boilerplate** !!!
 
 Suite à des conseils avisés, je me suis donc intéressé à la lib **[Async][async]**. Cette lib propose un ensemble de
@@ -651,13 +610,7 @@ interrompre mes traitements :
      */
     deleteElements:function () {
 
-        var elements = [];
-
-        $.each(this.collection, function (type, idArray) {
-            $.each(idArray, function (index, currentId) {
-                elements.push({type:type, id:currentId, index:index});
-            }.bind(this));
-        }.bind(this));
+        ...
 
         async.map(elements, this.deleteFromServer.bind(this), this.afterRemove.bind(this));
     },
@@ -690,32 +643,8 @@ interrompre mes traitements :
      */
     afterRemove:function (err, results) {
 
-        var initialCollectionLength = this.countElements(this.collection);
-        this.emptyCollection();
-
-        $.each(results, function (index, result) {
-            if (result.type == "error") {
-                this.addToCollection(result.elem.type, result.elem.id);
-            }
-        }.bind(this));
-
-        var finalCollectionLength = this.countElements(this.collection);
-
-        if (finalCollectionLength == 0) {
-            Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Elements successfully deleted', 'alert-success']);
-        }
-        else if (finalCollectionLength == initialCollectionLength) {
-            Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'Error occurred while deleting these elements', 'alert-error']);
-        }
-        else {
-            Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Error occurred while deleting some elements', 'alert-warning']);
-        }
-
-        // save collection
-        this.storeInLocalStorage();
-        this.render();
-
-        Pubsub.publish(Events.DELETIONS_CONFIRMED);
+        // no more test
+        ...
     },
 
 Le code est ainsi **beaucoup plus élégant, avec beaucoup moins de boilerplate**.
