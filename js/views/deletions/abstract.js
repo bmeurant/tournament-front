@@ -56,19 +56,19 @@ define([
         /**
          * Add a given element to the current collection if not already contained
          *
-         * @param type type of the element to add
+         * @param elemType type of the element to add
          * @param id id of the element to add
          */
-        addToCollection:function (type, id) {
+        addToCollection:function (elemType, id) {
 
-            // initialize collection type hash key if not exists
-            if (!this.collection[type]) {
-                this.collection[type] = [];
+            // initialize collection elemType hash key if not exists
+            if (!this.collection[elemType]) {
+                this.collection[elemType] = [];
             }
 
             // if the collection does not already contains the element, add it.
-            if (this.collection[type].indexOf(id) < 0) {
-                this.collection[type].push(id);
+            if (this.collection[elemType].indexOf(id) < 0) {
+                this.collection[elemType].push(id);
             }
         },
 

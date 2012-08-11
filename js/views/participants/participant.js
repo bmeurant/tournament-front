@@ -18,6 +18,7 @@ define([
      */
     return Backbone.View.extend({
 
+        viewType: 'participant',
         template:Handlebars.compile(participantTemplate),
         miniatureTemplate:Handlebars.compile(miniatureTemplate),
 
@@ -40,9 +41,9 @@ define([
          * Initialize view
          *
          * @param id id of the participant
-         * @param type type of the main view
+         * @param viewType main view type
          */
-        initialize:function (id, type) {
+        initialize:function (id, viewType) {
 
             this.$el = $("<div>").addClass("row");
             this.el = this.$el.get(0);
@@ -50,7 +51,7 @@ define([
             // manually bind this event because Backbone does not trigger events directly bind on el !
             this.$el.on("dragstart", this.dragStartHandler.bind(this));
 
-            this.type = type;
+            this.viewType = viewType;
             this.model = new Participant();
             this.model.id = id;
 
@@ -62,7 +63,7 @@ define([
             }
 
             // create sub navigation component
-            this.navigationView = new NavigationView(this.model.id, this.type);
+            this.navigationView = new NavigationView(this.model.id, this.viewType);
 
             this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this)));
@@ -156,7 +157,7 @@ define([
 
             this.renderViews();
 
-            Pubsub.publish(Events.VIEW_CHANGED, [this.type]);
+            Pubsub.publish(Events.VIEW_CHANGED, [this.viewType, this.viewType]);
         },
 
         /**
@@ -171,7 +172,7 @@ define([
                 this.initializeLinkedViews();
                 this.renderLinkedViews();
                 // allow css transitions between linked views
-                this.$el.find('#view').addClass('linked-views').css('margin-left', -(this.linkedViewsTypes.indexOf(this.type) * (940 + 20 + 50)) + "px");
+                this.$el.find('#view').addClass('linked-views').css('margin-left', -(this.linkedViewsTypes.indexOf(this.viewType) * (940 + 20 + 50)) + "px");
             }
             else {
                 this.renderMainView();
@@ -187,7 +188,7 @@ define([
          * @return {Boolean} true if current main view is linked to others views
          */
         mainIsLinkedView:function () {
-            return this.linkedViewsTypes.indexOf(this.type) >= 0;
+            return this.linkedViewsTypes.indexOf(this.viewType) >= 0;
         },
 
         renderMainView:function () {
@@ -197,7 +198,7 @@ define([
 
         renderLinkedViews:function () {
             // get index of current main view
-            var mainIndex = this.linkedViewsTypes.indexOf(this.type);
+            var mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
 
             // retrieves successively linked instances and render each one
             if (this.linkedViewsInstances) {
@@ -221,7 +222,7 @@ define([
             }
 
             // instantiates view depending on its type
-            switch (this.type) {
+            switch (this.viewType) {
                 case 'details':
                     this.mainView = new DetailsView(this.model);
                     break;
@@ -242,7 +243,7 @@ define([
 
             // initialize instances container and add main view instance on its index
             this.linkedViewsInstances = [];
-            var indexOfMainView = this.linkedViewsTypes.indexOf(this.type);
+            var indexOfMainView = this.linkedViewsTypes.indexOf(this.viewType);
 
             if (indexOfMainView < 0) {
                 return;
@@ -328,12 +329,12 @@ define([
         /**
          * Handles a main view change
          *
-         * @param type main view type to render
+         * @param viewType main view type to render
          */
-        changeParticipantView:function (type) {
+        changeParticipantView:function (viewType) {
 
-            var oldType = this.type;
-            this.type = type;
+            var oldType = this.viewType;
+            this.viewType = viewType;
             var mainIndex = this.linkedViewsTypes.indexOf(oldType);
 
             // unbind current main view
@@ -345,7 +346,7 @@ define([
             var updated = this.linkedViewsInstances[mainIndex].updated;
 
             // retrieve and bind new main view
-            mainIndex = this.linkedViewsTypes.indexOf(this.type);
+            mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
             if (this.linkedViewsInstances[mainIndex].initBindings) {
                 this.linkedViewsInstances[mainIndex].initBindings();
             }
@@ -357,7 +358,7 @@ define([
             }
 
             // display new view
-            this.$el.find('.view-elem#' + this.type).removeClass("hidden");
+            this.$el.find('.view-elem#' + this.viewType).removeClass("hidden");
 
             // hide navigation bar during transition because of some potential bugs
             this.$el.find('#navigation .nav-pills').addClass("hidden");
@@ -365,7 +366,7 @@ define([
             // register callbacks executed after css transition
             this.addTransitionCallbacks(this.$el.find('#view'), this.$el.find('.view-elem#' + oldType));
 
-            Pubsub.publish(Events.VIEW_CHANGED, [this.type]);
+            Pubsub.publish(Events.VIEW_CHANGED, [this.viewType, this.viewType]);
 
             // perform transition
             this.$el.find('#view').addClass('slide').css('margin-left', -(mainIndex * (940 + 20 + 50)) + "px");
@@ -396,7 +397,7 @@ define([
             this.$el.find('#navigation .nav-pills').removeClass("hidden");
 
             // change url
-            window.history.pushState(null, "Tournament", "/participant/" + this.model.id + this.linkedViewsURLFragment[this.linkedViewsTypes.indexOf(this.type)]);
+            window.history.pushState(null, "Tournament", "/participant/" + this.model.id + this.linkedViewsURLFragment[this.linkedViewsTypes.indexOf(this.viewType)]);
 
             // give focus to first input if exists
             this.$el.find("form input:not(:disabled)").first().focus();
@@ -413,7 +414,7 @@ define([
          */
         precedentHandler:function () {
             if (this.mainIsLinkedView()) {
-                var mainIndex = this.linkedViewsTypes.indexOf(this.type);
+                var mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
 
                 if (mainIndex > 0) {
                     var newType = this.linkedViewsTypes[mainIndex - 1];
@@ -427,7 +428,7 @@ define([
          */
         nextHandler:function () {
             if (this.mainIsLinkedView()) {
-                var mainIndex = this.linkedViewsTypes.indexOf(this.type);
+                var mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
 
                 if (mainIndex < this.linkedViewsTypes.length - 1) {
                     var newType = this.linkedViewsTypes[mainIndex + 1];

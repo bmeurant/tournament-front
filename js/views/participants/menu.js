@@ -9,6 +9,8 @@ define([
 
     return Backbone.View.extend({
 
+        viewType:'participant',
+
         // Cache the template function for a single item.
         template:Handlebars.compile(menuTemplate),
 
@@ -33,26 +35,29 @@ define([
             this.el = this.$el.get(0);
 
             // default type
-            this.type = "";
+            this.viewType = "";
 
             this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ADD_CALLED, this.addElement.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.LIST_CALLED, this.backToListElement.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.ECHAP_CALLED, this.backToElementHome.bind(this)));
 
-            Handlebars.registerHelper('hidden', function (type) {
-                return _.indexOf(this.actions[this.type], type) < 0 ? "hidden" : "";
+            Handlebars.registerHelper('hidden', function (viewType) {
+                return _.indexOf(this.actions[this.viewType], viewType) < 0 ? "hidden" : "";
             }.bind(this));
         },
 
         /**
          * Handles main view changed by re-rendering this menu
          *
-         * @param type main view type
+         * @param elemType type of the element managed by the main view
+         * @param viewType main view type
          */
-        onViewChanged:function (type) {
-            this.type = type;
-            this.render();
+        onViewChanged:function (elemType, viewType) {
+            if (elemType == this.viewType) {
+                this.viewType = viewType;
+                this.render();
+            }
         },
 
         /**

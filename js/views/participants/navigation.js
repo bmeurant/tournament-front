@@ -27,11 +27,11 @@ define([
          * Initialize view
          *
          * @param id id of the participant
-         * @param type type of the main view
+         * @param viewType type of the main view
          */
-        initialize:function (id, type) {
+        initialize:function (id, viewType) {
             this.id = id;
-            this.type = type;
+            this.viewType = viewType;
             this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.updatePills.bind(this)));
         },
 
@@ -45,33 +45,34 @@ define([
             event.preventDefault();
 
             // get asked main view type and, if different of the current one, ask for a change view
-            var type = event.target.id;
+            var viewType = event.target.id;
 
-            if (this.type != type) {
-                this.type = type;
-                Pubsub.publish(Events.CHANGE_VIEW, [type]);
+            if (this.viewType != viewType) {
+                this.viewType = viewType;
+                Pubsub.publish(Events.CHANGE_VIEW, [viewType]);
                 Pubsub.publish(Events.REMOVE_ALERT);
             }
         },
 
         render:function () {
-            var navigable = ((this.type == 'details') || (this.type == 'edit'));
-            this.$el.html(this.template({id:this.id, navigable: navigable, type:this.type}));
+            var navigable = ((this.viewType == 'details') || (this.viewType == 'edit'));
+            this.$el.html(this.template({id:this.id, navigable: navigable, type:this.viewType}));
             return this;
         },
 
         /**
          * update navigation bar depending on the main view type
          *
-         * @param type main view type
+         * @param elemType type of the element managed by the view
+         * @param viewType main view type
          */
-        updatePills:function (type) {
+        updatePills:function (elemType, viewType) {
 
             // clear pills
             $('ul.nav-pills li').removeClass('active');
 
             // active the current type
-            $('ul.nav-pills li > a#' + type).parent().addClass('active');
+            $('ul.nav-pills li > a#' + viewType).parent().addClass('active');
         }
 
     });

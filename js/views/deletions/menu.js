@@ -38,10 +38,6 @@ define([
             this.$el = $("<ul>").addClass("nav");
             this.el = this.$el.get(0);
 
-            // Default type
-            this.type = "no";
-
-
             // Register PubSub bindings
             this.handlers.push(Pubsub.subscribe(Events.DRAG_START, this.onDragStart.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.DRAG_END, this.onDragEnd.bind(this)));
@@ -57,14 +53,14 @@ define([
 
         /**
          * Redraw deletions menu when main view change
-         * @param type type of the main view
+         * @param elemType type of the element managed by the main view
+         * @param viewType type of the main view
          */
-        onViewChanged:function (type) {
-            this.type = type;
+        onViewChanged:function (elemType, viewType) {
             this.render();
 
             // if the new type is not managed by the view, hide it
-            if (this.acceptedTypes.indexOf(type) < 0) {
+            if (this.acceptedTypes.indexOf(viewType) < 0) {
                 this.$el.find(".delete-menu.drop-zone").addClass("hidden");
             }
         },
@@ -79,12 +75,12 @@ define([
         /**
          * Remove a given element from the list of elements to delete and from the current view
          *
-         * @param type type of the current element
+         * @param elemType type of the current element
          * @param id id of the current element
          */
-        deleteElem:function (type, id) {
+        deleteElem:function (elemType, id) {
             this.initCollection();
-            this.addToCollection(type, id);
+            this.addToCollection(elemType, id);
             this.storeInLocalStorage();
             this.renderDels();
 
@@ -108,40 +104,40 @@ define([
 
             // get transfered data
             var id = event.originalEvent.dataTransfer.getData('id');
-            var type = event.originalEvent.dataTransfer.getData('type');
+            var elemType = event.originalEvent.dataTransfer.getData('elemType');
 
             // handles element deletion or ignore any other dropped element
             if ((id != null) && (id != "")) {
-                this.deleteElement(type, id);
+                this.deleteElement(elemType, id);
                 Pubsub.publish(Events.REMOVE_ALERT);
             }
 
-            this.onDragEnd(type, id);
+            this.onDragEnd(elemType, id);
         },
 
         /**
          * Delete the given element
          *
-         * @param type type of the element to delete
+         * @param elemType type of the element to delete
          * @param id id of the element to delete
          */
-        deleteElement:function (type, id) {
+        deleteElement:function (elemType, id) {
             this.initCollection();
-            this.addToCollection(type, id);
+            this.addToCollection(elemType, id);
             this.storeInLocalStorage();
         },
 
         /**
          * Refresh view after drop
          *
-         * @param type type of the deleted element
+         * @param elemType type of the deleted element
          * @param id if of the deleted element
          */
-        onDragEnd:function (type, id) {
+        onDragEnd:function (elemType, id) {
             $('.drop-zone').removeClass('emphasize');
             this.clearDropZone();
             this.renderDels();
-            Pubsub.publish(Events.ELEM_DELETED_FROM_BAR, [id, type]);
+            Pubsub.publish(Events.ELEM_DELETED_FROM_BAR, [id, elemType]);
         },
 
         /**

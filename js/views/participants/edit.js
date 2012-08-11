@@ -13,7 +13,7 @@ define([
 
         template:Handlebars.compile(participantEditTemplate),
         handlers:[],
-        type:'edit',
+        viewType:'edit',
 
         events:{
             "drop .well":"dropHandler",

@@ -19,7 +19,7 @@ define([
             "click a":"changePage"
         },
 
-        type:'pagination',
+        viewType:'pagination',
 
         initialize:function () {
 

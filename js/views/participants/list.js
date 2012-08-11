@@ -14,6 +14,7 @@ define([
 
     return Backbone.View.extend({
 
+        viewType: 'participant',
         template:Handlebars.compile(participantListTemplate),
         containerTemplate:Handlebars.compile(participantListContainerTemplate),
         miniatureTemplate:Handlebars.compile(participantMiniatureTemplate),
@@ -100,7 +101,7 @@ define([
             // get id of the dragged element and set transfer data
             var id = event.currentTarget.getAttribute('id');
             event.originalEvent.dataTransfer.setData('id', id);
-            event.originalEvent.dataTransfer.setData('type', 'participant');
+            event.originalEvent.dataTransfer.setData('elemType', 'participant');
 
             // get corresponding model
             var participant = this.getModel(id);
@@ -159,7 +160,7 @@ define([
 
             window.history.pushState(null, "Tournament", "/participants" + ((this.collection.info().currentPage != 1) ? "?page=" + this.collection.info().currentPage : ""));
 
-            this.handlers.push(Pubsub.publish(Events.VIEW_CHANGED, ['list']));
+            this.handlers.push(Pubsub.publish(Events.VIEW_CHANGED, [this.viewType, 'list']));
         },
 
         /**

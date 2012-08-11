@@ -17,7 +17,7 @@ define([
 
         },
 
-        type:'details',
+        viewType:'details',
 
         initialize:function (model) {
             this.model = model;

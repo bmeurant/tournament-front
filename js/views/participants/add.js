@@ -6,7 +6,7 @@ define([
 ], function ($, _, Backbone, EditView) {
 
     return EditView.extend({
-        type:'add',
+        viewType:'add',
 
         initialize:function () {
 
