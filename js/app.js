@@ -9,9 +9,14 @@ define([
     'views/help/shortcuts',
     'views/footer',
     'controllers/keyboard',
+    'handlebars',
     'handlebars.helpers'
-], function ($, _, BackboneExtension, BackboneValidation, Router, HeaderView, AlertsView, ShortcutsView, FooterView, KeyboardController) {
+], function ($, _, BackboneExtension, BackboneValidation, Router, HeaderView, AlertsView, ShortcutsView, FooterView, KeyboardController, Handlebars) {
         var initialize = function () {
+
+            Handlebars.registerHelper('photo_link', function (picture_url) {
+                return "http://localhost:3000/api" + picture_url;
+            });
 
             // Define global singleton views
             classes.Views.HeaderView = new HeaderView();

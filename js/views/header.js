@@ -10,14 +10,14 @@ define([
     'pubsub'
 ], function ($, _, Backbone, Handlebars, bdd, headerTemplate, DeletionsMenuView,  SearchMenuView, Pubsub) {
 
-    var HeaderView = Backbone.View.extend({
+    return Backbone.View.extend({
 
         // Cache the template function for a single item.
         template:Handlebars.compile(headerTemplate),
 
         events:{
             "click div":"menuClicked",
-            "click .navbar-search .dropdown-menu li a":"toggleSearchOption",
+            "click .navbar-search .dropdown-menu li a":"toggleSearchOption"
         },
 
         handlers:[],
@@ -110,5 +110,4 @@ define([
         }
 
     });
-    return HeaderView;
 });

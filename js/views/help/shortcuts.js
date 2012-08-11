@@ -8,7 +8,7 @@ define([
     'pubsub'
 ], function ($, _, Backbone, Handlebars, BootstrapModal, shortcutsTemplate, Pubsub) {
 
-    var HelpView = Backbone.View.extend({
+    return Backbone.View.extend({
 
         // Cache the template function for a single item.
         template:Handlebars.compile(shortcutsTemplate),
@@ -36,5 +36,4 @@ define([
         }
 
     });
-    return HelpView;
 });

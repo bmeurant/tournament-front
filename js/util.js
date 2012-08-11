@@ -161,10 +161,7 @@ define([
                 return false;
             }
 
-            if (intValue <= 0) {
-                return false;
-            }
-            return true;
+            return (intValue <= 0);
         }
 
     };

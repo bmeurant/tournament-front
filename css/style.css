@@ -237,7 +237,7 @@ body input, textarea, select, .uneditable-input {
     line-height: 13px;
 }
 
-.dropable, .navbar .nav .active a:not(.badge).dropable, .navbar .nav .active a:hover:not(.badge).dropable {
+.droppable, .navbar .nav .active a:not(.badge).droppable, .navbar .nav .active a:hover:not(.badge).droppable {
     background-color: #7bb3cf;
 }
 

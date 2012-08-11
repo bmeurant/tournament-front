@@ -11,7 +11,8 @@ define([
     'text!templates/participants/miniature.html',
     'pubsub'
 ], function ($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, participantListContainerTemplate, participantListTemplate, PaginationView, participantMiniatureTemplate, Pubsub) {
-    var ParticipantListView = Backbone.View.extend({
+
+    return Backbone.View.extend({
 
         template:Handlebars.compile(participantListTemplate),
         containerTemplate:Handlebars.compile(participantListContainerTemplate),
@@ -71,7 +72,7 @@ define([
 
             this.initDeleted();
 
-            // reinit collection to force refresh
+            // reinitialize collection to force refresh
             this.collection = new ParticipantsCollection();
 
             // get the participants collection from server
@@ -81,7 +82,7 @@ define([
                         this.collection.goTo(this.askedPage);
                         this.showTemplate(partials);
                     }.bind(this),
-                    error:function (collection, response) {
+                    error:function () {
                         Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
                     }
                 });
@@ -94,7 +95,7 @@ define([
          * @param event event raised
          */
         dragStartHandler:function (event) {
-            event.originalEvent.dataTransfer.effectAllowed = 'move'; // only dropEffect='copy' will be dropable
+            event.originalEvent.dataTransfer.effectAllowed = 'move'; // only dropEffect='copy' will be droppable
 
             // get id of the dragged element and set transfer data
             var id = event.currentTarget.getAttribute('id');
@@ -276,6 +277,4 @@ define([
         }
 
     });
-
-    return ParticipantListView;
 });

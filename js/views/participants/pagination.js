@@ -9,7 +9,7 @@ define([
     'pubsub'
 ], function ($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, paginationTemplate, Pubsub) {
 
-    var PaginationView = Backbone.View.extend({
+    return Backbone.View.extend({
 
         template:Handlebars.compile(paginationTemplate),
 
@@ -77,7 +77,4 @@ define([
         }
 
     });
-
-    return PaginationView;
-})
-;
+});

@@ -7,7 +7,7 @@ define([
     'pubsub'
 ], function ($, _, Backbone, Handlebars, footerTemplate, Pubsub) {
 
-    var FooterView = Backbone.View.extend({
+    return Backbone.View.extend({
 
         // Cache the template function for a single item.
         template:Handlebars.compile(footerTemplate),
@@ -33,5 +33,4 @@ define([
         }
 
     });
-    return FooterView;
 });

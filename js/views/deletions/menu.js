@@ -8,7 +8,8 @@ define([
     'models/participant',
     'pubsub'
 ], function ($, _, Backbone, Handlebars, deletionsMenuTemplate, AbstractView, Participant, Pubsub) {
-    var DeletionsMenuView = AbstractView.extend({
+
+    return AbstractView.extend({
 
         menuTemplate:Handlebars.compile(deletionsMenuTemplate),
         nbDelsSelector:".nb-dels",
@@ -173,16 +174,16 @@ define([
          * Strong emphasize of drop zone (example: on drag over)
          */
         emphasizeDropZone:function () {
-            $('.drop-zone').addClass("dropable");
-            $('.drop-zone a').addClass("dropable");
+            $('.drop-zone').addClass("droppable");
+            $('.drop-zone a').addClass("droppable");
         },
 
         /**
          * Remove strong emphasize of drop zone (exemple: on drag leave)
          */
         clearDropZone:function () {
-            $('.drop-zone').removeClass("dropable");
-            $('.drop-zone a').removeClass("dropable");
+            $('.drop-zone').removeClass("droppable");
+            $('.drop-zone a').removeClass("droppable");
         },
 
         /**
@@ -242,7 +243,7 @@ define([
                 }
 
                 // callback is called with null error parameter because otherwise it breaks the
-                // loop and top on first error :-(
+                // loop and stop on first error :-(
                 deleteCallback(null, {type:"error", elem:elem});
             }.bind(this));
         },
@@ -288,7 +289,7 @@ define([
         },
 
         /**
-         * Handles deletions cancelation (example: cancel button clicked)
+         * Handles deletions cancellation (example: cancel button clicked)
          *
          * @param event event raised
          */
@@ -325,6 +326,4 @@ define([
         }
 
     });
-
-    return DeletionsMenuView;
 });

@@ -16,7 +16,7 @@ define([
     /**
      * Manage global view surrounding all unitary participants views
      */
-    var ParticipantView = Backbone.View.extend({
+    return Backbone.View.extend({
 
         template:Handlebars.compile(participantTemplate),
         miniatureTemplate:Handlebars.compile(miniatureTemplate),
@@ -112,7 +112,7 @@ define([
         dragStartHandler:function (event) {
 
             // set transfer data
-            event.originalEvent.dataTransfer.effectAllowed = 'move'; // only dropEffect='copy' will be dropable
+            event.originalEvent.dataTransfer.effectAllowed = 'move'; // only dropEffect='copy' will be droppable
             event.originalEvent.dataTransfer.setData('id', this.model.id);
             event.originalEvent.dataTransfer.setData('type', 'participant');
 
@@ -205,7 +205,7 @@ define([
                     var $newView = this.linkedViewsInstances[i].render().$el;
                     $newView.appendTo(this.$el.find('#view #' + this.linkedViewsInstances[i].type));
 
-                    // it its main view, show it. Otherwise it keeped hidden
+                    // it its main view, show it. Otherwise it kept hidden
                     if (i == mainIndex) {
                         this.$el.find('div#' + this.linkedViewsInstances[i].type).removeClass("hidden");
                     }
@@ -220,7 +220,7 @@ define([
                 this.mainView.close();
             }
 
-            // instanciate it depending on its type
+            // instantiates view depending on its type
             switch (this.type) {
                 case 'details':
                     this.mainView = new DetailsView(this.model);
@@ -287,7 +287,7 @@ define([
                 linkedViewInstance.removeBindings.apply(linkedViewInstance);
             }
 
-            // add the view to global conatiner
+            // add the view to global container
             this.linkedViewsInstances[i] = linkedViewInstance;
         },
 
@@ -437,7 +437,4 @@ define([
         }
 
     });
-
-    return ParticipantView;
-})
-;
+});

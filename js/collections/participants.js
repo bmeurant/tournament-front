@@ -9,17 +9,7 @@ define([
     /**
      * Collection of Participant model objects
      */
-    /*var participantsCollection = Backbone.Collection.extend({
-     model:participantModel,
-     url:"http://localhost:3000/api/participants",
-
-     initialize:function () {
-
-     }
-
-     });*/
-
-    var participantsCollection = Backbone.Paginator.clientPager.extend({
+    return Backbone.Paginator.clientPager.extend({
 
         model:participantModel,
         paginator_core:{
@@ -53,7 +43,4 @@ define([
             return response;
         }
     });
-
-
-    return participantsCollection;
 });

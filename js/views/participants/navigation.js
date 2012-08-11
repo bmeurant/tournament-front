@@ -11,7 +11,7 @@ define([
     /**
      * Manage sub view to navigate between participants details and edit views
      */
-    var ParticipantNavigationView = Backbone.View.extend({
+    return Backbone.View.extend({
 
         template:Handlebars.compile(navigationTemplate),
 
@@ -33,9 +33,6 @@ define([
             this.id = id;
             this.type = type;
             this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.updatePills.bind(this)));
-
-            var self = this;
-
         },
 
         /**
@@ -78,6 +75,4 @@ define([
         }
 
     });
-
-    return ParticipantNavigationView;
 });

@@ -9,7 +9,7 @@ define([
      * deletion views
      *
      */
-    var AbstractDeletionView = Backbone.View.extend({
+    return Backbone.View.extend({
 
         events:{
         },
@@ -40,7 +40,7 @@ define([
         },
 
         /**
-         * Retrieve collection from local stotage
+         * Retrieve collection from local storage
          */
         getFromLocalStorage:function () {
             this.collection = JSON.parse(localStorage.getItem('deletedElements'));
@@ -85,6 +85,4 @@ define([
         }
 
     });
-
-    return AbstractDeletionView;
 });

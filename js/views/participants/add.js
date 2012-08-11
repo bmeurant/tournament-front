@@ -5,7 +5,7 @@ define([
     'views/participants/edit'
 ], function ($, _, Backbone, EditView) {
 
-    var AddView = EditView.extend({
+    return EditView.extend({
         type:'add',
 
         initialize:function () {
@@ -26,7 +26,4 @@ define([
             Backbone.history.navigate('/participant/' + this.model.id + "/edit", true);
         }
     });
-
-
-    return AddView;
 });

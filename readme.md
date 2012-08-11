@@ -176,7 +176,7 @@ J'ai commencé par tester **[Backbone Forms][backbone-forms]** qui semble un tr�
 des champs du model avec leurs contraintes et le formulaire est auto généré.
 
 Cela peut sembler prometteur (même si je ne suis pas fan de ces approches 'scaffolding' et encore moins lorsqu'elles sont
-dynamiques. Mais le problème c'est que ces deux outils sont indissociables et qu'en essayant de customiser mon formulaire
+dynamiques). Mais le problème c'est que ces deux outils sont indissociables et qu'en essayant de customiser mon formulaire
 j'ai atteint très rapidement les limites de la personnalisation : Je n'ai pas pu générer un formulaire sur deux colonnes
 (peut-être possible mais très compliqué). Il est par exemple rigoureusement impossible de traiter deux fieldsets du même
 formulaire de manière différente sans surcharger le coeur de la lib.
@@ -190,13 +190,13 @@ générer des formulaires dynamiquement mais pas du tout adapté à une personna
 Je me suis donc tourné vers **[Backbone Validation][backbone-validation]** qui m'a bien plus convaincu. Cette lib se concentre en effet **uniquement
 sur l'aspect validation** et nous laisse la main libre sur le formulaire. Cette approche me convient bien mieux, ne représente
 au final pas plus de travail que la customisation d'un formulaire auto-généré (voire moins) et n'impose **aucune limite**.
-La lib dispose d'un **nombre très important de validateurs built-in** et propose des **mécanismes de personnalidation et
+La lib dispose d'un **nombre très important de validateurs built-in** et propose des **mécanismes de personnalisation et
 d'extension** de validateurs efficaces.
 
 **[Backbone Validation][backbone-validation]** ne propose pas non plus de lien automatique entre le formulaire et le modèle et nous laisse le choix
 d'utiliser une lib dédiée ou d'implémenter nous, avant la validation, le traitement qui va récupérer les valeurs du formulaire
 pour les setter au modèle. Le fonctionnement de **[Backbone Validation][backbone-validation]** **s'inscrit parfaitement dans le workflow standard
-de** `Backbone.js`_ via les méthodes `validate` et `is valid`.
+de** **[Backbone][backbone]** via les méthodes `validate` et `is valid`.
 
 **Model** : définition des contraintes:
 
@@ -326,7 +326,7 @@ de** `Backbone.js`_ via les méthodes `validate` et `is valid`.
             this.model.set(value.name, value.value);
         }.bind(this));
 
-        // save model if its valid, display alert otherwise
+        // save model if it's valid, display alert otherwise
         if (this.model.isValid()) {
             this.model.save(null, {
                 success:this.onSaveSuccess.bind(this),
@@ -398,8 +398,8 @@ Grâce à cette lib, incluse une fois pour toute dans mon router principal, j'ai
 
     listParticipants:function (params) {
         ...
-        // creation de la vue via une fonction générique (cf. gestion des zombies et rendering)
-        // le contructeur de la vue prend un paramètre params
+        // création de la vue via une fonction générique (cf. gestion des zombies et rendering)
+        // le constructeur de la vue prend un paramètre params
         utils.showView($('#content'), ParticipantListView, [params]);
     },
 
@@ -529,14 +529,14 @@ comportement de l'outil et sa pertinence sur ce type de besoins.
 ---
 ### Liste d'appels asynchrones : Async.js
 
-Autre problématique récurrente : les appels asynchones successifs pour lesquels on souhaite disposer d'un
+Autre problématique récurrente : les appels asynchrones successifs pour lesquels on souhaite disposer d'un
 traitement final permettant d'afficher le résultat de l'ensemble des appels : nombre d'erreurs, tous successfull,
 etc.
 
-Basiquement, chaque appel asynchrone dispose d'un callback appelé à la fin de son traitement propre (succes ou erreur).
-Sans outillage, on est donc obligé de mettre en place un **comptage manuel des fonctions appellées et un décomptage lors
+Basiquement, chaque appel asynchrone dispose d'un callback appelé à la fin de son traitement propre (succès ou erreur).
+Sans outillage, on est donc obligé de mettre en place un **comptage manuel des fonctions appelées et un décompte lors
 de l'appel du callback de chacune d'entre elles**. Le callback final est alors appelé à la fin de chaque appel unitaire
-mais ne s'execute que si plus aucun callback ne reste à appeler. Cela donne :
+mais ne s'exécute que si plus aucun callback ne reste à appeler. Cela donne :
 
     /**
      * Effective deletion of all element ids stored in the collection
@@ -583,7 +583,7 @@ mais ne s'execute que si plus aucun callback ne reste à appeler. Cela donne :
         }
     },
 
-C'est fonctionnel mais c'est quane même ** beaucoup de boilerplate** !!!
+C'est fonctionnel mais c'est quand même ** beaucoup de boilerplate** !!!
 
 Suite à des conseils avisés, je me suis donc intéressé à la lib **[Async][async]**. Cette lib propose un ensemble de
 helpers pour effectuer des **traitements asynchrone en parallèle** et resynchroniser la fin de ces traitements via un callback
@@ -592,7 +592,7 @@ final.
 Cette lib est initialement destinée à un server nodeJs mais est également **implémentée côté browser**.
 
 Sur le papier, la méthode dont j'avais besoin était le `forEach`. Je me suis cependant rapidement confronté au problème
-suivant : tous les helpers de cette lib sont conçus pour tout arréter (et passer au callback final) à la première erreur.
+suivant : tous les helpers de cette lib sont conçus pour tout arrêter (et passer au callback final) à la première erreur.
 Or j'avais besoin d'exécuter toutes mes fonctions puis, qu'elles aient réussi ou échouer, de dresser un bilan à remonter
 à l'utilisateur.
 
@@ -600,7 +600,7 @@ Il n'existe malheureusement aucune option dans cette lib ni dans une autre (à m
 fonctionnalité (malgré des demandes similaires sur les mailings lists) ...
 
 J'ai donc du twicker un peu et utiliser, en lieu et place du `forEach`, la fonction `map` qui renvoie, elle, un tableau
-de résultats dans lequel je peux enregistrer les succes. Le paramètre error du callback final ne peut être utilisé sous
+de résultats dans lequel je peux enregistrer les succès. Le paramètre error du callback final ne peut être utilisé sous
 peine de voir l'ensemble des appels stoppé. Le callback est donc systématiquement appelé avec un paramètre err à `null`
 et un wrapper de l'objet associé à un type `success`ou `error`. Je peux ainsi en déduire le nombre d'erreurs sans pour autant
 interrompre mes traitements :
@@ -650,26 +650,26 @@ interrompre mes traitements :
 Le code est ainsi **beaucoup plus élégant, avec beaucoup moins de boilerplate**.
 
 Ainsi, malgré ce twick bien dommage, **je retiens quand même cette lib pour tout ce qui concerne un empilement d'appels
-asynchrone à parraléliser** - que l'on souhaite ou non disposer d'un callback final.
+asynchrone à paralléliser** - que l'on souhaite ou non disposer d'un callback final.
 
 ---
 Considérations d'architecture et questions ouvertes
 ---------------------------------------------------
 
 Pendant ce travail, j'ai eu successivement à résoudre un certain nombre de **problématiques d'architecture et de
-conception** ainsi qu'à **expérimenter différentes solutions et stratégies**. Suite à cela, j'ai finallement choisit,
+conception** ainsi qu'à **expérimenter différentes solutions et stratégies**. Suite à cela, j'ai finalement choisit,
 pour chaque problématique, un **pattern à privilégier**.
 
 Ces choix ainsi que les exemples associés sont décrits ci-dessous.
 
 Un certain nombre de **questions restent bien évidemment ouvertes** sans solution pleinement satisfaisante et
 nécessitent pour certaines, une meilleure compréhension de ma part des mécanismes sous-jacents de ces libs et
-notamment de `Backbone.js`_.
+notamment de **[Backbone][backbone]**.
 
 Alternatives, propositions et discussions sont bien évidemment bienvenues.
 
 ---
-### 'Intelligence' des routers
+### 'Intelligence' des routeurs
 
 ---
 ### Le problème des vues zombies
@@ -695,7 +695,7 @@ close nested views
 ### Helpers Handlebars
 
 ---
-### Routers multiples
+### Routeurs multiples
 
 [resthubjs]: http://resthub.org/2/backbone-stack.html "Resthub js"
 [underscore]: http://underscorejs.org/ "Underscore"

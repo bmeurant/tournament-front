@@ -13,7 +13,7 @@ define([
     /**
      * Main view for displaying deletions
      */
-    var DeletionsView = AbstractView.extend({
+    return AbstractView.extend({
 
             template:Handlebars.compile(deletionsTemplate),
             participantsTemplate:Handlebars.compile(participantTemplate),
@@ -46,11 +46,11 @@ define([
 
                 this.emptyJSONCollection();
 
-                Handlebars.registerHelper('if_deleted', function (id, options) {
+                Handlebars.registerHelper('if_deleted', function () {
                     return false;
                 });
 
-                Handlebars.registerHelper('disabled', function (id) {
+                Handlebars.registerHelper('disabled', function () {
                     return '';
                 });
 
@@ -69,10 +69,6 @@ define([
 
             /**
              * Populate and initialize properly instance collections in order to prepare rendering.
-             * This methods retrieve the elements id deletion list from local storage and build
-             * a new collection made of corresponding elements models from fetching server.
-             *
-             * @param callback function to call after population completion
              */
             populateCollection:function () {
 
@@ -134,7 +130,7 @@ define([
                 }
                 // there is at least on error
                 else if (successes.length < this.countElements(this.collection)) {
-                    Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Some participants could not be retrived', 'alert-warning']);
+                    Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Some participants could not be retrieved', 'alert-warning']);
                 }
 
                 this.showTemplate();
@@ -172,7 +168,7 @@ define([
                 event.preventDefault();
                 var idElem = event.currentTarget.getAttribute("id");
 
-                this.cancelDeletion(id);
+                this.cancelDeletion(idElem);
             },
 
             /**
@@ -189,22 +185,21 @@ define([
             /**
              * Cancel element deletion by removing it from current deletions collection and from the current view
              *
-             * @param id id of the element to delete
+             * @param idElem id of the element to delete
              */
             cancelDeletion:function (idElem) {
                 // get collection from local storage
                 this.initCollection();
 
                 // find and remove the element from the deletions collection
-                var self = this;
                 $.each(this.collection, function (type, idArray) {
                     $.each(idArray, function (index, id) {
                         if (id == idElem) {
-                            self.collection[type].splice(index, 1);
+                            this.collection[type].splice(index, 1);
                             return false;
                         }
-                    });
-                });
+                    }.bind(this));
+                }.bind(this));
 
                 // retrieve and save the currently selected element, if any
                 var $selected = utils.findSelected(this.$el, "li.thumbnail");
@@ -231,9 +226,5 @@ define([
                 utils.selectElement(this.$el, "li.thumbnail", "previous");
             }
 
-        })
-        ;
-
-    return DeletionsView;
-})
-;
+        });
+});

@@ -5,7 +5,8 @@ define([
     'handlebars',
     'text!templates/search/menu.html'
 ], function ($, _, Backbone, Handlebars, searchMenuTemplate) {
-    var SearchMenuView = Backbone.View.extend({
+
+    return Backbone.View.extend({
 
         menuTemplate:Handlebars.compile(searchMenuTemplate),
 
@@ -37,5 +38,4 @@ define([
 
     });
 
-    return SearchMenuView;
 });

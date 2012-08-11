@@ -51,7 +51,7 @@ define([
             this.bindings[this.Z] = this.cancelDeletions;
             this.bindings[this.P] = this.participants;
             this.bindings[this.T] = this.teams;
-            this.bindings[this.G] = this.gamesAndTurnaments;
+            this.bindings[this.G] = this.gamesAndTournaments;
             this.bindings[this.F] = this.find;
             this.bindings[this.ENTER] = this.enter;
             this.bindings[this.ECHAP] = this.echap;
@@ -158,7 +158,7 @@ define([
                 PubSub.publish(Events.TEAMS_HOME_CALLED, [event]);
         },
 
-        gamesAndTurnaments:function (event) {
+        gamesAndTournaments:function (event) {
             if (!this.targetIsInput(event))
                 PubSub.publish(Events.GT_HOME_CALLED, [event]);
         },

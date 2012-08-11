@@ -7,7 +7,7 @@ define([
     'text!templates/participants/details.html'
 ], function ($, _, Handlebars, Backbone, Participant, detailsTemplate) {
 
-    var ParticipantDetailsView = Backbone.View.extend({
+    return Backbone.View.extend({
 
         template:Handlebars.compile(detailsTemplate),
 
@@ -35,6 +35,5 @@ define([
 
     });
 
-    return ParticipantDetailsView;
 })
 ;

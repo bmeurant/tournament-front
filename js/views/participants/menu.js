@@ -7,7 +7,7 @@ define([
     'pubsub'
 ], function ($, _, Backbone, Handlebars, menuTemplate, Pubsub) {
 
-    var MenuView = Backbone.View.extend({
+    return Backbone.View.extend({
 
         // Cache the template function for a single item.
         template:Handlebars.compile(menuTemplate),
@@ -84,5 +84,4 @@ define([
         }
 
     });
-    return MenuView;
 });

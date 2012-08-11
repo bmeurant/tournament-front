@@ -9,10 +9,6 @@
     /**
      * Register global custom handlebars helpers
      */
-    Handlebars.registerHelper('photo_link', function (picture_url) {
-        return "http://localhost:3000/api" + picture_url;
-    });
-
     Handlebars.registerHelper('ifinline', function (value, returnVal) {
         return value ? returnVal : '';
     });

@@ -7,9 +7,9 @@ define([
     'text!templates/participants/edit.html',
     'backbone-validation',
     'pubsub'
-], function ($, _, Backbone, Handlebars, Participant, participantEditTemplate, BackoneValidation, Pubsub) {
+], function ($, _, Backbone, Handlebars, Participant, participantEditTemplate, BackboneValidation, Pubsub) {
 
-    var ParticipantEditView = Backbone.View.extend({
+    return Backbone.View.extend({
 
         template:Handlebars.compile(participantEditTemplate),
         handlers:[],
@@ -162,7 +162,7 @@ define([
 
             // if model pictureFile has changed, upload on server
             if (this.pictureFile) {
-                this.uploadFile(self.pictureFile, this.model.id,
+                this.uploadFile(this.pictureFile, this.model.id,
                     this.afterSave().bind(this)
                 );
             } else {
@@ -206,7 +206,7 @@ define([
             event.stopPropagation();
             event.preventDefault();
 
-            // get the tranfered file
+            // get the transfered file
             var e = event.originalEvent;
             e.dataTransfer.dropEffect = 'copy';
             this.pictureFile = e.dataTransfer.files[0];
@@ -266,6 +266,4 @@ define([
         }
 
     });
-
-    return ParticipantEditView;
 });
