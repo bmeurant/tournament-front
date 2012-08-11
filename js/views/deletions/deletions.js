@@ -143,7 +143,7 @@ define([
                 this.emptyJSONCollection();
                 this.populateCollection();
 
-                Pubsub.publish(Events.VIEW_CHANGED, ['none', 'deletions']);
+                Pubsub.publish(Events.VIEW_CHANGED, ['deletions', 'deletions']);
                 return this;
             },
 

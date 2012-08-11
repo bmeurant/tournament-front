@@ -5,9 +5,8 @@ define([
     'backbone-queryparams',
     'views/participants/list',
     'views/participants/participant',
-    'views/participants/menu',
     'views/deletions/deletions'
-], function ($, _, Backbone, BackboneQueryParams, ParticipantListView, ParticipantView, ParticipantsMenuView, DeletionsView) {
+], function ($, _, Backbone, BackboneQueryParams, ParticipantListView, ParticipantView, DeletionsView) {
 
     var AppRouter = Backbone.Router.extend({
         routes:{
@@ -23,35 +22,22 @@ define([
         },
 
         listParticipants:function (params) {
-            classes.Views.HeaderView.setMenu(ParticipantsMenuView);
-            classes.Views.HeaderView.selectMenuItem('element-menu');
             utils.showView($('#content'), ParticipantListView, [params]);
         },
 
         showParticipant:function (id) {
-            classes.Views.HeaderView.setMenu(ParticipantsMenuView);
-            classes.Views.HeaderView.selectMenuItem('element-menu');
             utils.showView($('#content'), ParticipantView, [id, 'details']);
         },
 
         editParticipant:function (id) {
-            classes.Views.HeaderView.setMenu(ParticipantsMenuView);
-            classes.Views.HeaderView.selectMenuItem('element-menu');
             utils.showView($('#content'), ParticipantView, [id, 'edit']);
         },
 
         addParticipant:function () {
-            classes.Views.HeaderView.setMenu(ParticipantsMenuView);
-            classes.Views.HeaderView.selectMenuItem('element-menu');
             utils.showView($('#content'), ParticipantView, [null, 'add']);
         },
 
         showDeletions:function () {
-            if (classes.Views.currentView) {
-                classes.Views.currentView.close();
-            }
-            classes.Views.HeaderView.clearMenu();
-            classes.Views.HeaderView.selectMenuItem('delete-menu');
             utils.showView($('#content'), DeletionsView, []);
         },
 

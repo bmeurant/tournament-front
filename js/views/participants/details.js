@@ -17,6 +17,7 @@ define([
 
         },
 
+        elemType: 'participant',
         viewType:'details',
 
         initialize:function (model) {

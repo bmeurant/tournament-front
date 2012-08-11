@@ -11,9 +11,11 @@ define([
 
     return Backbone.View.extend({
 
+        elemType: 'participant',
+        viewType:'edit',
+
         template:Handlebars.compile(participantEditTemplate),
         handlers:[],
-        viewType:'edit',
 
         events:{
             "drop .well":"dropHandler",

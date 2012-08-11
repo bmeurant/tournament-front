@@ -14,7 +14,7 @@ define([
 
     return Backbone.View.extend({
 
-        viewType: 'participant',
+        elemType: 'participant',
         template:Handlebars.compile(participantListTemplate),
         containerTemplate:Handlebars.compile(participantListContainerTemplate),
         miniatureTemplate:Handlebars.compile(participantMiniatureTemplate),
@@ -160,7 +160,7 @@ define([
 
             window.history.pushState(null, "Tournament", "/participants" + ((this.collection.info().currentPage != 1) ? "?page=" + this.collection.info().currentPage : ""));
 
-            this.handlers.push(Pubsub.publish(Events.VIEW_CHANGED, [this.viewType, 'list']));
+            Pubsub.publish(Events.VIEW_CHANGED, [this.elemType, 'list']);
         },
 
         /**

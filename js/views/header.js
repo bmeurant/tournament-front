@@ -7,11 +7,13 @@ define([
     'text!templates/header.html',
     'views/deletions/menu',
     'views/search/menu',
+    'views/participants/menu',
     'pubsub'
-], function ($, _, Backbone, Handlebars, bdd, headerTemplate, DeletionsMenuView,  SearchMenuView, Pubsub) {
+], function ($, _, Backbone, Handlebars, bdd, headerTemplate, DeletionsMenuView, SearchMenuView, ParticipantsMenuView, Pubsub) {
 
     return Backbone.View.extend({
 
+        menuElemType:"no",
         // Cache the template function for a single item.
         template:Handlebars.compile(headerTemplate),
 
@@ -37,9 +39,11 @@ define([
             this.handlers.push(Pubsub.subscribe(Events.TEAMS_HOME_CALLED, this.moveToTeamsHome.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.GT_HOME_CALLED, this.moveToGTHome.bind(this)));
             this.handlers.push(Pubsub.subscribe(Events.FIND_CALLED, this.focusOnSearch.bind(this)));
+            this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
 
             this.deletionMenu = new DeletionsMenuView();
             this.searchMenu = new SearchMenuView();
+
         },
 
         render:function () {
@@ -60,7 +64,7 @@ define([
             if (this.menuView)
                 this.menuView.close();
             this.menuView = new MenuView();
-            $('.actions-menu').html(this.menuView.render().el);
+            $('.actions-menu').html(this.menuView.el);
         },
 
         clearMenu:function () {
@@ -107,6 +111,31 @@ define([
             event.stopPropagation();
             event.preventDefault();
             $('#searchText').focus();
+        },
+
+        /**
+         * Handles main view changed by re-rendering this menu
+         *
+         * @param elemType type of the element managed by the main view
+         * @param viewType main view type
+         */
+        onViewChanged:function (elemType, viewType) {
+
+            if (this.menuElemType != elemType) {
+                this.menuElemType = viewType;
+                this.clearMenu();
+            }
+
+            switch (elemType) {
+                case 'participant':
+                    this.setMenu(ParticipantsMenuView);
+                    this.selectMenuItem('element-menu');
+                    break;
+                case 'deletions':
+                    this.selectMenuItem('delete-menu');
+            }
+
+            this.menuView.onViewChanged(elemType, viewType);
         }
 
     });

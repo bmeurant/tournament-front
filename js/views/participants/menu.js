@@ -9,7 +9,7 @@ define([
 
     return Backbone.View.extend({
 
-        viewType:'participant',
+        elemType:'participant',
 
         // Cache the template function for a single item.
         template:Handlebars.compile(menuTemplate),
@@ -54,7 +54,7 @@ define([
          * @param viewType main view type
          */
         onViewChanged:function (elemType, viewType) {
-            if (elemType == this.viewType) {
+            if (elemType == this.elemType) {
                 this.viewType = viewType;
                 this.render();
             }

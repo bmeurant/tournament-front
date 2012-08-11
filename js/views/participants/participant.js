@@ -18,7 +18,7 @@ define([
      */
     return Backbone.View.extend({
 
-        viewType: 'participant',
+        elemType: 'participant',
         template:Handlebars.compile(participantTemplate),
         miniatureTemplate:Handlebars.compile(miniatureTemplate),
 
@@ -157,7 +157,7 @@ define([
 
             this.renderViews();
 
-            Pubsub.publish(Events.VIEW_CHANGED, [this.viewType, this.viewType]);
+            Pubsub.publish(Events.VIEW_CHANGED, [this.elemType, this.viewType]);
         },
 
         /**
@@ -204,11 +204,11 @@ define([
             if (this.linkedViewsInstances) {
                 for (var i = 0; i < this.linkedViewsInstances.length; i++) {
                     var $newView = this.linkedViewsInstances[i].render().$el;
-                    $newView.appendTo(this.$el.find('#view #' + this.linkedViewsInstances[i].type));
+                    $newView.appendTo(this.$el.find('#view #' + this.linkedViewsInstances[i].viewType));
 
                     // it its main view, show it. Otherwise it kept hidden
                     if (i == mainIndex) {
-                        this.$el.find('div#' + this.linkedViewsInstances[i].type).removeClass("hidden");
+                        this.$el.find('div#' + this.linkedViewsInstances[i].viewType).removeClass("hidden");
                     }
                 }
             }
@@ -366,7 +366,7 @@ define([
             // register callbacks executed after css transition
             this.addTransitionCallbacks(this.$el.find('#view'), this.$el.find('.view-elem#' + oldType));
 
-            Pubsub.publish(Events.VIEW_CHANGED, [this.viewType, this.viewType]);
+            Pubsub.publish(Events.VIEW_CHANGED, [this.elemType, this.viewType]);
 
             // perform transition
             this.$el.find('#view').addClass('slide').css('margin-left', -(mainIndex * (940 + 20 + 50)) + "px");
