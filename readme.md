@@ -710,6 +710,7 @@ De mon point de vue, ce traitement doit se résumer strictement à :
 - **Créer** la vue associée à la route en se contentant d'appeler son constructeur avec d'éventuels paramètres
 - Demander à cette vue de **s'afficher** dans un conteneur donné
 
+<!-- add comment to show code -->
 
     routes:{
         // Define some URL routes
