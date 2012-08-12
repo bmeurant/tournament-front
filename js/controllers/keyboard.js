@@ -40,25 +40,25 @@ define([
 
         init:function () {
 
-            this.bindings[this.LEFT_ARROW] = this.previous;
-            this.bindings[this.RIGHT_ARROW] = this.next;
-            this.bindings[this.H] = this.home;
-            this.bindings[this.L] = this.list;
-            this.bindings[this.DEL] = this.del;
-            this.bindings[this.D] = this.deletions;
-            this.bindings[this.A] = this.add;
-            this.bindings[this.X] = this.confirmDeletions;
-            this.bindings[this.Z] = this.cancelDeletions;
-            this.bindings[this.P] = this.participants;
-            this.bindings[this.T] = this.teams;
-            this.bindings[this.G] = this.gamesAndTournaments;
-            this.bindings[this.F] = this.find;
-            this.bindings[this.ENTER] = this.enter;
-            this.bindings[this.ECHAP] = this.echap;
-            this.bindings[this.PAGE_UP] = this.pageUp;
-            this.bindings[this.PAGE_DOWN] = this.pageDown;
-            this.bindings[this.QUESTION_MARK] = this.questionMark;
-            this.bindings[this.K] = this.keyboard;
+            this.bindings[this.LEFT_ARROW] = {event:Events.PREVIOUS_CALLED};
+            this.bindings[this.RIGHT_ARROW] = {event:Events.NEXT_CALLED};
+            this.bindings[this.H] = {event:Events.HOME_CALLED};
+            this.bindings[this.L] = {event:Events.LIST_CALLED};
+            this.bindings[this.DEL] = {event:Events.DELETE_ELEM};
+            this.bindings[this.D] = {event:Events.DELETIONS_CALLED};
+            this.bindings[this.A] = {event:Events.ADD_CALLED};
+            this.bindings[this.X] = {event:Events.CONFIRM_DELS_CALLED, needCtrl:true};
+            this.bindings[this.Z] = {event:Events.CANCEL_DELS_CALLED, needCtrl:true};
+            this.bindings[this.P] = {event:Events.PARTICIPANTS_HOME_CALLED};
+            this.bindings[this.T] = {event:Events.TEAMS_HOME_CALLED};
+            this.bindings[this.G] = {event:Events.GT_HOME_CALLED};
+            this.bindings[this.F] = {event:Events.FIND_CALLED};
+            this.bindings[this.ENTER] = {event:Events.ENTER_CALLED, acceptInputs:true};
+            this.bindings[this.ECHAP] = {event:Events.ECHAP_CALLED};
+            this.bindings[this.PAGE_UP] = {event:Events.PAGE_UP_CALLED, acceptInputs:true};
+            this.bindings[this.PAGE_DOWN] = {event:Events.PAGE_DOWN_CALLED, acceptInputs:true};
+            this.bindings[this.QUESTION_MARK] = {event:Events.QUESTION_MARK_CALLED};
+            this.bindings[this.K] = {event:Events.KEYBOARD_CALLED};
 
             $(document).on("keydown", this.onKeyDown.bind(this));
             $(document).on("keyup", this.onKeyUp.bind(this));
@@ -71,8 +71,12 @@ define([
                 this.ctrlDown = true;
             }
 
-            if (this.bindings[event.which] && !this.isModalActive()) {
-                this.bindings[event.which].apply(this, arguments);
+            var binding = this.bindings[event.which];
+
+            if (binding && !this.isModalActive()
+                && (binding.acceptInputs || !this.targetIsInput(event))
+                && (!binding.needCtrl || this.ctrlDown)) {
+                PubSub.publish(binding.event, [event]);
             }
         },
 
@@ -90,99 +94,6 @@ define([
 
         isModalActive:function () {
             return $(".modal").is(":visible");
-        },
-
-        previous:function (event) {
-            if (!this.targetIsInput(event))
-                PubSub.publish(Events.PREVIOUS_CALLED, [event]);
-            console.log("previous");
-        },
-
-        next:function (event) {
-            if (!this.targetIsInput(event))
-                PubSub.publish(Events.NEXT_CALLED, [event]);
-            console.log("next");
-        },
-
-        del:function (event) {
-            if (!this.targetIsInput(event))
-                PubSub.publish(Events.DELETE_ELEM, [event]);
-        },
-
-        enter:function (event) {
-            PubSub.publish(Events.ENTER_CALLED, [event]);
-        },
-
-        echap:function (event) {
-            if (!this.targetIsInput(event))
-                PubSub.publish(Events.ECHAP_CALLED, [event]);
-        },
-
-        home:function (event) {
-            if (!this.targetIsInput(event))
-                PubSub.publish(Events.HOME_CALLED, [event]);
-        },
-
-        list:function (event) {
-            if (!this.targetIsInput(event))
-                PubSub.publish(Events.LIST_CALLED, [event]);
-        },
-
-        deletions:function (event) {
-            if (!this.targetIsInput(event))
-                PubSub.publish(Events.DELETIONS_CALLED, [event]);
-        },
-
-        add:function (event) {
-            if (!this.targetIsInput(event))
-                PubSub.publish(Events.ADD_CALLED, [event]);
-        },
-
-        confirmDeletions:function (event) {
-            if (!this.targetIsInput(event) && this.ctrlDown)
-                PubSub.publish(Events.CONFIRM_DELS_CALLED, [event]);
-        },
-
-        cancelDeletions:function (event) {
-            if (!this.targetIsInput(event) && this.ctrlDown)
-                PubSub.publish(Events.CANCEL_DELS_CALLED, [event]);
-        },
-
-        participants:function (event) {
-            if (!this.targetIsInput(event))
-                PubSub.publish(Events.PARTICIPANTS_HOME_CALLED, [event]);
-        },
-
-        teams:function (event) {
-            if (!this.targetIsInput(event))
-                PubSub.publish(Events.TEAMS_HOME_CALLED, [event]);
-        },
-
-        gamesAndTournaments:function (event) {
-            if (!this.targetIsInput(event))
-                PubSub.publish(Events.GT_HOME_CALLED, [event]);
-        },
-
-        find:function (event) {
-            if (!this.targetIsInput(event))
-                PubSub.publish(Events.FIND_CALLED, [event]);
-        },
-
-        pageUp:function (event) {
-            PubSub.publish(Events.PAGE_UP_CALLED, [event]);
-        },
-
-        pageDown:function (event) {
-            PubSub.publish(Events.PAGE_DOWN_CALLED, [event]);
-        },
-
-        questionMark:function (event) {
-            if (!this.targetIsInput(event))
-                PubSub.publish(Events.QUESTION_MARK_CALLED, [event]);
-        },
-
-        keyboard:function (event) {
-            PubSub.publish(Events.KEYBOARD_CALLED, [event]);
         }
 
     });
