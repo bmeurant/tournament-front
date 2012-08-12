@@ -2,13 +2,10 @@
 Tournament-front
 ================
 
-Ce projet est une **application exemple et exploratoire** basée sur **[Resthub js][resthubjs]**.
+Ce projet est une **application exemple** basée sur **[Resthub js][resthubjs]**.
 
-Son but est de fournir un pretexte pour me familiariser avec cette stack et les frameworks
-qu'elle embarque, découvrir leurs **patterns et anti-patterns** et me forger ma propre opinion sur ces outils.
-Du coup, le code est en refactoring permanent.
 
-Les questions principales que j'ai cherché à adresser :
+A travers cette application j'ai cherché à adresser els questions suivantes :
 
 - Comment organiser ses vues ?
 - Quelle stratégie de rendering ?
@@ -25,11 +22,9 @@ Outils complémentaires
 ----------------------
 
 En plus des outils standards embarqués par **[Resthub js][resthubjs]**, j'ai progressivement ajouté des libs et frameworks complémentaires
-pour répondre à des besoins particuliers que j'estime récurrents.
+pour répondre à des besoins particuliers.
 
-**Question** : Le choix de ces outils est-il pertinent ? Existe-t-il des alternatives préférables ?
-
-**Question Bonus** : Ces outils peuvent-ils / doivent-ils être intégrés à la stack **[Resthub js][resthubjs]** ?
+**Question** : Ces outils peuvent-ils / doivent-ils être intégrés à la stack **[Resthub js][resthubjs]** ?
 
 Ces outils sont les suivants :
 
@@ -66,7 +61,7 @@ combiné aux helpers underscore. Il repose sur une syntaxe à la JSP :
         <% }
     }); %>
 
-Cela peut paraître initialement simple mais ce n'est **vraiment pas très élégant** et conduit rapidement à **déplacer une bonne
+Cela peut paraître initialement simple je ne trouve **vraiment pas ça très élégant** car cela conduit rapidement à **déplacer une bonne
 partie de la logique de la vue vers le template** et rend très difficile la réutilisation de ces templates.
 
 Je suis donc rapidement passé à un **moteur de template logic-less**, en l'occurrence **[Handlebars][handlebars]**.
@@ -333,7 +328,7 @@ de** **[Backbone][backbone]** via les méthodes `validate` et `is valid`.
             });
         }
         else {
-            Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Fix validation errors and try again', 'alert-warning']);
+            Pubsub.publish(App.Events.ALERT_RAISED, ['Warning!', 'Fix validation errors and try again', 'alert-warning']);
         }
     },
 
@@ -399,7 +394,7 @@ Grâce à cette lib, incluse une fois pour toute dans mon router principal, j'ai
         ...
         // création de la vue via une fonction générique (cf. gestion des zombies et rendering)
         // le constructeur de la vue prend un paramètre params
-        utils.showView($('#content'), ParticipantListView, [params]);
+        this.showView($('#content'), ParticipantListView, [params]);
     },
 
 Ainsi, le tableau des paramètres de requête est récupéré automatiquement sans **aucun traitement supplémentaire** et
@@ -415,7 +410,7 @@ initialisation :
         ...
 
         if (params) {
-            if (params.page && utils.isValidPageNumber(params.page)) this.askedPage = parseInt(params.page);
+            if (params.page && this.isValidPageNumber(params.page)) this.askedPage = parseInt(params.page);
         }
 
         ..
@@ -496,7 +491,7 @@ fetch complet puis on choisit la page courante :
                     this.showTemplate(partials);
                 }.bind(this),
                 error:function (collection, response) {
-                    Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
+                    Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
                 }
             });
         return this;
@@ -658,10 +653,10 @@ Considérations d'architecture et questions ouvertes
 **[Backbone][backbone]** est une lib plus qu'un framework et propose un certain nombre d'outils **sans jamais imposer ni
 même parfois proposer de cadre** en termes d'architecture et de design de l'application.
 
-Il me semble donc indispensable d'explorer les différentes façons d'adresser ces problématiques et de proposer ensuite
+Il me semble donc indispensable d'explorer les différentes façons d'adresser ces problématiques d'en dégager ensuite
 des guidelines et bonnes pratiques pour l'utilisation et l'organisation d'une application avec **[Backbone][backbone]**.
 
-Un certain nombre de **questions restent bien évidemment ouvertes** sans solution pleinement satisfaisante et
+Un certain nombre de **questions restent ouvertes** sans solution pleinement satisfaisante et
 nécessitent pour certaines, une meilleure compréhension de ma part des mécanismes sous-jacents de ces libs et
 notamment de **[Backbone][backbone]**.
 
@@ -718,7 +713,7 @@ Par exemple:
     },
 
     listParticipants:function (params) {
-        utils.showView($('#content'), ParticipantListView, [params]);
+        this.showView($('#content'), ParticipantListView, [params]);
     },
 
 **Ce n'est pas au routeur d'organiser les autres vues** si elles existe en fonction de la nouvelle vue créée comme j'avais
@@ -727,7 +722,7 @@ pu le faire dans une précédente version :
     listParticipants:function (params) {
         classes.Views.HeaderView.setMenu(ParticipantsMenuView);
         classes.Views.HeaderView.selectMenuItem('element-menu');
-        utils.showView($('#content'), ParticipantListView, [params]);
+        this.showView($('#content'), ParticipantListView, [params]);
     },
 
 Cette opération doit être effectuée la vue `header` abonnée à un évènement de changement de vue.
@@ -753,8 +748,7 @@ de se rendre** ...
 ---
 ### Main view or not ?
 
-Le NB ci-dessus ouvre une autre question. Celle-ci est, je pense, sans réponse universelle : faut-il une `Main view`
-globale en charge de l'ensemble de l'organisation de l'application.
+Le NB ci-dessus ouvre une autre question. Faut-il une `Main view` globale en charge de l'ensemble de l'organisation de l'application ?
 
 Dans mon cas, l'organisation de mes différentes vues et la présences de vues annexes de contrôle et de navigation :
 `header`, `menu`, etc. m'a fait répondre à cette question par la négative : je n'ai pas éprouvé le besoin d'ajouter
@@ -762,6 +756,10 @@ cette vue principale puisque ma vue `header`, notamment se chargeait déjà des 
 
 Cependant, la réponse peut-être différente selon les applications et, dans tous les cas, une vue doit se charger de ces
 opérations qui ne doivent pas être laissées au routeur (cf. § précédent).
+
+En particulier, dans cette application, j'ai du créer une vue `footer` pour gérer les évènements sur les boutons d'aide
+(dont un en fenêtre modale) et un `KeyboardController` pour centraliser les évènements clavier sur le document. Deux
+éléments qui auraient pu être traités par une vue principale ... sujet ouvert, donc ...
 
 ---
 ### Le problème des vues zombies
@@ -781,16 +779,107 @@ close nested views
 ### Stratégie globale et cohérente de rendering
 
 ---
-### gestion effective du PushState
+### Gestion effective du PushState
+
+**[Backbone][backbone]** permet d'activer le `pushState` et donc de permettre d'utiliser de vrais liens et non uniquement
+des ancres `#` ce qui est bien mieux pour la navigation et indispensable au référencement et à l'indexation de l'application :
+
+    Backbone.history.start({pushState:true, root:"/"});
+
+L'option `root` permet de demander à  **[Backbone][backbone]** d'ajouter systématiquement ce path comme contexte de l'application.
+
+Cependant, **[Backbone][backbone]** s'arrête ici et si l'accès direct aux vues par leur url fonctionne, **chaque lien provoque
+un rechargement complet de l'application** ! **[Backbone][backbone]** n'intercepte en effet pas les lien html et il est nécessaire
+de l'implémenter soi-même.
+
+Tim Branyen, le créateur de **[Backbone boilerplate][backbone-boilerplate]** propose la solution suivante que j'ai intégré à mes
+extensions **[Backbone][backbone]** en y ajoutant un test pour vérifier l'activation du pushState :
+
+    // force all links to be handled by Backbone pushstate - no get will be send to server
+    $(document).on('click', 'a:not([data-bypass])', function (evt) {
+
+        if (Backbone.history.options.pushState) {
+
+            var href = this.href;
+            var protocol = this.protocol + '//';
+            href = href.slice(protocol.length);
+            href = href.slice(href.indexOf("/") + 1);
+
+            if (href.slice(protocol.length) !== protocol) {
+                evt.preventDefault();
+                Backbone.history.navigate(href, true);
+            }
+        }
+    });
+
+Ainsi chaque click sur un lien sera intercepté et effectuera une navigation **[Backbone][backbone]** plutôt qu'un rechargement.
+Si l'on souhaite faire des liens externes, il suffit d'utiliser l'attribut `data-bypass` comme ceci :
+
+    <a data-bypass href="http://bitbucket.org/bmeurant/tournament-front" target="_blank">
 
 ---
 ### Extension des libs
 
+Pour ne pas surcharger le code d'extensions en vrac pour les libs utilisées, ces extensions sont isolées et placées dans
+un répertoire `js/libs/extensions` :
+
+    |-- js
+        |-- libs
+            |-- extensions
+                |-- backbone-validation.ext.js
+                |-- backbone.ext.js
+                |-- handlebars.helpers.ext.js
+
+Les extensions sont chargées au démarrage de l'application (`app.js`) :
+
+    define([
+        'jquery',
+        'underscore',
+        'backbone.ext',
+        'backbone-validation.ext',
+        'router',
+        'views/header',
+        'views/alerts',
+        'views/help/shortcuts',
+        'views/footer',
+        'controllers/keyboard',
+        'handlebars',
+        'handlebars.helpers'
+    ],
+
 ---
 ### Helpers Handlebars
 
+Dans la mesure du possible, les helpers Handlebars sont définis globalement (dans une extension) et chargés statiquement :
+
+    Handlebars.registerHelper('ifequals', function (value1, value2, options) {
+
+        if (value1 == value2) {
+            return options.fn(this);
+        } else {
+            return options.inverse(this);
+        }
+    });
+
+Cependant, certains helpers sont spécifiques à une vue et doivent être non seulement définis dans cette vue mais également
+lors de son instanciation et non de manière statique (utilisation du `this`) :
+
+    Handlebars.registerHelper('disabled', function (id) {
+        return (this.deleted.indexOf(id) >= 0) ? 'disabled' : '';
+    }.bind(this));
+
+---
+### Mixins
+
+Les mixins remplacent avantageusement la définition de méthodes utilitaires au sein d'un namespace global.
+
+cf. http://ricostacruz.com/backbone-patterns/#mixins
+
 ---
 ### Routeurs multiples
+
+Cette question reste à adresser dans mon cas mais cela me parait indispensable dans le cas d'une application de taille
+importante.
 
 [resthubjs]: http://resthub.org/2/backbone-stack.html "Resthub js"
 [underscore]: http://underscorejs.org/ "Underscore"
@@ -802,3 +891,4 @@ close nested views
 [backbone-query-parameters]: https://github.com/jhudson8/backbone-query-parameters "Backbone Query Parameters"
 [backbone-paginator]: http://addyosmani.github.com/backbone.paginator/ "Backbone Paginator"
 [async]: https://github.com/caolan/async/ "Async"
+[backbone-boilerplate]: https://github.com/tbranyen/backbone-boilerplate "Backbone boilerplate"
