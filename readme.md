@@ -731,6 +731,7 @@ pu le faire dans une précédente version :
     },
 
 Cette opération doit être effectuée la vue `header` abonnée à un évènement de changement de vue.
+
 **NB** : évidemment, si il n'existe dans l'application aucune vue `header`en charge de ces opérations, cela peut
 être effectuée par une `main view` mais je ne pens pas que cela soit pertinent dans le routeur.
 
@@ -745,7 +746,7 @@ différents exemples en ligne :
         this.headerView.selectMenuItem('list-menu');
     },
 
-Même si dans cet exemple le routeur effectue peu d'opération, ce n'est à mon sens pas à lui de demander à la vue de
+Même si dans cet exemple le routeur effectue peu d'opérations, ce n'est à mon sens pas à lui de demander à la vue de
 mettre à jour son model, de gérer les success et errors de l'appel au serveur, etc. **Il doit se contenter de lui demander
 de se rendre** ...
 
