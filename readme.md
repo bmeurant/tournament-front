@@ -4,12 +4,11 @@ Tournament-front
 
 Ce projet est une **application exemple et exploratoire** basée sur **[Resthub js][resthubjs]**.
 
-Je travaille actuellement sur cette application pour me familiariser avec cette stack et les frameworks
+Son but est de fournir un pretexte pour me familiariser avec cette stack et les frameworks
 qu'elle embarque, découvrir leurs **patterns et anti-patterns** et me forger ma propre opinion sur ces outils.
 Du coup, le code est en refactoring permanent.
 
-Un autre objectif majeur est d'être au final en capacité de fournir des conseils, des bonnes pratiques et d'apporter
-du support aux projets reposant sur cette stack. en particulier :
+Les questions principales que j'ai cherché à adresser :
 
 - Comment organiser ses vues ?
 - Quelle stratégie de rendering ?
@@ -656,11 +655,11 @@ asynchrone à paralléliser** - que l'on souhaite ou non disposer d'un callback 
 Considérations d'architecture et questions ouvertes
 ---------------------------------------------------
 
-Pendant ce travail, j'ai eu successivement à résoudre un certain nombre de **problématiques d'architecture et de
-conception** ainsi qu'à **expérimenter différentes solutions et stratégies**. Suite à cela, j'ai finalement choisit,
-pour chaque problématique, un **pattern à privilégier**.
+**[Backbone][backbone]** est une lib plus qu'un framework et propose un certain nombre d'outils **sans jamais imposer ni
+même parfois proposer de cadre** en termes d'architecture et de design de l'application.
 
-Ces choix ainsi que les exemples associés sont décrits ci-dessous.
+Il me semble donc indispensable d'explorer les différentes façons d'adresser ces problématiques et de proposer ensuite
+des guidelines et bonnes pratiques pour l'utilisation et l'organisation d'une application avec **[Backbone][backbone]**.
 
 Un certain nombre de **questions restent bien évidemment ouvertes** sans solution pleinement satisfaisante et
 nécessitent pour certaines, une meilleure compréhension de ma part des mécanismes sous-jacents de ces libs et
@@ -669,10 +668,103 @@ notamment de **[Backbone][backbone]**.
 Alternatives, propositions et discussions sont bien évidemment bienvenues.
 
 ---
+### Utilisation de routeurs
+
+**[Backbone][backbone]** fournit un objet routeur permettant d'**organiser la navigation entre les différentes vues** de
+l'application. Malgré cela certains exemples n'en font pas uage et préferrent déléguer à chaque vue la responsabilité
+de passer la main à la suivante, de l'initialiser, etc.
+
+Il me semble que cet usage est à déconseiller pour plusieurs raisons :
+
+- On introduit un **couplage fort** entre les vues en termes fonctionnels mais aussi techniques (gestion du cycle de vie, etc.)
+  L'évolutivité de l'application en est fortement réduite
+- On introduit **beaucoup de boilerplate** dans chaque vue pour préparer la suivante, se 'nettoyer', etc. ce code
+  technique se trouve alors éparpillé dans l'application et est **difficilement capitalisable**
+- L'affichage de chaque vue est totalement dépendante de la précédente : **pas de `deep-linking`**. Autrement dit il est
+  impossible d'accéder directement à une vue par son url et il n'existe q'une url : celle de l'application
+
+Pour toutes ces raison (et surement des tas d'autres), les routeurs **[Backbone][backbone]** doivent être utilisés pour
+naviguer entre les vues :
+
+    var AppRouter = Backbone.Router.extend({
+        routes:{
+            // Define some URL routes
+            '*path':'defaultAction'
+        },
+
+        defaultAction:function () {
+            this.navigate("participants", true);
+        }
+    });
+
+---
 ### 'Intelligence' des routeurs
+
+Une fois que l'on a dit que l'utilisation des routeurs était à privilégier, reste à identifier précisément leur
+responsabilité.
+
+Le routeur définit les différentes routes de l'application et associe à chacune d'elle un traitement.
+
+De mon point de vue, ce traitement doit se résumer strictement à :
+
+- **Créer** la vue associée à la route en se contentant d'appeler son constructeur avec d'éventuels paramètres
+- Demander à cette vue de **s'afficher** dans un conteneur donné
+
+    routes:{
+        // Define some URL routes
+        "participants":"listParticipants",
+    },
+
+    listParticipants:function (params) {
+        utils.showView($('#content'), ParticipantListView, [params]);
+    },
+
+**Ce n'est pas au routeur d'organiser les autres vues** si elles existe en fonction de la nouvelle vue créée comme j'avais
+pu le faire dans une précédente version :
+
+    listParticipants:function (params) {
+        classes.Views.HeaderView.setMenu(ParticipantsMenuView);
+        classes.Views.HeaderView.selectMenuItem('element-menu');
+        utils.showView($('#content'), ParticipantListView, [params]);
+    },
+
+Cette opération doit être effectuée la vue `header` abonnée à un évènement de changement de vue.
+**NB** : évidemment, si il n'existe dans l'application aucune vue `header`en charge de ces opérations, cela peut
+être effectuée par une `main view` mais je ne pens pas que cela soit pertinent dans le routeur.
+
+C'est **encore moins au routeur d'appeler des fonction "métier" de la vue** à afficher comme cela peut se trouver sur
+différents exemples en ligne :
+
+    list: function() {
+        var list = new Collection();
+        list.fetch({success: function(){
+            $("#content").html(new ListView({model: list}).el);
+        }});
+        this.headerView.selectMenuItem('list-menu');
+    },
+
+Même si dans cet exemple le routeur effectue peu d'opération, ce n'est à mon sens pas à lui de demander à la vue de
+mettre à jour son model, de gérer les success et errors de l'appel au serveur, etc. **Il doit se contenter de lui demander
+de se rendre** ...
+
+---
+### Main view or not ?
+
+Le NB ci-dessus ouvre une autre question. Celle-ci est, je pense, sans réponse universelle : faut-il une `Main view`
+globale en charge de l'ensemble de l'organisation de l'application.
+
+Dans mon cas, l'organisation de mes différentes vues et la présences de vues annexes de contrôle et de navigation :
+`header`, `menu`, etc. m'a fait répondre à cette question par la négative : je n'ai pas éprouvé le besoin d'ajouter
+cette vue principale puisque ma vue `header`, notamment se chargeait déjà des adaptations en questions.
+
+Cependant, la réponse peut-être différente selon les applications et, dans tous les cas, une vue doit se charger de ces
+opérations qui ne doivent pas être laissées au routeur (cf. § précédent).
 
 ---
 ### Le problème des vues zombies
+
+---
+### Nested views
 
 close
 unbind events
