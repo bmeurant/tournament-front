@@ -18,7 +18,7 @@ define([
      */
     return Backbone.View.extend({
 
-        elemType: 'participant',
+        elemType:'participant',
         template:Handlebars.compile(participantTemplate),
         miniatureTemplate:Handlebars.compile(miniatureTemplate),
 
@@ -36,6 +36,7 @@ define([
         renderNext:false,
 
         handlers:[],
+        inTransition:false,
 
         /**
          * Initialize view
@@ -360,8 +361,9 @@ define([
             // display new view
             this.$el.find('.view-elem#' + this.viewType).removeClass("hidden");
 
-            // hide navigation bar during transition because of some potential bugs
+            // hide navigation bar and deactivate controls during transition because of some potential bugs
             this.$el.find('#navigation .nav-pills').addClass("hidden");
+            this.inTransition = true;
 
             // register callbacks executed after css transition
             this.addTransitionCallbacks(this.$el.find('#view'), this.$el.find('.view-elem#' + oldType));
@@ -394,7 +396,10 @@ define([
 
             // hide old view
             event.data.oldView.addClass("hidden");
+
+            // reactivate nav bar and controls
             this.$el.find('#navigation .nav-pills').removeClass("hidden");
+            this.inTransition = false;
 
             // change url
             window.history.pushState(null, "Tournament", "/participant/" + this.model.id + this.linkedViewsURLFragment[this.linkedViewsTypes.indexOf(this.viewType)]);
@@ -413,12 +418,14 @@ define([
          *  Show the precedent linked view
          */
         precedentHandler:function () {
-            if (this.mainIsLinkedView()) {
-                var mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
+            if (!this.inTransition) {
+                if (this.mainIsLinkedView()) {
+                    var mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
 
-                if (mainIndex > 0) {
-                    var newType = this.linkedViewsTypes[mainIndex - 1];
-                    this.changeParticipantView(newType);
+                    if (mainIndex > 0) {
+                        var newType = this.linkedViewsTypes[mainIndex - 1];
+                        this.changeParticipantView(newType);
+                    }
                 }
             }
         },
@@ -427,12 +434,14 @@ define([
          *  Show the next linked view
          */
         nextHandler:function () {
-            if (this.mainIsLinkedView()) {
-                var mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
+            if (!this.inTransition) {
+                if (this.mainIsLinkedView()) {
+                    var mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
 
-                if (mainIndex < this.linkedViewsTypes.length - 1) {
-                    var newType = this.linkedViewsTypes[mainIndex + 1];
-                    this.changeParticipantView(newType);
+                    if (mainIndex < this.linkedViewsTypes.length - 1) {
+                        var newType = this.linkedViewsTypes[mainIndex + 1];
+                        this.changeParticipantView(newType);
+                    }
                 }
             }
         }
