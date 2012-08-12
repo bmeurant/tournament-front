@@ -73,7 +73,7 @@ define([
             populateCollection:function () {
 
                 // if collection is empty, don't do anything but rendering view
-                if (utils.mapLength(this.collection) == 0) {
+                if (this.countElements(this.collection) == 0) {
                     this.showTemplate();
                 }
                 else {

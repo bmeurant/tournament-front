@@ -22,27 +22,62 @@ define([
         },
 
         listParticipants:function (params) {
-            utils.showView($('#content'), ParticipantListView, [params]);
+            this.showView($('#content'), ParticipantListView, [params]);
         },
 
         showParticipant:function (id) {
-            utils.showView($('#content'), ParticipantView, [id, 'details']);
+            this.showView($('#content'), ParticipantView, [id, 'details']);
         },
 
         editParticipant:function (id) {
-            utils.showView($('#content'), ParticipantView, [id, 'edit']);
+            this.showView($('#content'), ParticipantView, [id, 'edit']);
         },
 
         addParticipant:function () {
-            utils.showView($('#content'), ParticipantView, [null, 'add']);
+            this.showView($('#content'), ParticipantView, [null, 'add']);
         },
 
         showDeletions:function () {
-            utils.showView($('#content'), DeletionsView, []);
+            this.showView($('#content'), DeletionsView, []);
         },
 
         defaultAction:function () {
             this.navigate("participants", true);
+        },
+
+        /**
+         * This methods wrap initialization and rendering of main view in order to guarantee
+         * that any previous main view is properly closed and unbind.
+         *
+         * Otherwise events and listeners are raise twice or more and the application becomes unstable
+         *
+         * @param $selector jquery selector in which the view has to be rendered
+         * @param View View to create
+         * @param args optional view constructor arguments
+         * @return {Object} create View
+         */
+        showView:function ($selector, View, args) {
+            // initialize args if null
+            args = args || [];
+
+            // clean previous view
+            if (classes.Views.currentView) {
+                classes.Views.currentView.close();
+            }
+
+            // insertion of this in arguments in order to perform dynamic constructor call
+            args.splice(0, 0, this);
+
+            // call constructor and initialize view
+            var view = new (Function.prototype.bind.apply(View, args));
+
+            // render view
+            $selector.html(view.render().el);
+
+            // replace global accessor of current view
+            classes.Views.currentView = view;
+
+            return view;
         }
     });
 
@@ -56,7 +91,7 @@ define([
             var href = this.href;
             var protocol = this.protocol + '//';
             href = href.slice(protocol.length);
-            href = href.slice(href.indexOf("/") + 1 );
+            href = href.slice(href.indexOf("/") + 1);
 
             if (href.slice(protocol.length) !== protocol) {
                 evt.preventDefault();
