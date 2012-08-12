@@ -61,8 +61,8 @@ define([
             args = args || [];
 
             // clean previous view
-            if (classes.Views.currentView) {
-                classes.Views.currentView.close();
+            if (App.Views.currentView) {
+                App.Views.currentView.close();
             }
 
             // insertion of this in arguments in order to perform dynamic constructor call
@@ -75,14 +75,14 @@ define([
             $selector.html(view.render().el);
 
             // replace global accessor of current view
-            classes.Views.currentView = view;
+            App.Views.currentView = view;
 
             return view;
         }
     });
 
     var initialize = function () {
-        classes.Routers.AppRouter = new AppRouter;
+        App.Routers.AppRouter = new AppRouter;
         Backbone.history.start({pushState:true, root:"/"});
 
         // force all links to be handled by Backbone pushstate - no get will be send to server

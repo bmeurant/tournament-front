@@ -19,14 +19,14 @@ define([
             });
 
             // Define global singleton views
-            classes.Views.HeaderView = new HeaderView();
-            classes.Views.FooterView = new FooterView();
-            $('footer').html(classes.Views.FooterView.render().el);
-            classes.Views.ShortcutsView = new ShortcutsView();
-            $('.header').html(classes.Views.HeaderView.render().el);
-            classes.Views.AlertsView = new AlertsView();
-            $('.alerts').html(classes.Views.AlertsView.render().el);
-            classes.Controllers.KeyboardController = new KeyboardController();
+            App.Views.HeaderView = new HeaderView();
+            App.Views.FooterView = new FooterView();
+            $('footer').html(App.Views.FooterView.render().el);
+            App.Views.ShortcutsView = new ShortcutsView();
+            $('.header').html(App.Views.HeaderView.render().el);
+            App.Views.AlertsView = new AlertsView();
+            $('.alerts').html(App.Views.AlertsView.render().el);
+            App.Controllers.KeyboardController = new KeyboardController();
 
             // Pass in our Router module and call it's initialize function
             Router.initialize();
@@ -36,5 +36,4 @@ define([
             initialize:initialize
         };
     }
-)
-;
+);

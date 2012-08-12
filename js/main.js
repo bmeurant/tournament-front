@@ -26,12 +26,13 @@ require.config({
 
 });
 
-classes = {
+App = {
     Routers:{},
     Collections:{},
     Models:{},
     Controllers:{},
-    Views:{}
+    Views:{},
+    Mixins:{}
 };
 
 

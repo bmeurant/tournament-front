@@ -7,13 +7,15 @@ define([
     'views/deletions/abstract',
     'text!templates/participants/list.html',
     'models/participant',
+    'mixins/selection',
     'pubsub'
-], function ($, _, Backbone, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, Pubsub) {
+], function ($, _, Backbone, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, Selection, Pubsub) {
 
     /**
      * Main view for displaying deletions
      */
-    return AbstractView.extend({
+    return AbstractView.extend(
+          _.extend({}, Selection, {
 
             template:Handlebars.compile(deletionsTemplate),
             participantsTemplate:Handlebars.compile(participantTemplate),
@@ -152,9 +154,9 @@ define([
                 this.$el.html(this.template({'participants':this.JSONCollection['participant'], 'participants_template':new Handlebars.SafeString(participants_template)}));
 
                 // if no element is currently select, select the first one
-                var $selected = utils.findSelected(this.$el, "li.thumbnail");
+                var $selected = this.findSelected(this.$el, "li.thumbnail");
                 if (!$selected || $selected.length == 0) {
-                    utils.selectFirst(this.$el, "li.thumbnail");
+                    this.selectFirst(this.$el, "li.thumbnail");
                 }
             },
 
@@ -176,7 +178,7 @@ define([
              */
             cancelSelectedDeletion:function () {
 
-                var $selected = utils.findSelected(this.$el, "li.thumbnail");
+                var $selected = this.findSelected(this.$el, "li.thumbnail");
                 if ($selected && $selected.length > 0) {
                     this.cancelDeletion($selected.attr("id"));
                 }
@@ -202,10 +204,10 @@ define([
                 }.bind(this));
 
                 // retrieve and save the currently selected element, if any
-                var $selected = utils.findSelected(this.$el, "li.thumbnail");
+                var $selected = this.findSelected(this.$el, "li.thumbnail");
 
                 if ($selected && $selected.length > 0) {
-                    this.idSelected = utils.findSelected(this.$el, "li.thumbnail").get(0).id;
+                    this.idSelected = this.findSelected(this.$el, "li.thumbnail").get(0).id;
                 }
 
                 // remove element from the current view
@@ -219,12 +221,12 @@ define([
             },
 
             selectNext:function () {
-                utils.selectElement(this.$el, "li.thumbnail", "next");
+                this.selectElement(this.$el, "li.thumbnail", "next");
             },
 
             selectPrevious:function () {
-                utils.selectElement(this.$el, "li.thumbnail", "previous");
+                this.selectElement(this.$el, "li.thumbnail", "previous");
             }
 
-        });
+        }));
 });
