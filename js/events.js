@@ -1,5 +1,5 @@
 // Defines globally all existing Events that can be raised between views
-Events = {
+App.Events = {
     SAVE_ELEM:"SaveElement",
     VIEW_CHANGED:"ViewChanged",
     DRAG_START:"DragStart",

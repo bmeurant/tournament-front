@@ -23,8 +23,8 @@ define([
 
         initialize:function () {
 
-            this.handlers.push(Pubsub.subscribe(Events.PAGE_UP_CALLED, this.previousPage.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.PAGE_DOWN_CALLED, this.nextPage.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.PAGE_UP_CALLED, this.previousPage.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.PAGE_DOWN_CALLED, this.nextPage.bind(this)));
 
         },
 
@@ -52,7 +52,7 @@ define([
                 pageId = pageId.substring(0, pageId.indexOf("&"));
             }
 
-            Pubsub.publish(Events.NEW_PAGE, [pageId]);
+            Pubsub.publish(App.Events.NEW_PAGE, [pageId]);
 
         },
 
@@ -62,7 +62,7 @@ define([
             event.preventDefault();
 
             if (this.collection.info().prev) {
-                Pubsub.publish(Events.NEW_PAGE, [this.collection.info().prev]);
+                Pubsub.publish(App.Events.NEW_PAGE, [this.collection.info().prev]);
             }
         },
 
@@ -72,7 +72,7 @@ define([
             event.preventDefault();
 
             if (this.collection.info().next) {
-                Pubsub.publish(Events.NEW_PAGE, [this.collection.info().next]);
+                Pubsub.publish(App.Events.NEW_PAGE, [this.collection.info().next]);
             }
         }
 

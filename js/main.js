@@ -43,7 +43,6 @@ require([
     'jquery',
     'underscore',
     'underscore.string',
-    'util',
     'async',
     'events'
     // Some plugins have to be loaded in order due to their non AMD compliance

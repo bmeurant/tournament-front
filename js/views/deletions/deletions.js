@@ -7,15 +7,15 @@ define([
     'views/deletions/abstract',
     'text!templates/participants/list.html',
     'models/participant',
-    'mixins/selection',
+    'mixins/selectable',
     'pubsub'
-], function ($, _, Backbone, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, Selection, Pubsub) {
+], function ($, _, Backbone, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, Selectable, Pubsub) {
 
     /**
      * Main view for displaying deletions
      */
     return AbstractView.extend(
-          _.extend({}, Selection, {
+          _.extend({}, Selectable, {
 
             template:Handlebars.compile(deletionsTemplate),
             participantsTemplate:Handlebars.compile(participantTemplate),
@@ -40,11 +40,11 @@ define([
                 this.el = this.$el.get(0);
 
                 // init PubSub bindings
-                this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CONFIRMED, this.render.bind(this)));
-                this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CANCELED, this.render.bind(this)));
-                this.handlers.push(Pubsub.subscribe(Events.NEXT_CALLED, this.selectNext.bind(this)));
-                this.handlers.push(Pubsub.subscribe(Events.PREVIOUS_CALLED, this.selectPrevious.bind(this)));
-                this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM, this.cancelSelectedDeletion.bind(this)));
+                this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CONFIRMED, this.render.bind(this)));
+                this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CANCELED, this.render.bind(this)));
+                this.handlers.push(Pubsub.subscribe(App.Events.NEXT_CALLED, this.selectNext.bind(this)));
+                this.handlers.push(Pubsub.subscribe(App.Events.PREVIOUS_CALLED, this.selectPrevious.bind(this)));
+                this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM, this.cancelSelectedDeletion.bind(this)));
 
                 this.emptyJSONCollection();
 
@@ -128,16 +128,16 @@ define([
 
                 // if the number of errors is strictly equal to the number of elements to fetch
                 if (successes.length == 0) {
-                    Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
+                    Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
                 }
                 // there is at least on error
                 else if (successes.length < this.countElements(this.collection)) {
-                    Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Some participants could not be retrieved', 'alert-warning']);
+                    Pubsub.publish(App.Events.ALERT_RAISED, ['Warning!', 'Some participants could not be retrieved', 'alert-warning']);
                 }
 
                 this.showTemplate();
 
-                Pubsub.publish(Events.DELETIONS_POPULATED);
+                Pubsub.publish(App.Events.DELETIONS_POPULATED);
             },
 
             render:function () {
@@ -145,7 +145,7 @@ define([
                 this.emptyJSONCollection();
                 this.populateCollection();
 
-                Pubsub.publish(Events.VIEW_CHANGED, ['deletions', 'deletions']);
+                Pubsub.publish(App.Events.VIEW_CHANGED, ['deletions', 'deletions']);
                 return this;
             },
 
@@ -217,7 +217,7 @@ define([
                 this.storeInLocalStorage();
                 this.render();
 
-                Pubsub.publish(Events.DELETION_CANCELED);
+                Pubsub.publish(App.Events.DELETION_CANCELED);
             },
 
             selectNext:function () {

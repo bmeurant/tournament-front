@@ -29,7 +29,7 @@ define([
         showShortcuts:function (event) {
             event.stopPropagation();
             event.preventDefault();
-            Pubsub.publish(Events.KEYBOARD_CALLED);
+            Pubsub.publish(App.Events.KEYBOARD_CALLED);
         }
 
     });

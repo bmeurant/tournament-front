@@ -21,7 +21,7 @@ define([
 
         initialize:function () {
             this.$el = $('#shortcuts');
-            this.handlers.push(Pubsub.subscribe(Events.KEYBOARD_CALLED, this.render.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.KEYBOARD_CALLED, this.render.bind(this)));
         },
 
         render:function () {

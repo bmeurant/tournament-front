@@ -19,8 +19,8 @@ define([
 
         initialize:function () {
             this.$el.addClass("row");
-            this.handlers.push(Pubsub.subscribe(Events.REMOVE_ALERT, this.hideAlerts.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.ALERT_RAISED, this.showAlert.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.REMOVE_ALERT, this.hideAlerts.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.ALERT_RAISED, this.showAlert.bind(this)));
         },
 
         render:function () {

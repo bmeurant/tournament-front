@@ -34,12 +34,12 @@ define([
             this.$el = $("<div>").addClass("navbar").addClass("navbar-fixed-top");
             this.el = this.$el.get(0);
 
-            this.handlers.push(Pubsub.subscribe(Events.HOME_CALLED, this.backToGeneralHome.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.PARTICIPANTS_HOME_CALLED, this.moveToParticipantHome.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.TEAMS_HOME_CALLED, this.moveToTeamsHome.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.GT_HOME_CALLED, this.moveToGTHome.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.FIND_CALLED, this.focusOnSearch.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.HOME_CALLED, this.backToGeneralHome.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.PARTICIPANTS_HOME_CALLED, this.moveToParticipantHome.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.TEAMS_HOME_CALLED, this.moveToTeamsHome.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.GT_HOME_CALLED, this.moveToGTHome.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.FIND_CALLED, this.focusOnSearch.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
 
             this.deletionMenu = new DeletionsMenuView();
             this.searchMenu = new SearchMenuView();
@@ -74,7 +74,7 @@ define([
         },
 
         menuClicked:function () {
-            Pubsub.publish(Events.REMOVE_ALERT);
+            Pubsub.publish(App.Events.REMOVE_ALERT);
         },
 
         toggleSearchOption:function (event) {

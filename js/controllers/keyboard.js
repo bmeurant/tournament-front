@@ -40,25 +40,25 @@ define([
 
         init:function () {
 
-            this.bindings[this.LEFT_ARROW] = {event:Events.PREVIOUS_CALLED};
-            this.bindings[this.RIGHT_ARROW] = {event:Events.NEXT_CALLED};
-            this.bindings[this.H] = {event:Events.HOME_CALLED};
-            this.bindings[this.L] = {event:Events.LIST_CALLED};
-            this.bindings[this.DEL] = {event:Events.DELETE_ELEM};
-            this.bindings[this.D] = {event:Events.DELETIONS_CALLED};
-            this.bindings[this.A] = {event:Events.ADD_CALLED};
-            this.bindings[this.X] = {event:Events.CONFIRM_DELS_CALLED, needCtrl:true};
-            this.bindings[this.Z] = {event:Events.CANCEL_DELS_CALLED, needCtrl:true};
-            this.bindings[this.P] = {event:Events.PARTICIPANTS_HOME_CALLED};
-            this.bindings[this.T] = {event:Events.TEAMS_HOME_CALLED};
-            this.bindings[this.G] = {event:Events.GT_HOME_CALLED};
-            this.bindings[this.F] = {event:Events.FIND_CALLED};
-            this.bindings[this.ENTER] = {event:Events.ENTER_CALLED, acceptInputs:true};
-            this.bindings[this.ECHAP] = {event:Events.ECHAP_CALLED};
-            this.bindings[this.PAGE_UP] = {event:Events.PAGE_UP_CALLED, acceptInputs:true};
-            this.bindings[this.PAGE_DOWN] = {event:Events.PAGE_DOWN_CALLED, acceptInputs:true};
-            this.bindings[this.QUESTION_MARK] = {event:Events.QUESTION_MARK_CALLED};
-            this.bindings[this.K] = {event:Events.KEYBOARD_CALLED};
+            this.bindings[this.LEFT_ARROW] = {event:App.Events.PREVIOUS_CALLED};
+            this.bindings[this.RIGHT_ARROW] = {event:App.Events.NEXT_CALLED};
+            this.bindings[this.H] = {event:App.Events.HOME_CALLED};
+            this.bindings[this.L] = {event:App.Events.LIST_CALLED};
+            this.bindings[this.DEL] = {event:App.Events.DELETE_ELEM};
+            this.bindings[this.D] = {event:App.Events.DELETIONS_CALLED};
+            this.bindings[this.A] = {event:App.Events.ADD_CALLED};
+            this.bindings[this.X] = {event:App.Events.CONFIRM_DELS_CALLED, needCtrl:true};
+            this.bindings[this.Z] = {event:App.Events.CANCEL_DELS_CALLED, needCtrl:true};
+            this.bindings[this.P] = {event:App.Events.PARTICIPANTS_HOME_CALLED};
+            this.bindings[this.T] = {event:App.Events.TEAMS_HOME_CALLED};
+            this.bindings[this.G] = {event:App.Events.GT_HOME_CALLED};
+            this.bindings[this.F] = {event:App.Events.FIND_CALLED};
+            this.bindings[this.ENTER] = {event:App.Events.ENTER_CALLED, acceptInputs:true};
+            this.bindings[this.ECHAP] = {event:App.Events.ECHAP_CALLED};
+            this.bindings[this.PAGE_UP] = {event:App.Events.PAGE_UP_CALLED, acceptInputs:true};
+            this.bindings[this.PAGE_DOWN] = {event:App.Events.PAGE_DOWN_CALLED, acceptInputs:true};
+            this.bindings[this.QUESTION_MARK] = {event:App.Events.QUESTION_MARK_CALLED};
+            this.bindings[this.K] = {event:App.Events.KEYBOARD_CALLED};
 
             $(document).on("keydown", this.onKeyDown.bind(this));
             $(document).on("keyup", this.onKeyUp.bind(this));

@@ -6,10 +6,12 @@ define([
     'models/participant',
     'text!templates/participants/edit.html',
     'backbone-validation',
+    'mixins/validatable',
     'pubsub'
-], function ($, _, Backbone, Handlebars, Participant, participantEditTemplate, BackboneValidation, Pubsub) {
+], function ($, _, Backbone, Handlebars, Participant, participantEditTemplate, BackboneValidation, Validatable, Pubsub) {
 
-    return Backbone.View.extend({
+    return Backbone.View.extend(
+        _.extend({}, Validatable, {
 
         elemType: 'participant',
         viewType:'edit',
@@ -42,8 +44,8 @@ define([
             // allow backbone-validation view callbacks (for error display)
             Backbone.Validation.bind(this);
 
-            this.handlers.push(Pubsub.subscribe(Events.SAVE_ELEM, this.submitForm.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.ENTER_CALLED, this.submitForm.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.SAVE_ELEM, this.submitForm.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.ENTER_CALLED, this.submitForm.bind(this)));
         },
 
         /**
@@ -134,7 +136,7 @@ define([
                 });
             }
             else {
-                Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Fix validation errors and try again', 'alert-warning']);
+                Pubsub.publish(App.Events.ALERT_RAISED, ['Warning!', 'Fix validation errors and try again', 'alert-warning']);
             }
         },
 
@@ -147,7 +149,7 @@ define([
         onSaveError:function (model, resp) {
             // error is an http (server) one
             if (resp.hasOwnProperty("status")) {
-                Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to update this item', 'alert-error']);
+                Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to update this item', 'alert-error']);
             }
         },
 
@@ -160,7 +162,7 @@ define([
 
             this.model = model;
 
-            utils.clearValidationErrors();
+            this.clearValidationErrors();
 
             // if model pictureFile has changed, upload on server
             if (this.pictureFile) {
@@ -179,7 +181,7 @@ define([
             // store the fact that the model has been updated
             this.updated = true;
 
-            Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Participant saved successfully', 'alert-success']);
+            Pubsub.publish(App.Events.ALERT_RAISED, ['Success!', 'Participant saved successfully', 'alert-success']);
 
             // restore the focus on the last acceded field before saving
             if (this.focusedField) {
@@ -246,7 +248,7 @@ define([
                     callbackSuccess();
                 })
                 .fail(function () {
-                    Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while uploading ' + file.name, 'alert-error']);
+                    Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while uploading ' + file.name, 'alert-error']);
                 });
         },
 
@@ -267,5 +269,5 @@ define([
             this.$el.find("form input:focus").blur();
         }
 
-    });
+    }));
 });

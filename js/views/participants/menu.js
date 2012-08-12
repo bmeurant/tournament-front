@@ -37,10 +37,10 @@ define([
             // default type
             this.viewType = "";
 
-            this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.ADD_CALLED, this.addElement.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.LIST_CALLED, this.backToListElement.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.ECHAP_CALLED, this.backToElementHome.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.ADD_CALLED, this.addElement.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.LIST_CALLED, this.backToListElement.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.ECHAP_CALLED, this.backToElementHome.bind(this)));
 
             Handlebars.registerHelper('hidden', function (viewType) {
                 return _.indexOf(this.actions[this.viewType], viewType) < 0 ? "hidden" : "";
@@ -68,7 +68,7 @@ define([
         saveElement:function (event) {
             event.stopPropagation();
             event.preventDefault();
-            Pubsub.publish(Events.SAVE_ELEM);
+            Pubsub.publish(App.Events.SAVE_ELEM);
         },
 
         render:function () {

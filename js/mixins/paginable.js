@@ -1,15 +1,6 @@
-define([
-    'jquery'
-], function ($) {
+define([], function () {
 
-    // global utility methods
-    utils = {
-
-        clearValidationErrors:function () {
-            $('.control-group').removeClass("error");
-            $('.help-inline').empty();
-        },
-
+    return {
         isValidPageNumber:function (value) {
             if (value.length == 0) {
                 return false;
@@ -20,8 +11,7 @@ define([
                 return false;
             }
 
-            return (intValue <= 0);
+            return (intValue >= 0);
         }
-
     };
 });

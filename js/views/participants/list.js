@@ -9,12 +9,13 @@ define([
     'text!templates/participants/list.html',
     'views/participants/pagination',
     'text!templates/participants/miniature.html',
-    'mixins/selection',
+    'mixins/selectable',
+    'mixins/paginable',
     'pubsub'
-], function ($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, participantListContainerTemplate, participantListTemplate, PaginationView, participantMiniatureTemplate, Selection, Pubsub) {
+], function ($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, participantListContainerTemplate, participantListTemplate, PaginationView, participantMiniatureTemplate, Selectable, Paginable, Pubsub) {
 
     return Backbone.View.extend(
-      _.extend({}, Selection, {
+      _.extend({}, Selectable, Paginable, {
 
         elemType: 'participant',
         template:Handlebars.compile(participantListTemplate),
@@ -34,16 +35,16 @@ define([
             this.collection = new ParticipantsCollection;
             this.paginationView = new PaginationView();
 
-            this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_BAR, this.participantDeleted.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CANCELED, this.cancelDeletions.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.NEXT_CALLED, this.selectNext.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.PREVIOUS_CALLED, this.selectPrevious.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.ENTER_CALLED, this.showSelected.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_VIEW, this.participantDeleted.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.NEW_PAGE, this.newPage.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CONFIRMED, this.render.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.ELEM_DELETED_FROM_BAR, this.participantDeleted.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CANCELED, this.cancelDeletions.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.NEXT_CALLED, this.selectNext.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.PREVIOUS_CALLED, this.selectPrevious.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.ENTER_CALLED, this.showSelected.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.ELEM_DELETED_FROM_VIEW, this.participantDeleted.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.NEW_PAGE, this.newPage.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CONFIRMED, this.render.bind(this)));
 
             this.initDeleted();
 
@@ -61,7 +62,7 @@ define([
             }.bind(this));
 
             if (params) {
-                if (params.page && utils.isValidPageNumber(params.page)) this.askedPage = parseInt(params.page);
+                if (params.page && this.isValidPageNumber(params.page)) this.askedPage = parseInt(params.page);
             }
         },
 
@@ -86,7 +87,7 @@ define([
                         this.showTemplate(partials);
                     }.bind(this),
                     error:function () {
-                        Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
+                        Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
                     }
                 });
             return this;
@@ -117,7 +118,7 @@ define([
             dragIcon.html(this.miniatureTemplate({participant:participant.toJSON()}));
             event.originalEvent.dataTransfer.setDragImage(dragIcon.get(0), 25, 25);
 
-            Pubsub.publish(Events.DRAG_START);
+            Pubsub.publish(App.Events.DRAG_START);
         },
 
         /**
@@ -162,7 +163,7 @@ define([
 
             window.history.pushState(null, "Tournament", "/participants" + ((this.collection.info().currentPage != 1) ? "?page=" + this.collection.info().currentPage : ""));
 
-            Pubsub.publish(Events.VIEW_CHANGED, [this.elemType, 'list']);
+            Pubsub.publish(App.Events.VIEW_CHANGED, [this.elemType, 'list']);
         },
 
         /**
@@ -216,7 +217,7 @@ define([
 
             var $selected = this.findSelected(this.$el, "li.thumbnail");
             if ($selected && $selected.length > 0) {
-                Pubsub.publish(Events.DELETE_ELEM_FROM_VIEW, ['participant', $selected.get(0).id]);
+                Pubsub.publish(App.Events.DELETE_ELEM_FROM_VIEW, ['participant', $selected.get(0).id]);
             }
         },
 

@@ -39,15 +39,15 @@ define([
             this.el = this.$el.get(0);
 
             // Register PubSub bindings
-            this.handlers.push(Pubsub.subscribe(Events.DRAG_START, this.onDragStart.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.DRAG_END, this.onDragEnd.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.DELETIONS_POPULATED, this.render.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.DELETION_CANCELED, this.render.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.DELETIONS_CALLED, this.moveToDeletionsView.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.CONFIRM_DELS_CALLED, this.confirmDeletions.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.CANCEL_DELS_CALLED, this.cancelDeletions.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM_FROM_VIEW, this.deleteElem.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DRAG_START, this.onDragStart.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DRAG_END, this.onDragEnd.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_POPULATED, this.render.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DELETION_CANCELED, this.render.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CALLED, this.moveToDeletionsView.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.CONFIRM_DELS_CALLED, this.confirmDeletions.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.CANCEL_DELS_CALLED, this.cancelDeletions.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM_FROM_VIEW, this.deleteElem.bind(this)));
 
         },
 
@@ -84,7 +84,7 @@ define([
             this.storeInLocalStorage();
             this.renderDels();
 
-            Pubsub.publish(Events.ELEM_DELETED_FROM_BAR, [id]);
+            Pubsub.publish(App.Events.ELEM_DELETED_FROM_BAR, [id]);
         },
 
         /**
@@ -109,7 +109,7 @@ define([
             // handles element deletion or ignore any other dropped element
             if ((id != null) && (id != "")) {
                 this.deleteElement(elemType, id);
-                Pubsub.publish(Events.REMOVE_ALERT);
+                Pubsub.publish(App.Events.REMOVE_ALERT);
             }
 
             this.onDragEnd(elemType, id);
@@ -137,7 +137,7 @@ define([
             $('.drop-zone').removeClass('emphasize');
             this.clearDropZone();
             this.renderDels();
-            Pubsub.publish(Events.ELEM_DELETED_FROM_BAR, [id, elemType]);
+            Pubsub.publish(App.Events.ELEM_DELETED_FROM_BAR, [id, elemType]);
         },
 
         /**
@@ -266,13 +266,13 @@ define([
             var finalCollectionLength = this.countElements(this.collection);
 
             if (finalCollectionLength == 0) {
-                Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Elements successfully deleted', 'alert-success']);
+                Pubsub.publish(App.Events.ALERT_RAISED, ['Success!', 'Elements successfully deleted', 'alert-success']);
             }
             else if (finalCollectionLength == initialCollectionLength) {
-                Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'Error occurred while deleting these elements', 'alert-error']);
+                Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'Error occurred while deleting these elements', 'alert-error']);
             }
             else {
-                Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Error occurred while deleting some elements', 'alert-warning']);
+                Pubsub.publish(App.Events.ALERT_RAISED, ['Warning!', 'Error occurred while deleting some elements', 'alert-warning']);
             }
 
             // save collection
@@ -280,7 +280,7 @@ define([
 
             this.render();
 
-            Pubsub.publish(Events.DELETIONS_CONFIRMED);
+            Pubsub.publish(App.Events.DELETIONS_CONFIRMED);
 
         },
 
@@ -300,8 +300,8 @@ define([
 
             this.render();
 
-            Pubsub.publish(Events.ALERT_RAISED, ['Success!', 'Deletion canceled', 'alert-success']);
-            Pubsub.publish(Events.DELETIONS_CANCELED);
+            Pubsub.publish(App.Events.ALERT_RAISED, ['Success!', 'Deletion canceled', 'alert-success']);
+            Pubsub.publish(App.Events.DELETIONS_CANCELED);
         },
 
         /**
@@ -311,7 +311,7 @@ define([
         removeElement:function (event) {
             event.stopPropagation();
             event.preventDefault();
-            Pubsub.publish(Events.DELETE_ELEM_FROM_BAR);
+            Pubsub.publish(App.Events.DELETE_ELEM_FROM_BAR);
         },
 
         /**

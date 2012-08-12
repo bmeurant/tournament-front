@@ -65,19 +65,19 @@ define([
             // create sub navigation component
             this.navigationView = new NavigationView(this.model.id, this.viewType);
 
-            this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_BAR, this.onParticipantDeleted.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.ELEM_DELETED_FROM_VIEW, this.onParticipantDeleted.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.CHANGE_VIEW, this.changeParticipantView.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.PREVIOUS_CALLED, this.precedentHandler.bind(this)));
-            this.handlers.push(Pubsub.subscribe(Events.NEXT_CALLED, this.nextHandler.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.ELEM_DELETED_FROM_BAR, this.onParticipantDeleted.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.ELEM_DELETED_FROM_VIEW, this.onParticipantDeleted.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.CHANGE_VIEW, this.changeParticipantView.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.PREVIOUS_CALLED, this.precedentHandler.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.NEXT_CALLED, this.nextHandler.bind(this)));
         },
 
         render:function () {
 
             if (this.model.id && this.deleted.indexOf(this.model.id) >= 0) {
-                Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'This participant is currently being deleted', 'alert-error']);
+                Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'This participant is currently being deleted', 'alert-error']);
 
                 setTimeout(function () {
                     Backbone.history.navigate("/participants", true);
@@ -93,7 +93,7 @@ define([
                         this.showTemplate();
                     }.bind(this),
                     error:function () {
-                        Pubsub.publish(Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to get participant', 'alert-error']);
+                        Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to get participant', 'alert-error']);
                     }
                 });
             }
@@ -126,7 +126,7 @@ define([
             dragIcon.html(this.miniatureTemplate({participant:this.model.toJSON()}));
             event.originalEvent.dataTransfer.setDragImage(dragIcon.get(0), 50, 50);
 
-            Pubsub.publish(Events.DRAG_START);
+            Pubsub.publish(App.Events.DRAG_START);
         },
 
         /**
@@ -157,7 +157,7 @@ define([
 
             this.renderViews();
 
-            Pubsub.publish(Events.VIEW_CHANGED, [this.elemType, this.viewType]);
+            Pubsub.publish(App.Events.VIEW_CHANGED, [this.elemType, this.viewType]);
         },
 
         /**
@@ -308,7 +308,7 @@ define([
                     callbackSuccess();
                 })
                 .fail(function () {
-                    Pubsub.publish(Events.ALERT_RAISED, ['Warning!', 'Error occurred while deleting ' + id + 'photo', 'alert-warning']);
+                    Pubsub.publish(App.Events.ALERT_RAISED, ['Warning!', 'Error occurred while deleting ' + id + 'photo', 'alert-warning']);
                 });
         },
 
@@ -316,7 +316,7 @@ define([
          * Asks for current participant deletion
          */
         deleteParticipant:function () {
-            Pubsub.publish(Events.DELETE_ELEM_FROM_VIEW, ['participant', this.model.id]);
+            Pubsub.publish(App.Events.DELETE_ELEM_FROM_VIEW, ['participant', this.model.id]);
         },
 
         /**
@@ -366,7 +366,7 @@ define([
             // register callbacks executed after css transition
             this.addTransitionCallbacks(this.$el.find('#view'), this.$el.find('.view-elem#' + oldType));
 
-            Pubsub.publish(Events.VIEW_CHANGED, [this.elemType, this.viewType]);
+            Pubsub.publish(App.Events.VIEW_CHANGED, [this.elemType, this.viewType]);
 
             // perform transition
             this.$el.find('#view').addClass('slide').css('margin-left', -(mainIndex * (940 + 20 + 50)) + "px");
