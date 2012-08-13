@@ -666,7 +666,7 @@ Alternatives, propositions et discussions sont bien évidemment bienvenues.
 ### Utilisation de routeurs
 
 **[Backbone][backbone]** fournit un objet routeur permettant d'**organiser la navigation entre les différentes vues** de
-l'application. Malgré cela certains exemples n'en font pas uage et préferrent déléguer à chaque vue la responsabilité
+l'application. Malgré cela certains exemples n'en font pas uage et préfèrent déléguer à chaque vue la responsabilité
 de passer la main à la suivante, de l'initialiser, etc.
 
 Il me semble que cet usage est à déconseiller pour plusieurs raisons :
@@ -678,7 +678,7 @@ Il me semble que cet usage est à déconseiller pour plusieurs raisons :
 - L'affichage de chaque vue est totalement dépendante de la précédente : **pas de `deep-linking`**. Autrement dit il est
   impossible d'accéder directement à une vue par son url et il n'existe q'une url : celle de l'application
 
-Pour toutes ces raison (et surement des tas d'autres), les routeurs **[Backbone][backbone]** doivent être utilisés pour
+Pour toutes ces raison (et sûrement des tas d'autres), les routeurs **[Backbone][backbone]** doivent être utilisés pour
 naviguer entre les vues :
 
     var AppRouter = Backbone.Router.extend({
@@ -728,9 +728,9 @@ pu le faire dans une précédente version :
 Cette opération doit être effectuée la vue `header` abonnée à un évènement de changement de vue.
 
 **NB** : évidemment, si il n'existe dans l'application aucune vue `header`en charge de ces opérations, cela peut
-être effectuée par une `main view` mais je ne pens pas que cela soit pertinent dans le routeur.
+être effectuée par une `main view` mais je ne pense pas que cela soit pertinent dans le routeur.
 
-Certains exemples en ligne proposent des implémentation de routeurs **appelant des fonction "métier" de la vue** à
+Certains exemples en ligne proposent des implémentations de routeurs **appelant des fonction "métier" de la vue** à
 afficher :
 
     list: function() {
@@ -742,7 +742,7 @@ afficher :
     },
 
 Même si dans cet exemple le routeur effectue peu d'opérations, ce n'est à mon sens pas à lui de demander à la vue de
-mettre à jour son model, de gérer les success et errors de l'appel au serveur, etc. Je préferre un modèle ou **le routeur
+mettre à jour son model, de gérer les success et errors de l'appel au serveur, etc. Je préfère un modèle ou **le routeur
 se contente de lui demander de se rendre** ...
 
 ---
@@ -758,23 +758,195 @@ Cependant, la réponse peut-être différente selon les applications et, dans to
 opérations qui ne doivent pas être laissées au routeur (cf. § précédent).
 
 En particulier, dans cette application, j'ai du créer une vue `footer` pour gérer les évènements sur les boutons d'aide
-(dont un en fenêtre modale) et un `KeyboardController` pour centraliser les évènements clavier sur le document. Deux
+(dont un en fenêtre modale) et une `KeyboardView` pour centraliser les évènements clavier sur le document. Deux
 éléments qui auraient pu être traités par une vue principale ... sujet ouvert, donc ...
 
 ---
 ### Le problème des vues zombies
 
-TODO
+Lorsqu'on travaille avec un routeur **[Backbone][backbone]**, celui-ci est classiquement an charge d'instancier et
+de demander à la vue associée à la route appelée de se rendre (voir plus haut). On est alors confronté au problème
+suivant :
+
+**Chaque nouvelle instanciation d'une vue déclare de nouveaux bindings sans pour autant que les précédents soient
+désactivés**. On se retrouve donc avec de multiples instances active d'une même vue même si une seule d'entre elles est
+rendue puisqu'elles partagent le même `root element` et se replacent donc les unes les autres d'un point de vue DOM.
+Il est alors perturbant de constater qu'**un click sur le bouton `delete` génère plusieures requêtes de suppression sur le
+serveur** ...
+
+Ce problème est référencé dans [ce très bon post](http://lostechies.com/derickbailey/2011/09/15/zombies-run-managing-page-transitions-in-backbone-apps/)
+
+On doit alors trouver un moyen de garantir l'unicité d'une vue donnée à un instant t. Plusieurs solutions pour cela :
+
+- **Utilisation exclusive de Singletons** : cf. plus loin. Cela nécessite de mettre en place une logique de
+rafraichissement de la vue via l'implémentation d'une fonction `reset` dans chacune d'entre elles qui sera appelée
+en lieu et place du constructeur. Les vues **[Backbone][backbone]** peuvent être étendues pour ajouter la signature
+ce cette méthode, laissée vide pour une implémentation sépcifique par vue.
+- **Extension des vues [Backbone][backbone]** pour ajouter une méthode `close` chargée d'appeler les méthodes déjà
+présentes : `remove` (suppression du DOM), `unbind`, etc. Comme le suggère Derick Bailey dans son post.
+
+La seconde solution m'a parue préferable parce qu'elle s'intègre mieux, je trouve, dans le cycle de vie des vues
+**[Backbone][backbone]**, conserve l'approche standard d'initialisation et peut être proposée sous forme d'extension
+générique sans ajouter quoique ce soit aux vues.
+
+J'ai donc implémenté l'extension suivante (`libs/extensions/backbone.ext.js`) :
+
+        /**
+         *  Backbone extension:
+         *
+         *  Defines a new function close properly cleaning current active view.
+         *      - remove validation and model bindings, if any
+         *      - remove PubSub bindings, if any
+         *      - remove view bindings, if any
+         *      - remove this.el
+         */
+        Backbone.View.prototype.close = function () {
+
+            // unsubscribe all PubSub events. Otherwise these events would still be launched and listened
+            // and unexpected  handlers would be called conducing to perform a same action twice or more
+            if (this.handlers) {
+                $.each(this.handlers, function (index, value) {
+                    Pubsub.unsubscribe(value);
+                });
+            }
+
+            // unbind all model (if exists) and validation events
+            if (this.model && this.model.unbind) {
+                if (Backbone.Validation) {
+                    Backbone.Validation.unbind(this);
+                }
+                this.model.unbind();
+            }
+
+            // remove html content
+            this.remove();
+
+            // unbind view events
+            this.unbind();
+
+            // optionally call a close method if exists
+            if (this.onClose) {
+                this.onClose();
+            }
+        };
+
+Il s'agit de l'implémentation proposée par Derick Bailey à laquelle j'ai apporté les modifications suivantes :
+
+- Suppresion de toutes les souscriptions Pubsub qui provent le même effet
+- unbind des évènements liés au model (pas sûr que cela soit nécessaire)
+- unbind des callbacks de validation
+
+Concernant le "unsubscribe" Pubsub, pour pouvoir appliquer une solution générique j'ai du appliquer la convention
+suivante dans l'ensemble de mes vues :
+
+    handlers:[],
+
+    initialize:function () {
+
+        ...
+
+        this.handlers.push(Pubsub.subscribe(App.Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
+        this.handlers.push(Pubsub.subscribe(App.Events.ADD_CALLED, this.addElement.bind(this)));
+        this.handlers.push(Pubsub.subscribe(App.Events.LIST_CALLED, this.backToListElement.bind(this)));
+        this.handlers.push(Pubsub.subscribe(App.Events.ECHAP_CALLED, this.backToElementHome.bind(this)));
+
+        ...
+    }
+
+Soit le référencement de chaque souscription dans un tableau de handlers, puisque Pubsub ne permet un unbind qu'à
+partir d'un handler donné.
+
+Reste à appeler cette méthode close à chaque changement de vue dans le routeur. Pour cela il est nécessaire de
+stocker en permanence une référence vers la vue active et de la clore avant d'en initialiser une nouvelle via
+une méthode unique dédiée dans notre routeur :
+
+    listParticipants:function (params) {
+        this.showView($('#content'), ParticipantListView, [params]);
+    },
+
+    ...
+
+    /**
+     * This methods wrap initialization and rendering of main view in order to guarantee
+     * that any previous main view is properly closed and unbind.
+     *
+     * Otherwise events and listeners are raise twice or more and the application becomes unstable
+     *
+     * @param $selector jquery selector in which the view has to be rendered
+     * @param View View to create
+     * @param args optional view constructor arguments
+     * @return {Object} created View
+     */
+    showView:function ($selector, View, args) {
+        // initialize args if null
+        args = args || [];
+
+        // clean previous view
+        if (App.Views.currentView) {
+            App.Views.currentView.close();
+        }
+
+        // insertion of this in arguments in order to perform dynamic constructor call
+        args.splice(0, 0, this);
+
+        // call constructor and initialize view
+        var view = new (Function.prototype.bind.apply(View, args));
+
+        // render view
+        $selector.html(view.render().el);
+
+        // replace global accessor of current view
+        App.Views.currentView = view;
+
+        return view;
+    }
+
+A noter qu'il est également nécessaire de s'occuper transitivement des "Sous vues" si elles existent (cf. plus loin).
+
+Et pourquoi pas des singletons ? Après tout, chaque vue est unique ... Outre le fait que cela génèrerait d'avantage
+de boilerplate réparti dans les différentes vues, j'ai préferré ne considérer comme singletons que les vues de contôle
+qui ne nécessitent donc aucun `reset` depuis le controller et se mettent à jour en souscrivant aux évènements générés
+par les autres vues (cf. plus loin).
 
 ---
-### Nested views
+### Sous vues
 
-TODO
+Une sous vue est une **vue embarquée dans une vue de plus haut niveau et dont le cycle de vie est totalement inféodé à celui
+de son parent** : elles n'existent que pendant la durée de l'existence du parent et ne peuvent lui survivre.
 
-close
-unbind events
-unbind Pubsub subscribers
-close nested views
+Dans le système décrit précédement, seules sont gérées par le routeur les vues principales, charge à elles d'intitialiser,
+rendre et donc de clore également les vues qu'elles embarquent.
+
+Il est donc nécessaire pour chaque vue comportant des sous vues, que la vue parente les ferment proprement à sa propre
+fermeture, via une surcharge de la méthode close (sans oublier de rappeler la méthode originelle) :
+
+    return Backbone.View.extend({
+
+        ...
+
+        initialize:function (params) {
+            ...
+            this.paginationView = new PaginationView();
+        },
+
+        render: function() {
+            ...
+            this.paginationView.render(this.collection);
+            ...
+        },
+
+        /**
+         * Close the current view and any of its embedded components in order
+         * to unbind events and handlers that should not be triggered anymore
+         */
+        close:function () {
+
+            this.paginationView.close();
+            Backbone.View.prototype.close.apply(this, arguments);
+        }
+    });
+
+De cette manière, les sous vues sont également fermées correctement.
 
 ---
 ### Vues Singleton
@@ -850,7 +1022,7 @@ Les extensions sont chargées au démarrage de l'application (`app.js`) :
         'views/alerts',
         'views/help/shortcuts',
         'views/footer',
-        'controllers/keyboard',
+        'views/keyboard',
         'handlebars',
         'handlebars.helpers'
     ],

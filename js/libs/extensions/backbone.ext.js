@@ -17,11 +17,6 @@
      */
     Backbone.View.prototype.close = function () {
 
-        // optionally call a pre close method if exists
-        if (this.beforeClose) {
-            this.beforeClose();
-        }
-
         // unsubscribe all PubSub events. Otherwise these events would still be launched and listened
         // and unexpected  handlers would be called conducing to perform a same action twice or more
         if (this.handlers) {
@@ -32,7 +27,9 @@
 
         // unbind all model (if exists) and validation events
         if (this.model && this.model.unbind) {
-            Backbone.Validation.unbind(this);
+            if (Backbone.Validation) {
+                Backbone.Validation.unbind(this);
+            }
             this.model.unbind();
         }
 
@@ -41,6 +38,11 @@
 
         // unbind view events
         this.unbind();
+
+        // optionally call a close method if exists
+        if (this.onClose) {
+            this.onClose();
+        }
     };
 
     // force all links to be handled by Backbone pushstate - no get will be send to server

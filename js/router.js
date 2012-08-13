@@ -54,7 +54,7 @@ define([
          * @param $selector jquery selector in which the view has to be rendered
          * @param View View to create
          * @param args optional view constructor arguments
-         * @return {Object} create View
+         * @return {Object} created View
          */
         showView:function ($selector, View, args) {
             // initialize args if null

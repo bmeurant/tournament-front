@@ -262,7 +262,6 @@ define([
         close:function () {
 
             this.paginationView.close();
-
             Backbone.View.prototype.close.apply(this, arguments);
         },
 
