@@ -26,13 +26,10 @@ require.config({
 
 });
 
+// namespaces for Singleton views and routers
 App = {
     Routers:{},
-    Collections:{},
-    Models:{},
-    Controllers:{},
-    Views:{},
-    Mixins:{}
+    Views:{}
 };
 
 

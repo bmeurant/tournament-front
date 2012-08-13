@@ -1,44 +1,47 @@
 define([
     'jquery',
+    'backbone',
     'pubsub'
-], function ($, PubSub) {
+], function ($, Backbone, Pubsub) {
 
     /**
      * Global controller allowing to map and publish keyboard events and controls
      */
-    var KeyboardController = function () {
+    return Backbone.View.extend({
 
-        this.LEFT_ARROW = 37;
-        this.RIGHT_ARROW = 39;
-        this.H = 72;
-        this.L = 76;
-        this.Z = 90;
-        this.S = 83;
-        this.A = 65;
-        this.X = 88;
-        this.D = 68;
-        this.F = 70;
-        this.P = 80;
-        this.T = 84;
-        this.G = 71;
-        this.K = 75;
-        this.DEL = 46;
-        this.ENTER = 13;
-        this.ECHAP = 27;
-        this.PAGE_UP = 33;
-        this.PAGE_DOWN = 34;
-        this.QUESTION_MARK = 188;
-        this.CTRL = 17;
+        LEFT_ARROW:37,
+        RIGHT_ARROW:39,
+        H:72,
+        L:76,
+        Z:90,
+        S:83,
+        A:65,
+        X:88,
+        D:68,
+        F:70,
+        P:80,
+        T:84,
+        G:71,
+        K:75,
+        DEL:46,
+        ENTER:13,
+        ECHAP:27,
+        PAGE_UP:33,
+        PAGE_DOWN:34,
+        QUESTION_MARK:188,
+        CTRL:17,
 
-        this.bindings = {};
-        this.ctrlDown = false;
+        bindings:{},
+        ctrlDown:false,
 
-        this.init();
-    };
+        events:{
+            "keydown":"onKeyDown",
+            "keyup":"onKeyUp"
+        },
 
-    $.extend(KeyboardController.prototype, {
+        initialize:function () {
 
-        init:function () {
+            this.setElement(document);
 
             this.bindings[this.LEFT_ARROW] = {event:App.Events.PREVIOUS_CALLED};
             this.bindings[this.RIGHT_ARROW] = {event:App.Events.NEXT_CALLED};
@@ -60,8 +63,6 @@ define([
             this.bindings[this.QUESTION_MARK] = {event:App.Events.QUESTION_MARK_CALLED};
             this.bindings[this.K] = {event:App.Events.KEYBOARD_CALLED};
 
-            $(document).on("keydown", this.onKeyDown.bind(this));
-            $(document).on("keyup", this.onKeyUp.bind(this));
         },
 
         onKeyDown:function (event) {
@@ -76,7 +77,7 @@ define([
             if (binding && !this.isModalActive()
                 && (binding.acceptInputs || !this.targetIsInput(event))
                 && (!binding.needCtrl || this.ctrlDown)) {
-                PubSub.publish(binding.event, [event]);
+                Pubsub.publish(binding.event, [event]);
             }
         },
 
@@ -98,5 +99,4 @@ define([
 
     });
 
-    return KeyboardController;
 });
