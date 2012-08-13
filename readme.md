@@ -883,6 +883,53 @@ Les mixins remplacent avantageusement la définition de méthodes utilitaires au
 
 cf. **[Backbone Patterns](http://ricostacruz.com/backbone-patterns/#mixins)**.
 
+Les vues `participant/list` et `deletions/list` déclarent par exemple tous les deux le mixin `selectable` qui fournit
+un ensemble de méthodes et de comportements permettant de gérer la sélection d'un élément de liste :
+
+    return Backbone.View.extend(
+        _.extend({}, Selectable, Paginable, {
+
+        ...
+
+    }));
+
+Le mixin est définit dans `js/mixins/selectable` :
+
+    define([
+        'jquery'
+    ], function ($) {
+
+        return {
+            /**
+             * Select an element
+             *
+             * @param type optional selection type : 'previous' or 'next'. Otherwise or null : 'next'
+             */
+            selectElement:function ($el, selector, type) {
+                ...
+            },
+
+            selectNext:function ($el, selector) {
+                ...
+            },
+
+            selectPrevious:function ($el, selector) {
+                ...
+            },
+
+            selectFirst:function ($el, selector) {
+                ...
+            },
+
+            findSelected:function ($el, selector) {
+                return $el.find(selector + ".selected");
+            },
+
+            ...
+
+        };
+    });
+
 ---
 ### Routeurs multiples
 
