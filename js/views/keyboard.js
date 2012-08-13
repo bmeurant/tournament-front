@@ -74,6 +74,9 @@ define([
 
             var binding = this.bindings[event.which];
 
+            // publish event based on binding if no active modal
+            // and if the current event should be activated on inputs or the current target is not input
+            // and the event does not need ctrl activated or ctrl is activated
             if (binding && !this.isModalActive()
                 && (binding.acceptInputs || !this.targetIsInput(event))
                 && (!binding.needCtrl || this.ctrlDown)) {
