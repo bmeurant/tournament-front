@@ -730,8 +730,8 @@ Cette opération doit être effectuée la vue `header` abonnée à un évènemen
 **NB** : évidemment, si il n'existe dans l'application aucune vue `header`en charge de ces opérations, cela peut
 être effectuée par une `main view` mais je ne pens pas que cela soit pertinent dans le routeur.
 
-C'est **encore moins au routeur d'appeler des fonction "métier" de la vue** à afficher comme cela peut se trouver sur
-différents exemples en ligne :
+Certains exemples en ligne proposent des implémentation de routeurs **appelant des fonction "métier" de la vue** à
+afficher :
 
     list: function() {
         var list = new Collection();
@@ -742,8 +742,8 @@ différents exemples en ligne :
     },
 
 Même si dans cet exemple le routeur effectue peu d'opérations, ce n'est à mon sens pas à lui de demander à la vue de
-mettre à jour son model, de gérer les success et errors de l'appel au serveur, etc. **Il doit se contenter de lui demander
-de se rendre** ...
+mettre à jour son model, de gérer les success et errors de l'appel au serveur, etc. Je préferre un modèle ou **le routeur
+se contente de lui demander de se rendre** ...
 
 ---
 ### Main view or not ?
@@ -764,8 +764,12 @@ En particulier, dans cette application, j'ai du créer une vue `footer` pour gé
 ---
 ### Le problème des vues zombies
 
+TODO
+
 ---
 ### Nested views
+
+TODO
 
 close
 unbind events
@@ -775,8 +779,12 @@ close nested views
 ---
 ### Vues Singleton
 
+TODO
+
 ---
 ### Stratégie globale et cohérente de rendering
+
+TODO
 
 ---
 ### Gestion effective du PushState
@@ -873,7 +881,7 @@ lors de son instanciation et non de manière statique (utilisation du `this`) :
 
 Les mixins remplacent avantageusement la définition de méthodes utilitaires au sein d'un namespace global.
 
-cf. http://ricostacruz.com/backbone-patterns/#mixins
+cf. **[Backbone Patterns](http://ricostacruz.com/backbone-patterns/#mixins)**.
 
 ---
 ### Routeurs multiples
