@@ -516,9 +516,7 @@ l'état courant de la collection :
 
 Cette lib me convient donc tout à fait et se montre efficace, intuitive et simple d'utilisation pour le moment.
 
-L'étape suivante consistera à implémenter une api de pagination côté server et mettre en place un requestPager en
-lieu et place du clientPager puis à ajouter des fonctionnalités de filtrage des requêtes afin de tester le
-comportement de l'outil et sa pertinence sur ce type de besoins.
+TODO : Pagination côté client avec requestPager
 
 ---
 ### Liste d'appels asynchrones : Async.js
@@ -647,6 +645,11 @@ Ainsi, malgré ce twick bien dommage, **je retiens quand même cette lib pour to
 asynchrone à paralléliser** - que l'on souhaite ou non disposer d'un callback final.
 
 ---
+### CSS : LESS ?
+
+TODO
+
+---
 Considérations d'architecture et questions ouvertes
 ---------------------------------------------------
 
@@ -770,8 +773,8 @@ suivant :
 
 **Chaque nouvelle instanciation d'une vue déclare de nouveaux bindings sans pour autant que les précédents soient
 désactivés**. On se retrouve donc avec de multiples instances active d'une même vue même si une seule d'entre elles est
-rendue puisqu'elles partagent le même `root element` et se replacent donc les unes les autres d'un point de vue DOM.
-Il est alors perturbant de constater qu'**un click sur le bouton `delete` génère plusieures requêtes de suppression sur le
+rendue puisqu'elles partagent le même `root element` et se remplacent donc les unes les autres d'un point de vue DOM.
+Il est alors perturbant de constater qu'**un click sur le bouton `delete` génère plusieurs requêtes de suppression sur le
 serveur** ...
 
 Ce problème est référencé dans [ce très bon post](http://lostechies.com/derickbailey/2011/09/15/zombies-run-managing-page-transitions-in-backbone-apps/)
@@ -779,13 +782,13 @@ Ce problème est référencé dans [ce très bon post](http://lostechies.com/der
 On doit alors trouver un moyen de garantir l'unicité d'une vue donnée à un instant t. Plusieurs solutions pour cela :
 
 - **Utilisation exclusive de Singletons** : cf. plus loin. Cela nécessite de mettre en place une logique de
-rafraichissement de la vue via l'implémentation d'une fonction `reset` dans chacune d'entre elles qui sera appelée
+rafraîchissement de la vue via l'implémentation d'une fonction `reset` dans chacune d'entre elles qui sera appelée
 en lieu et place du constructeur. Les vues **[Backbone][backbone]** peuvent être étendues pour ajouter la signature
-ce cette méthode, laissée vide pour une implémentation sépcifique par vue.
+ce cette méthode, laissée vide pour une implémentation spécifique par vue.
 - **Extension des vues [Backbone][backbone]** pour ajouter une méthode `close` chargée d'appeler les méthodes déjà
 présentes : `remove` (suppression du DOM), `unbind`, etc. Comme le suggère Derick Bailey dans son post.
 
-La seconde solution m'a parue préferable parce qu'elle s'intègre mieux, je trouve, dans le cycle de vie des vues
+La seconde solution m'a parue préférable parce qu'elle s'intègre mieux, je trouve, dans le cycle de vie des vues
 **[Backbone][backbone]**, conserve l'approche standard d'initialisation et peut être proposée sous forme d'extension
 générique sans ajouter quoique ce soit aux vues.
 
@@ -832,7 +835,7 @@ J'ai donc implémenté l'extension suivante (`libs/extensions/backbone.ext.js`) 
 
 Il s'agit de l'implémentation proposée par Derick Bailey à laquelle j'ai apporté les modifications suivantes :
 
-- Suppresion de toutes les souscriptions Pubsub qui provent le même effet
+- Suppression de toutes les souscriptions Pubsub qui provoquent le même effet
 - unbind des évènements liés au model (pas sûr que cela soit nécessaire)
 - unbind des callbacks de validation
 
@@ -857,7 +860,7 @@ Soit le référencement de chaque souscription dans un tableau de handlers, puis
 partir d'un handler donné.
 
 Reste à appeler cette méthode close à chaque changement de vue dans le routeur. Pour cela il est nécessaire de
-stocker en permanence une référence vers la vue active et de la clore avant d'en initialiser une nouvelle via
+stocker en permanence une **référence vers la vue active et de la clore avant d'en initialiser une nouvelle** via
 une méthode unique dédiée dans notre routeur :
 
     listParticipants:function (params) {
@@ -903,18 +906,13 @@ une méthode unique dédiée dans notre routeur :
 
 A noter qu'il est également nécessaire de s'occuper transitivement des "Sous vues" si elles existent (cf. plus loin).
 
-Et pourquoi pas des singletons ? Après tout, chaque vue est unique ... Outre le fait que cela génèrerait d'avantage
-de boilerplate réparti dans les différentes vues, j'ai préferré ne considérer comme singletons que les vues de contôle
-qui ne nécessitent donc aucun `reset` depuis le controller et se mettent à jour en souscrivant aux évènements générés
-par les autres vues (cf. plus loin).
-
 ---
 ### Sous vues
 
 Une sous vue est une **vue embarquée dans une vue de plus haut niveau et dont le cycle de vie est totalement inféodé à celui
 de son parent** : elles n'existent que pendant la durée de l'existence du parent et ne peuvent lui survivre.
 
-Dans le système décrit précédement, seules sont gérées par le routeur les vues principales, charge à elles d'intitialiser,
+Dans le système décrit précédemment, seules sont gérées par le routeur les vues principales, charge à elles d'initialiser,
 rendre et donc de clore également les vues qu'elles embarquent.
 
 Il est donc nécessaire pour chaque vue comportant des sous vues, que la vue parente les ferment proprement à sa propre
@@ -951,12 +949,140 @@ De cette manière, les sous vues sont également fermées correctement.
 ---
 ### Vues Singleton
 
-TODO
+Le sujet des vues Singletons a déjà été en partie abordé plus haut mais mérite quelques précisions.
+Je ne considère comme 'vue singleton' que les vues de contrôle qui ne nécessitent donc aucun `reset` depuis le
+controller et se mettent à jour en souscrivant aux évènements générés par les autres vues.
+
+Par définition, ces vues sont uniques sur toute l'application et ne sont instanciées qu'une seule et unique fois,
+le plus souvent au démarrage.
+
+Dans cet exemple, elles sont initialisé dans le fichier `app.js` :
+
+    // Define global singleton views
+    App.Views.HeaderView = new HeaderView();
+    $('.header').html(App.Views.HeaderView.render().el);
+    App.Views.AlertsView = new AlertsView();
+     $('.alerts').html(App.Views.AlertsView.render().el);
+    App.Views.FooterView = new FooterView();
+    $('footer').html(App.Views.FooterView.render().el);
+    App.Views.ShortcutsView = new ShortcutsView();
+    App.Views.KeyboardView = new KeyboardView();
+
+On constate qu'elles sont ajoutées au namespace `App.Views` ... pour l'instant sans utilité aucune - simplement, cela
+me gênait de les voir disparaître dans la nature sans possibilité de les retrouver si besoin :-)
+
+Plus globalement, concernant ces vues spécifiques, se pose la question justement de la manière d'y accéder et
+éventuellement de la manière de garantir leur unicité en rendant impossible leur instanciation ultérieure.
+
+J'ai pour l'instant adopté la doctrine de Julien Askhenas, le créateur de **[Backbone][backbone]** dans cette
+[Pull Request](https://github.com/documentcloud/backbone/pull/1299) : "if you just want one of an object ... just make one".
+Je ne les ai donc créé qu'une seule fois :-)
+
+Je reste partagé sur ce point et n'exclue pas de trouver mieux ...
 
 ---
 ### Stratégie globale et cohérente de rendering
 
-TODO
+Concernant la manière de rendre les vues, ici encore **[Backbone][backbone] nous laisse nous débrouiller** et trouver
+la meilleure façon de le faire pour notre besoin. Il est donc nécessaire de définir une stratégie globale de rendering
+à appliquer de manière systématique sous peine de créer une nouvelle manière à chaque vue ...
+
+Pour cela, Ian Storm Taylor nous donne [quelques pistes](http://ianstormtaylor.com/rendering-views-in-backbonejs-isnt-always-simple/).
+
+En résumé notre stratégie de rendering doit nous permettre de respecter les principes suivants :
+
+- Une vue doit pouvoir être rendue plusieurs fois de suite sans effet de bord
+- L'organisation du DOM et l'ordre de positionnement des éléments doit être définit dans les templates et pas dans les vues
+- Appeler plusieurs fois render doit maintenir la vue dans le même état
+- Rendre plusieurs fois une vue ne doit pas consister à la supprimer et la recréer
+
+Ces différents principes nous amènent à certaines conclusions :
+
+- Pas de changement d'état : incrément, etc. dans une fonction `render()`
+- Ce sont les templates et le layout général qui définissent les éléments dans lesquels les vues seront rendues :
+
+Par exemple :
+
+    <div class="header"></div>
+
+    <div class="container">
+        <div class="row">
+            <div class="alerts span12>"></div>
+        </div>
+
+        <div class="row">
+            <div id="content" class="span12>"></div>
+        </div>
+
+        <div class="modal hide" id="shortcuts"></div>
+
+        <footer class="footer row">
+        </footer>
+    </div>
+
+En particulier, cela signifie qu'il ne faut **en aucun cas que l'élément root de la vue (`this.el`) soit l'élément
+dans lequel la vue doit se rendre** mais simplement le conteneur de plus haut niveau de cette vue.
+
+Ce qui signifie que ceci n'est pas souhaitable :
+
+    new MyView($('.container'));
+
+    return Backbone.View.extend({
+
+        initialize:function (el) {
+            this.setElement(el);
+        }
+
+        ...
+    });
+
+En effet, dans la logique **[Backbone][backbone]**, le `this.el` est inféodé à la vue qui le crée et le supprime. Si
+l'on détourne ce mécanisme, tout appel à `MyView.remove()` supprimera de manière irrémédiable le container et empêchera
+tout rendering futur.
+
+- Ne pas stocker en dur le container dans lequel la vue sera rendue pour permettre de la rendre ailleurs.
+
+Ce qui signifie qu'il est préférable éviter :
+
+    new MyView().render();
+
+    return Backbone.View.extend({
+
+      ...
+
+      render:function () {
+          $('.container').html(this.template());
+          return this;
+      },
+    });
+
+Avec ces différentes contraintes et quelques autres (notamment le fait de laisser le soin aux templates) de définir
+l'ordre (et donc d'éviter de faire de `appendTo` directement dans `this.$el`), on obtient le pattern, suivant :
+
+    return Backbone.View.extend({
+
+        // Cache the template function for a single item.
+        template:Handlebars.compile(template),
+
+        initialize:function () {
+        },
+
+        render:function () {
+            this.$el.html(this.template());
+            return this;
+        }
+    });
+
+On remarque que la méthode `render` retourne `this` de manière à ce que l'on puisse ensuite insérer le html de cette
+manière depuis l'extérieur de la vue (le routeur ou une vue parent) :
+
+    $('.container').html(new MyView().render().el);
+
+De cette manière ce n'est pas la vue qui décide ou se rendre mais un élément de plus haut niveau, il est possible de la
+rendre plusieurs fois sans effet indésirable (ce qui ne serait pas le cas avec une succession de `appendTo`) et l'appel
+à la méthode `remove` supprime l'élément de plus haut niveau de la vue (par défaut une div) mais pas le conteneur principal.
+
+Dans notre cas, cette opération est effectuée de manière générique dans la méthode `showView` du routeur (cf.plus haut).
 
 ---
 ### Gestion effective du PushState
@@ -1107,6 +1233,21 @@ Le mixin est définit dans `js/mixins/selectable` :
 
 Cette question reste à adresser dans mon cas mais cela me parait indispensable dans le cas d'une application de taille
 importante.
+
+---
+### Lazy loading avec requireJS ?
+
+TODO
+
+---
+### Internationalisation ?
+
+TODO
+
+---
+### Login / Logout & Sécurisation ?
+
+TODO
 
 [resthubjs]: http://resthub.org/2/backbone-stack.html "Resthub js"
 [underscore]: http://underscorejs.org/ "Underscore"
