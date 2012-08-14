@@ -18,6 +18,7 @@ define([
 
         // For these main view types, the deletion menu will be completely rendered
         acceptedTypes:['details', 'edit', 'list'],
+        ignoreElemTypes:['deletions'],
 
         events:{
             "drop #deleteDropZone":"onDrop",
@@ -41,8 +42,8 @@ define([
             // Register PubSub bindings
             this.handlers.push(Pubsub.subscribe(App.Events.DRAG_START, this.onDragStart.bind(this)));
             this.handlers.push(Pubsub.subscribe(App.Events.DRAG_END, this.onDragEnd.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_POPULATED, this.render.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.DELETION_CANCELED, this.render.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_POPULATED, this.renderDels.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DELETION_CANCELED, this.renderDels.bind(this)));
             this.handlers.push(Pubsub.subscribe(App.Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
             this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CALLED, this.moveToDeletionsView.bind(this)));
             this.handlers.push(Pubsub.subscribe(App.Events.CONFIRM_DELS_CALLED, this.confirmDeletions.bind(this)));
@@ -60,7 +61,7 @@ define([
             this.render();
 
             // if the new type is not managed by the view, hide it
-            if (this.acceptedTypes.indexOf(viewType) < 0) {
+            if (this.ignoreElemTypes.indexOf(elemType) >= 0 || this.acceptedTypes.indexOf(viewType) < 0) {
                 this.$el.find(".delete-menu.drop-zone").addClass("hidden");
             }
         },
@@ -135,9 +136,11 @@ define([
          */
         onDragEnd:function (elemType, id) {
             $('.drop-zone').removeClass('emphasize');
-            this.clearDropZone();
-            this.renderDels();
-            Pubsub.publish(App.Events.ELEM_DELETED_FROM_BAR, [id, elemType]);
+            if (elemType && id) {
+                this.clearDropZone();
+                this.renderDels();
+                Pubsub.publish(App.Events.ELEM_DELETED_FROM_BAR, [id, elemType]);
+            }
         },
 
         /**
@@ -229,10 +232,10 @@ define([
                 url:'http://localhost:3000/api/' + elem.type + '/' + elem.id,
                 type:'DELETE'
             })
-            .done(function () {
-                deleteCallback(null, {type:"success", elem:elem});
-            })
-            .fail(function (jqXHR) {
+                .done(function () {
+                    deleteCallback(null, {type:"success", elem:elem});
+                })
+                .fail(function (jqXHR) {
                 if (jqXHR.status == 404) {
                     // element obviously already deleted from server. Ignore it and remove from local collection
                     this.collection[elem.type].splice(elem.index, 1);

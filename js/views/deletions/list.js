@@ -15,12 +15,14 @@ define([
      * Main view for displaying deletions
      */
     return AbstractView.extend(
-          _.extend({}, Selectable, {
+        _.extend({}, Selectable, {
 
             template:Handlebars.compile(deletionsTemplate),
             participantsTemplate:Handlebars.compile(participantTemplate),
 
             handlers:[],
+            elemType:'deletions',
+            viewType:'list',
 
             events:{
                 "click #deletions-container li.thumbnail":"cancelElementDeletion"
@@ -93,12 +95,12 @@ define([
 
             fetchElement:function (elem, fetchCallback) {
                 $.getJSON('http://localhost:3000/api/' + elem.type + '/' + elem.id)
-                .done(function (data) {
+                    .done(function (data) {
                     // add model to current collection and call callback
                     this.JSONCollection[elem.type].push(data);
                     fetchCallback(null, elem);
                 }.bind(this))
-                .fail(function (jqXHR) {
+                    .fail(function (jqXHR) {
                     if (jqXHR.status == 404) {
                         // element obviously already deleted from server. Ignore it and remove from local collection
                         this.collection[elem.type].splice(elem.index, 1);
@@ -145,7 +147,8 @@ define([
                 this.emptyJSONCollection();
                 this.populateCollection();
 
-                Pubsub.publish(App.Events.VIEW_CHANGED, ['deletions', 'deletions']);
+                Pubsub.publish(App.Events.VIEW_CHANGED, [this.elemType, this.viewType]);
+                $(".delete-menu.drop-zone").addClass("hidden");
                 return this;
             },
 

@@ -23,6 +23,7 @@ define([
         miniatureTemplate:Handlebars.compile(miniatureTemplate),
 
         events:{
+            "dragend":"dragEndHandler"
         },
 
         // management of linked views : i.e. views that could be switched with transition and without a
@@ -116,7 +117,7 @@ define([
             // set transfer data
             event.originalEvent.dataTransfer.effectAllowed = 'move'; // only dropEffect='copy' will be droppable
             event.originalEvent.dataTransfer.setData('id', this.model.id);
-            event.originalEvent.dataTransfer.setData('type', 'participant');
+            event.originalEvent.dataTransfer.setData('elemType', 'participant');
 
             // create miniature shown during drag
             // this miniature must be already rendered by the browser and not hidden -> should be positioned
@@ -444,6 +445,10 @@ define([
                     }
                 }
             }
+        },
+
+        dragEndHandler:function (event) {
+            Pubsub.publish(App.Events.DRAG_END);
         }
 
     });

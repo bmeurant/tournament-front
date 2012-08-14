@@ -14,6 +14,7 @@ define([
     return Backbone.View.extend({
 
         menuElemType:"no",
+
         // Cache the template function for a single item.
         template:Handlebars.compile(headerTemplate),
 
@@ -122,7 +123,7 @@ define([
         onViewChanged:function (elemType, viewType) {
 
             if (this.menuElemType != elemType) {
-                this.menuElemType = viewType;
+                this.menuElemType = elemType;
                 this.clearMenu();
             }
 
@@ -135,7 +136,9 @@ define([
                     this.selectMenuItem('delete-menu');
             }
 
-            this.menuView.onViewChanged(elemType, viewType);
+            if (this.menuView) {
+                this.menuView.onViewChanged(elemType, viewType);
+            }
         }
 
     });
