@@ -82,6 +82,26 @@ define([
                 elements += value.length;
             });
             return elements;
+        },
+
+        deleteFromServer:function (elem, deleteCallback) {
+            $.ajax({
+                url:'http://localhost:3000/api/' + elem.type + '/' + elem.id,
+                type:'DELETE'
+            })
+                .done(function () {
+                    deleteCallback(null, {type:"success", elem:elem});
+                })
+                .fail(function (jqXHR) {
+                if (jqXHR.status == 404) {
+                    // element obviously already deleted from server. Ignore it and remove from local collection
+                    this.collection[elem.type].splice(elem.index, 1);
+                }
+
+                // callback is called with null error parameter because otherwise it breaks the
+                // loop and stop on first error :-(
+                deleteCallback(null, {type:"error", elem:elem});
+            }.bind(this));
         }
 
     });

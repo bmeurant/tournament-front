@@ -17,6 +17,7 @@ App.Events = {
     DELETIONS_POPULATED:"DeletionsPopulated",
     DELETIONS_TO_CANCEL:"DeletionsToCancel",
     DELETION_CANCELED:"DeletionCanceled",
+    DELETION_CONFIRMED:"DeletionConfirmed",
     CHANGE_VIEW:"ChangeView",
     PREVIOUS_CALLED:"PreviousCalled",
     NEXT_CALLED:"NextCalled",

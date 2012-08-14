@@ -44,6 +44,7 @@ define([
             this.handlers.push(Pubsub.subscribe(App.Events.DRAG_END, this.onDragEnd.bind(this)));
             this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_POPULATED, this.renderDels.bind(this)));
             this.handlers.push(Pubsub.subscribe(App.Events.DELETION_CANCELED, this.renderDels.bind(this)));
+            this.handlers.push(Pubsub.subscribe(App.Events.DELETION_CONFIRMED, this.renderDels.bind(this)));
             this.handlers.push(Pubsub.subscribe(App.Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
             this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CALLED, this.moveToDeletionsView.bind(this)));
             this.handlers.push(Pubsub.subscribe(App.Events.CONFIRM_DELS_CALLED, this.confirmDeletions.bind(this)));
@@ -225,26 +226,6 @@ define([
             }.bind(this));
 
             async.map(elements, this.deleteFromServer.bind(this), this.afterRemove.bind(this));
-        },
-
-        deleteFromServer:function (elem, deleteCallback) {
-            $.ajax({
-                url:'http://localhost:3000/api/' + elem.type + '/' + elem.id,
-                type:'DELETE'
-            })
-                .done(function () {
-                    deleteCallback(null, {type:"success", elem:elem});
-                })
-                .fail(function (jqXHR) {
-                if (jqXHR.status == 404) {
-                    // element obviously already deleted from server. Ignore it and remove from local collection
-                    this.collection[elem.type].splice(elem.index, 1);
-                }
-
-                // callback is called with null error parameter because otherwise it breaks the
-                // loop and stop on first error :-(
-                deleteCallback(null, {type:"error", elem:elem});
-            }.bind(this));
         },
 
         /**

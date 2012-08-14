@@ -46,7 +46,8 @@ define([
                 this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CANCELED, this.render.bind(this)));
                 this.handlers.push(Pubsub.subscribe(App.Events.NEXT_CALLED, this.selectNext.bind(this)));
                 this.handlers.push(Pubsub.subscribe(App.Events.PREVIOUS_CALLED, this.selectPrevious.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM, this.cancelSelectedDeletion.bind(this)));
+                this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM, this.confirmSelectedDeletion.bind(this)));
+                this.handlers.push(Pubsub.subscribe(App.Events.ENTER_CALLED, this.cancelSelectedDeletion.bind(this)));
 
                 this.emptyJSONCollection();
 
@@ -121,8 +122,6 @@ define([
              */
             afterPopulate:function (err, results) {
 
-                this.storeInLocalStorage();
-
                 // remove null elements i.e. models that could not be fetched
                 var successes = results.filter(function (e) {
                     return e;
@@ -137,6 +136,7 @@ define([
                     Pubsub.publish(App.Events.ALERT_RAISED, ['Warning!', 'Some participants could not be retrieved', 'alert-warning']);
                 }
 
+                this.storeInLocalStorage();
                 this.showTemplate();
 
                 Pubsub.publish(App.Events.DELETIONS_POPULATED);
@@ -188,39 +188,79 @@ define([
             },
 
             /**
+             * Confirm deletion of the selected element
+             */
+            confirmSelectedDeletion:function () {
+
+                var $selected = this.findSelected(this.$el, "li.thumbnail");
+                if ($selected && $selected.length > 0) {
+                    var elem = this.findElement($selected.attr("id"));
+                    this.deleteFromServer(elem, this.onElementDeleted.bind(this));
+                }
+            },
+
+            onElementDeleted:function (err, result) {
+                if (result.elem == null) {
+                    Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'Cannot remove selected element', 'alert-error']);
+                    return;
+                }
+
+                this.removeAndSave(result.elem);
+
+                Pubsub.publish(App.Events.DELETION_CONFIRMED);
+                Pubsub.publish(App.Events.ALERT_RAISED, ['Success!', 'Element deletion confirmed', 'alert-success'])
+            },
+
+            /**
              * Cancel element deletion by removing it from current deletions collection and from the current view
              *
              * @param idElem id of the element to delete
              */
             cancelDeletion:function (idElem) {
+
+                var elem = this.findElement(idElem);
+                this.removeAndSave(elem);
+
+                Pubsub.publish(App.Events.DELETION_CANCELED);
+                Pubsub.publish(App.Events.ALERT_RAISED, ['Success!', 'Element deletion canceled', 'alert-success'])
+            },
+
+            findElement:function (idElem) {
                 // get collection from local storage
                 this.initCollection();
+
+                var elem = {};
 
                 // find and remove the element from the deletions collection
                 $.each(this.collection, function (type, idArray) {
                     $.each(idArray, function (index, id) {
                         if (id == idElem) {
-                            this.collection[type].splice(index, 1);
+                            elem.id = id;
+                            elem.index = index;
+                            elem.type = type;
                             return false;
                         }
                     }.bind(this));
                 }.bind(this));
 
+                return elem;
+            },
+
+            removeAndSave:function (elem) {
+
+                this.selectPrevious();
+
+                this.collection[elem.type].splice(elem.index, 1);
+                // remove element from the current view
+                $("#" + elem.id).remove();
+
                 // retrieve and save the currently selected element, if any
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
 
-                if ($selected && $selected.length > 0) {
-                    this.idSelected = this.findSelected(this.$el, "li.thumbnail").get(0).id;
-                }
+                if (!$selected || $selected.length == 0) this.selectFirst(this.$el, "li.thumbnail");
 
-                // remove element from the current view
-                $("#" + idElem).remove();
-
-                // save changes in local storage and refresh view
+                // save changes in local storage
                 this.storeInLocalStorage();
-                this.render();
-
-                Pubsub.publish(App.Events.DELETION_CANCELED);
             },
 
             selectNext:function () {
