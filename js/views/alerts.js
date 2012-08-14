@@ -3,8 +3,9 @@ define([
     'underscore',
     'backbone',
     'handlebars',
-    'text!templates/alerts.html',
-    'pubsub'
+    'text!templates/alert.html',
+    'pubsub',
+    'bootstrap-alert'
 ], function ($, _, Backbone, Handlebars, alertsTemplate, Pubsub) {
 
     return Backbone.View.extend({
@@ -29,22 +30,23 @@ define([
         },
 
         hideAlerts:function () {
-            $('.alert').hide();
+            $(".alert").fadeOut('fast');
+            $(".alert").alert('close');
         },
 
         showAlert:function (title, text, klass) {
-            $('.alert').removeClass("alert-error alert-warning alert-success alert-info");
+            $(".alert").fadeOut('fast');
+            $(".alert").alert('close');
+
+            this.render();
             $('.alert').addClass(klass);
-            $('.alert').html('<strong>' + title + '</strong> ' + text);
-            $('.alert').show();
-            if (klass != "alert-error") {
-                this.timeout = setTimeout(function () {
-                    $('.alert').hide();
-                }.bind(this), 4000);
-            }
-            else {
-                clearTimeout(this.timeout);
-            }
+            $('.alert > .message').html('<strong>' + title + '</strong> ' + text);
+            $(".alert").fadeIn('fast');
+
+            clearTimeout(this.timeout);
+            this.timeout = setTimeout(function () {
+                $(".alert").alert('close');
+            }.bind(this), 5000);
         }
 
     });

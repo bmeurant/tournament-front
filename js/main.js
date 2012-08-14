@@ -13,6 +13,7 @@ require.config({
         'backbone-queryparams':'libs/backbone.queryparams',
         'bootstrap-modal':'libs/bootstrap-modal',
         'bootstrap-dropdown':'libs/bootstrap-dropdown',
+        'bootstrap-alert':'libs/bootstrap-alert',
         use:"libs/use",
         async:"libs/async",
         pubsub:'libs/pubsub',
