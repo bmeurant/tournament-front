@@ -25,7 +25,7 @@ define([
              $('.alerts').html(App.Views.AlertsView.render().el);
             App.Views.FooterView = new FooterView();
             $('footer').html(App.Views.FooterView.render().el);
-            App.Views.ShortcutsView = new ShortcutsView();
+            App.Views.ShortcutsView = new ShortcutsView($('.shortcuts-container'));
             App.Views.KeyboardView = new KeyboardView();
 
             // Pass in our Router module and call it's initialize function

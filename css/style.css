@@ -7,6 +7,10 @@ img.photo {
     max-width: 140px;
 }
 
+#edit .input-prepend .add-on, .input-prepend .btn {
+    margin-right: -5px;
+}
+
 p.photo {
     text-align: center;
 }
@@ -184,6 +188,55 @@ body .navbar .nav {
 img.icon {
     max-height: 14px;
     vertical-align: text-top;
+}
+
+h1 img.icon,
+h2 img.icon,
+h3 img.icon,
+h4 img.icon,
+h5 img.icon,
+h6 img.icon {
+    vertical-align:middle;
+}
+
+.shortcuts code {
+    box-shadow: 0px 0px 5px #737373;
+    padding: 2px 7px;
+    color: #000;
+}
+
+.shortcuts code.no-padding {
+    padding: 2px 0px;
+}
+
+.shortcuts-container hr {
+    margin-top: 3px;
+    margin-bottom: 5px;
+}
+
+.shortcuts-container .modal-body {
+    max-height: none;
+}
+
+.shortcuts-container h4 {
+    margin-top: 15px;
+}
+
+.shortcuts-container.modal {
+    top: 40%;
+}
+
+img.keyboard-btn {
+    max-width: 21px;
+}
+
+ul.shortcuts {
+    list-style: none;
+    margin: 0
+}
+
+ul.shortcuts li {
+    line-height: 25px;
 }
 
 footer p[class*="-menu"] {

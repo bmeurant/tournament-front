@@ -5,7 +5,7 @@ define([
     'backbone-queryparams',
     'views/participants/list',
     'views/participants/participant',
-    'views/deletions/deletions'
+    'views/deletions/list'
 ], function ($, _, Backbone, BackboneQueryParams, ParticipantListView, ParticipantView, DeletionsView) {
 
     var AppRouter = Backbone.Router.extend({
