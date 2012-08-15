@@ -114,6 +114,8 @@ define([
          */
         dragStartHandler:function (event) {
 
+            this.navigationView.hideTooltips();
+
             // set transfer data
             event.originalEvent.dataTransfer.effectAllowed = 'move'; // only dropEffect='copy' will be droppable
             event.originalEvent.dataTransfer.setData('id', this.model.id);
@@ -318,6 +320,7 @@ define([
          * Asks for current participant deletion
          */
         deleteParticipant:function () {
+            this.navigationView.hideTooltips();
             Pubsub.publish(App.Events.DELETE_ELEM_FROM_VIEW, ['participant', this.model.id]);
         },
 

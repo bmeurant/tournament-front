@@ -55,9 +55,9 @@ define([
         },
 
         selectMenuItem:function (menuItem) {
-            $('.nav li').removeClass('active');
+            this.$el.find('.nav li').removeClass('active');
             if (menuItem) {
-                $('.' + menuItem).addClass('active');
+                this.$el.find('.' + menuItem).addClass('active');
             }
         },
 

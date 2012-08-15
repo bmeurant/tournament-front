@@ -28,7 +28,7 @@ define([
                 "dragend li.thumbnail[draggable=\"true\"]":"dragEndHandler",
                 "focusin ul.thumbnails li.thumbnail a":"elemFocused",
                 "focusout ul.thumbnails li.thumbnail a":"elemFocused",
-                "click li.thumbnail":"participantClicked"
+                "click li.thumbnail":"hideTooltips"
             },
 
             handlers:[],
@@ -147,6 +147,7 @@ define([
              * @param partials optional object containing partial views elements to display. if null, display all
              */
             showTemplate:function (partials) {
+                this.hideTooltips();
 
                 if (!partials || (partials.participants && partials.pagination)) {
                     this.$el.html(this.containerTemplate());
@@ -162,11 +163,7 @@ define([
                     this.paginationView.render(this.collection);
                 }
 
-                // initialize tooltips
-                $("li.thumbnail").tooltip({title:"drag on delete drop-zone to remove<br/>click to view details", trigger:'hover', placement:this.liTooltipPlacement});
-                // cannot define a tooltip on a same selector twice : define one on 'a' to link with focus event
-                $("li.thumbnail > a").tooltip({title:"press <code>Del</code> to remove<br/>press <code>Enter</code> to view details", trigger:'focus', placement:this.liTooltipPlacement});
-
+                this.initTooltips();
 
                 // if no element is currently select, select the first one
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
@@ -179,6 +176,13 @@ define([
                 Pubsub.publish(App.Events.VIEW_CHANGED, [this.elemType, 'list']);
             },
 
+            initTooltips:function () {
+                // initialize tooltips
+                this.$el.find("li.thumbnail").tooltip({title:"drag on delete drop-zone to remove<br/>click to view details", trigger:'hover', placement:this.liTooltipPlacement});
+                // cannot define a tooltip on a same selector twice : define one on 'a' to link with focus event
+                this.$el.find("li.thumbnail > a").tooltip({title:"press <code>Del</code> to remove<br/>press <code>Enter</code> to view details", trigger:'focus', placement:this.liTooltipPlacement});
+            },
+
             /**
              * Calculate tooltip placement
              * @param tip tooltip to display
@@ -187,17 +191,15 @@ define([
              */
             liTooltipPlacement:function (tip, target) {
 
+                $("li.thumbnail").tooltip('hide');
+                $("li.thumbnail a").tooltip('hide');
                 var $target = $(target);
 
                 // if target is a : found the real target (parent li) and force
                 // bootstrap-tooltip to consider this element instead of original 'a'
                 if (target.tagName == "A") {
-                    $("li.thumbnail").tooltip('hide');
                     $target = $target.parent();
                     this.$element = $target;
-                }
-                else {
-                    $("li.thumbnail a").tooltip('hide');
                 }
                 var index = $target.index();
                 var liWidth = $target.outerWidth(true);
@@ -207,6 +209,11 @@ define([
                 if (index < perLine) return "top";
                 return "bottom";
 
+            },
+
+            hideTooltips:function () {
+                this.$el.find("li.thumbnail").tooltip('hide');
+                this.$el.find("li.thumbnail a").tooltip('hide');
             },
 
             /**
@@ -272,17 +279,12 @@ define([
                 this.selectElement(this.$el, "li.thumbnail", "previous");
             },
 
-            participantClicked:function (event) {
-                var $elem = $(event.currentTarget);
-                $elem.tooltip('hide');
-            },
-
             /**
              * Navigates to the details view of the currently selected element
              */
             showSelected:function () {
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
-                $selected.find('a').tooltip('hide');
+                this.hideTooltips();
                 if ($selected && $selected.length > 0) {
                     Backbone.history.navigate('/participant/' + $selected.get(0).id, true);
                 }
@@ -326,6 +328,10 @@ define([
                 if (!this.deleted) {
                     this.deleted = [];
                 }
+            },
+
+            beforeClose: function() {
+                this.hideTooltips();
             }
 
         }));

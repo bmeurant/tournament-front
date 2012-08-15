@@ -58,16 +58,14 @@
                 <div class="well">
                     <p class="photo">
                         {{#if picture_url}}
-                        <img class="photo" src="{{photo_link picture_url}}" alt="" draggable="false"/>
-
-                    <p hidden><img src="{{photo_link pict_min}}"/></p>
-                    {{else}}
-                    <img class="photo" src="/img/participants/no-photo.jpg" alt="" draggable="false"/>
-                    {{/if}}
+                            <img class="photo" src="{{photo_link picture_url}}" alt="" draggable="false"/>
+                            <p hidden><img src="{{photo_link pict_min}}"/></p>
+                        {{else}}
+                            <img class="photo" src="/img/participants/no-photo.jpg" alt="" draggable="false"/>
+                        {{/if}}
                     </p>
-
-                    <p>To change the picture, drag a new picture from your file system onto the box above.</p>
                 </div>
+                <div class="alert alert-info"><img src="/img/info.png" class="icon" alt="info"/> To change the picture, drag a new picture from your file system onto the box above.</div>
             </div>
         </div>
     </fieldset>

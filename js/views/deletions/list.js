@@ -284,8 +284,5 @@ define([
                 this.selectElement(this.$el, "li.thumbnail", "previous");
             }
 
-        })
-    )
-        ;
-})
-;
+    }));
+});

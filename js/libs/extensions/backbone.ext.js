@@ -17,6 +17,11 @@
      */
     Backbone.View.prototype.close = function () {
 
+        // optionally call a pre close method if exists
+        if (this.beforeClose) {
+            this.beforeClose();
+        }
+
         // unsubscribe all PubSub events. Otherwise these events would still be launched and listened
         // and unexpected  handlers would be called conducing to perform a same action twice or more
         if (this.handlers) {
