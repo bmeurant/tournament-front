@@ -194,9 +194,22 @@ define([
 
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
                 if ($selected && $selected.length > 0) {
-                    var elem = this.findElement($selected.attr("id"));
-                    this.deleteFromServer(elem, this.onElementDeleted.bind(this));
+                    this.confirmDeletion($selected.attr("id"));
                 }
+            },
+
+            confirmElementDeletion:function (event) {
+
+                event.stopPropagation();
+                event.preventDefault();
+                var idElem = event.currentTarget.getAttribute("id");
+
+                this.deleteFromServer(idElem, this.onElementDeleted.bind(this));
+            },
+
+            confirmDeletion:function (idElem) {
+                var elem = this.findElement(idElem);
+                this.deleteFromServer(elem, this.onElementDeleted.bind(this));
             },
 
             onElementDeleted:function (err, result) {
@@ -271,5 +284,8 @@ define([
                 this.selectElement(this.$el, "li.thumbnail", "previous");
             }
 
-        }));
-});
+        })
+    )
+        ;
+})
+;

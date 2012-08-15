@@ -14,6 +14,7 @@ require.config({
         'bootstrap-modal':'libs/bootstrap-modal',
         'bootstrap-dropdown':'libs/bootstrap-dropdown',
         'bootstrap-alert':'libs/bootstrap-alert',
+        'bootstrap-tooltip':'libs/bootstrap-tooltip',
         use:"libs/use",
         async:"libs/async",
         pubsub:'libs/pubsub',

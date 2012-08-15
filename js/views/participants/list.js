@@ -11,7 +11,8 @@ define([
     'text!templates/participants/miniature.html',
     'mixins/selectable',
     'mixins/paginable',
-    'pubsub'
+    'pubsub',
+    'bootstrap-tooltip'
 ], function ($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, participantListContainerTemplate, participantListTemplate, PaginationView, participantMiniatureTemplate, Selectable, Paginable, Pubsub) {
 
     return Backbone.View.extend(
@@ -26,7 +27,8 @@ define([
                 "dragstart li.thumbnail[draggable=\"true\"]":"dragStartHandler",
                 "dragend li.thumbnail[draggable=\"true\"]":"dragEndHandler",
                 "focusin ul.thumbnails li.thumbnail a":"elemFocused",
-                "focusout ul.thumbnails li.thumbnail a":"elemFocused"
+                "focusout ul.thumbnails li.thumbnail a":"elemFocused",
+                "click li.thumbnail":"participantClicked"
             },
 
             handlers:[],
@@ -160,6 +162,12 @@ define([
                     this.paginationView.render(this.collection);
                 }
 
+                // initialize tooltips
+                $("li.thumbnail").tooltip({title:"drag on delete drop-zone to remove<br/>click to view details", trigger:'hover', placement:this.liTooltipPlacement});
+                // cannot define a tooltip on a same selector twice : define one on 'a' to link with focus event
+                $("li.thumbnail > a").tooltip({title:"press <code>Del</code> to remove<br/>press <code>Enter</code> to view details", trigger:'focus', placement:this.liTooltipPlacement});
+
+
                 // if no element is currently select, select the first one
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
                 if (!$selected || $selected.length == 0) {
@@ -169,6 +177,36 @@ define([
                 window.history.pushState(null, "Tournament", "/participants" + ((this.collection.info().currentPage != 1) ? "?page=" + this.collection.info().currentPage : ""));
 
                 Pubsub.publish(App.Events.VIEW_CHANGED, [this.elemType, 'list']);
+            },
+
+            /**
+             * Calculate tooltip placement
+             * @param tip tooltip to display
+             * @param target DOM element 'tooltiped'
+             * @return {String}
+             */
+            liTooltipPlacement:function (tip, target) {
+
+                var $target = $(target);
+
+                // if target is a : found the real target (parent li) and force
+                // bootstrap-tooltip to consider this element instead of original 'a'
+                if (target.tagName == "A") {
+                    $("li.thumbnail").tooltip('hide');
+                    $target = $target.parent();
+                    this.$element = $target;
+                }
+                else {
+                    $("li.thumbnail a").tooltip('hide');
+                }
+                var index = $target.index();
+                var liWidth = $target.outerWidth(true);
+                var ulWidth = $target.parent().innerWidth(false);
+                var perLine = Math.floor(ulWidth / liWidth);
+
+                if (index < perLine) return "top";
+                return "bottom";
+
             },
 
             /**
@@ -234,11 +272,17 @@ define([
                 this.selectElement(this.$el, "li.thumbnail", "previous");
             },
 
+            participantClicked:function (event) {
+                var $elem = $(event.currentTarget);
+                $elem.tooltip('hide');
+            },
+
             /**
              * Navigates to the details view of the currently selected element
              */
             showSelected:function () {
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
+                $selected.find('a').tooltip('hide');
                 if ($selected && $selected.length > 0) {
                     Backbone.history.navigate('/participant/' + $selected.get(0).id, true);
                 }

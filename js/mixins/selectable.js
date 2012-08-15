@@ -34,8 +34,8 @@ define([
             }
 
             $toSelect.addClass("selected");
-            $('*:focus').blur();
-            $toSelect.find("a").focus();
+            $('li.thumbnail > a').blur();
+            $toSelect.find('a').focus();
 
         },
 
@@ -48,16 +48,16 @@ define([
         },
 
         selectFirst:function ($el, selector) {
-            var $toselect = $el.find(selector + ":first-child");
+            var $toSelect = $el.find(selector + ":first-child");
 
-            if ($toselect.hasClass("disabled")) {
-                $toselect = this.findNextSelect($toselect, selector);
+            if ($toSelect.hasClass("disabled")) {
+                $toSelect = this.findNextSelect($toSelect, selector);
             }
 
             // select the element, remove focus from others and give it focus
-            if ($toselect && $toselect.length != 0) {
-                $('*:focus').blur();
-                $toselect.addClass("selected").focus();
+            if ($toSelect && $toSelect.length != 0) {
+                $('li.thumbnail > a').blur();
+                $toSelect.find('a').focus();
             }
         },
 

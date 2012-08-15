@@ -1,8 +1,8 @@
-<ul class="thumbnails span12">
+<ul class="thumbnails">
     {{#each participants}}
         {{#with this}}
-            <li id="{{id}}" class='thumbnail {{ifequalsinline ../id_selected id "selected"}} {{disabled id}}' draggable="true">
-                <a href="/participant/{{id}}" class="plain participant-thumb" rel="tooltip">
+            <li id="{{id}}" class='thumbnail {{ifequalsinline ../id_selected id "selected"}} {{disabled id}}' draggable="true" rel="tooltip">
+                <a href="/participant/{{id}}" class="plain participant-thumb">
                     <div class="participant-thumb">
                         {{#if picture_url}}
                             <img class="photo" src="{{photo_link picture_url}}" alt="participant photo" draggable="false"/>
