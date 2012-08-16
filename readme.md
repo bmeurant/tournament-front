@@ -429,7 +429,7 @@ mécanismes de pagination coté client (`Paginator.clientPager`) ou de se branch
 server paginée (`Paginator.requestPager`). La configuration de ces objets et très complète : gestion de filtres,
 d'ordre, etc.
 
-J'ai pour le moment mis en place la pagination côté client en attendant une api paginée sur mon server :
+#### Pagination côté client
 
 Cette lib repose sur l'**extension des collections [Backbone][backbone]**. Il faut donc ajouter les options
 nécessaires à la collection :
@@ -518,6 +518,8 @@ l'état courant de la collection :
 
 
 Cette lib me convient donc tout à fait et se montre efficace, intuitive et simple d'utilisation pour le moment.
+
+#### Pagination côté serveur
 
 Une fois la pagination côté serveur implémentée, l'adaptation est très facile :
 
