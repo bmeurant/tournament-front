@@ -25,7 +25,10 @@ define([
             viewType:'list',
 
             events:{
-                "click #deletions-container li.thumbnail":"cancelElementDeletion"
+                "click #deletions-container li.thumbnail":"elemClicked",
+                "dblclick #deletions-container li.thumbnail":"elemDblClicked",
+                "focusin ul.thumbnails li.thumbnail a":"elemFocused",
+                "focusout ul.thumbnails li.thumbnail a":"elemFocused"
             },
 
             JSONCollection:{},
@@ -40,6 +43,9 @@ define([
                 // override this.el because of abstract inheritance
                 this.$el = $("<div>").attr("id", "deletions-container");
                 this.el = this.$el.get(0);
+
+                // set defaut handler for click in order to handle both simple and dble click
+                this.firingFunc = this.cancelElementDeletion.bind(this);
 
                 // init PubSub bindings
                 this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CONFIRMED, this.render.bind(this)));
@@ -156,11 +162,44 @@ define([
                 var participants_template = this.participantsTemplate({'participants':this.JSONCollection['participant']});
                 this.$el.html(this.template({'participants':this.JSONCollection['participant'], 'participants_template':new Handlebars.SafeString(participants_template)}));
 
+                this.initTooltips();
+
                 // if no element is currently select, select the first one
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
                 if (!$selected || $selected.length == 0) {
                     this.selectFirst(this.$el, "li.thumbnail");
                 }
+
+            },
+
+            elemClicked:function (event) {
+                if (event) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+
+                // Detect the 2nd single click event, so we can stop it
+                if (this.firing)
+                    return;
+
+                this.firing = true;
+                var timer = setTimeout(function () {
+                    this.firingFunc.call(this, event);
+
+                    // Always revert back to singleClick firing function
+                    this.firingFunc = this.cancelElementDeletion.bind(this);
+                    this.firing = false;
+                }.bind(this), 150);
+            },
+
+            elemDblClicked:function (event) {
+
+                if (event) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+
+                this.firingFunc = this.confirmElementDeletion.bind(this);
             },
 
             /**
@@ -169,8 +208,11 @@ define([
              * @param event event raised if any
              */
             cancelElementDeletion:function (event) {
-                event.stopPropagation();
-                event.preventDefault();
+                if (event) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+
                 var idElem = event.currentTarget.getAttribute("id");
 
                 this.cancelDeletion(idElem);
@@ -199,12 +241,13 @@ define([
             },
 
             confirmElementDeletion:function (event) {
-
-                event.stopPropagation();
-                event.preventDefault();
+                if (event) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
                 var idElem = event.currentTarget.getAttribute("id");
 
-                this.deleteFromServer(idElem, this.onElementDeleted.bind(this));
+                this.confirmDeletion(idElem);
             },
 
             confirmDeletion:function (idElem) {
@@ -261,7 +304,7 @@ define([
 
             removeAndSave:function (elem) {
 
-                this.selectPrevious();
+                this.hideTooltips();
 
                 this.collection[elem.type].splice(elem.index, 1);
                 // remove element from the current view
@@ -269,6 +312,8 @@ define([
 
                 // retrieve and save the currently selected element, if any
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
+
+                this.selectNext();
 
                 if (!$selected || $selected.length == 0) this.selectFirst(this.$el, "li.thumbnail");
 
@@ -282,7 +327,67 @@ define([
 
             selectPrevious:function () {
                 this.selectElement(this.$el, "li.thumbnail", "previous");
+            },
+
+            /**
+             * Give 'focus' on the currently selected element.
+             * Remove focus if no element selected
+             *
+             * @param event event raised
+             */
+            elemFocused:function (event) {
+                if (event && event.currentTarget) {
+                    var $selected = this.findSelected(this.$el, "li.thumbnail");
+                    if ($selected && $selected.length != 0) {
+                        $selected.removeClass('selected');
+                    }
+                    $(event.currentTarget).parent().addClass("selected");
+                }
+            },
+
+            initTooltips:function () {
+                // initialize tooltips
+                this.$el.find("li.thumbnail").tooltip({title:"double click to remove, simple click to cancel", trigger:'hover', placement:this.liTooltipPlacement});
+                // cannot define a tooltip on a same selector twice : define one on 'a' to link with focus event
+                this.$el.find("li.thumbnail > a").tooltip({title:"press <code>Del</code> to remove<br/>press <code>Enter</code> to cancel", trigger:'focus', placement:this.liTooltipPlacement});
+            },
+
+            /**
+             * Calculate tooltip placement
+             * @param tip tooltip to display
+             * @param target DOM element 'tooltiped'
+             * @return {String}
+             */
+            liTooltipPlacement:function (tip, target) {
+
+                $("li.thumbnail").tooltip('hide');
+                $("li.thumbnail a").tooltip('hide');
+                var $target = $(target);
+
+                // if target is a : found the real target (parent li) and force
+                // bootstrap-tooltip to consider this element instead of original 'a'
+                if (target.tagName == "A") {
+                    $target = $target.parent();
+                    this.$element = $target;
+                }
+                var index = $target.index();
+                var liWidth = $target.outerWidth(true);
+                var ulWidth = $target.parent().innerWidth(false);
+                var perLine = Math.floor(ulWidth / liWidth);
+
+                if (index < perLine) return "top";
+                return "bottom";
+
+            },
+
+            hideTooltips:function () {
+                this.$el.find("li.thumbnail").tooltip('hide');
+                this.$el.find("li.thumbnail a").tooltip('hide');
+            },
+
+            beforeClose:function () {
+                this.hideTooltips();
             }
 
-    }));
+        }));
 });

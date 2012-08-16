@@ -29,7 +29,12 @@ define([
                         this.selectFirst($el, selector);
                         return;
                     case 'next':
-                        $toSelect = $selected;
+                        if ($selected.hasClass("disabled")) {
+                           $toSelect = this.findPreviousSelect($selected, selector);
+                        }
+                        else {
+                            $toSelect = $selected;
+                        }
                 }
             }
 

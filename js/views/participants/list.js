@@ -249,7 +249,7 @@ define([
 
                 // if the deleted element is selected, select previous
                 if ($element.hasClass("selected")) {
-                    this.selectPrevious(this.$el, "li.thumbnail");
+                    this.selectNext(this.$el, "li.thumbnail");
                 }
 
                 // if no element is currently select, select the first one
