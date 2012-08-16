@@ -475,9 +475,10 @@ fetch complet puis on choisit la page courante :
      * Render this view
      *
      * @param partials optional object containing partial views elements to render. if null, render all
+     * @param selectLast optional boolean. if true select the last element after rendering
      * @return {*} the current view
      */
-    render:function (partials) {
+    render:function (partials, selectLast) {
 
         this.initDeleted();
 
@@ -490,6 +491,9 @@ fetch complet puis on choisit la page courante :
                 success:function () {
                     this.collection.goTo(this.askedPage);
                     this.showTemplate(partials);
+                    if (selectLast) {
+                        this.selectLast(this.$el, "li.thumbnail");
+                    }
                 }.bind(this),
                 error:function (collection, response) {
                     Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
@@ -501,23 +505,72 @@ fetch complet puis on choisit la page courante :
 A noter q'une fois la collection récupérée `collection.info()` permet d'obtenir tout un tas d'information sur
 l'état courant de la collection :
 
-    info = {
-        totalUnfilteredRecords:self.origModels.length,
-        totalRecords:totalRecords,
-        currentPage:self.currentPage,
-        perPage:this.perPage,
-        totalPages:totalPages,
-        lastPage:totalPages,
-        previous:false,
-        next:false,
-        startRecord:totalRecords === 0 ? 0 : (self.currentPage - 1) * this.perPage + 1,
-        endRecord:Math.min(totalRecords, self.currentPage * this.perPage)
-    };
+    totalUnfilteredRecords
+    totalRecords
+    currentPage
+    perPage
+    totalPages
+    lastPage
+    previous
+    next
+    startRecord
+    endRecord
 
 
 Cette lib me convient donc tout à fait et se montre efficace, intuitive et simple d'utilisation pour le moment.
 
-TODO : Pagination côté client avec requestPager
+Une fois la pagination côté serveur implémentée, l'adaptation est très facile :
+
+On renseigne les **paramètres à envoyer au server** dans la collection `collections/participants.js` :
+
+    server_api:{
+        'page':function () {
+            return this.currentPage;
+        },
+
+        'perPage':function () {
+            return this.perPage;
+        }
+    },
+
+Puis, dans le même fichier, on implémente le parser pour récupérer la réponse et initialiser la collection et le pager :
+
+    parse:function (response) {
+        var participants = response.content;
+        this.totalPages = response.totalPages;
+        this.totalRecords = response.totalElements;
+        this.lastPage = this.totalPages;
+        return participants;
+    }
+
+Et enfin, on modifie l'appel au serveur : cette fois, la méthode `goTo()` étend `fecth` et doit donc être appelée à sa
+place et non à son retour (`views/participants/list.js`) :
+
+    // get the participants collection from server
+    this.collection.goTo(this.askedPage,
+        {
+            success:function () {
+                this.showTemplate(partials);
+                if (selectLast) {
+                    this.selectLast(this.$el, "li.thumbnail");
+                }
+            }.bind(this),
+            error:function () {
+                Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
+            }
+        });
+    return this;
+
+Le reste est inchangé si ce n'est le collection.info() qui dispose de moins d'éléments :
+
+    totalRecords
+    currentPage
+    perPage
+    totalPages
+    lastPage
+    // ces deux là ne sont originellement pas présents mais une pull-request est en attente
+    previous
+    next
 
 ---
 ### Liste d'appels asynchrones : Async.js
@@ -656,7 +709,7 @@ et de les propager. La syntaxe est élégante, elle est très simple et fonction
 - filtrage sur certains éléments source
 - ...
 
-Elle est tellement micro que la oc parle d'elle même mais ca me semble un must pour toute application avec raccourcis
+Elle est tellement micro que la doc parle d'elle même mais ca me semble un must pour toute application avec raccourcis
 clavier.
 
 ---
