@@ -9,7 +9,7 @@ define([
     /**
      * Collection of Participant model objects
      */
-    return Backbone.Paginator.clientPager.extend({
+    return Backbone.Paginator.requestPager.extend({
 
         model:participantModel,
         paginator_core:{
@@ -39,8 +39,24 @@ define([
             // 10 as a default in case your service doesn't return the total
             totalPages:10
         },
+        server_api:{
+            'page':function () {
+                return this.currentPage;
+            },
+
+            'perPage':function () {
+                return this.perPage;
+            }
+
+        },
         parse:function (response) {
-            return response;
+            var participants = response.content;
+            this.totalPages = response.totalPages;
+            this.totalRecords = response.totalElements;
+            this.lastPage = this.totalPages;
+            this.prev = response.hasPreviousPage ? this.currentPage - 1 : null;
+            this.next = response.hasNextPage ? this.currentPage + 1 : null;
+            return participants;
         }
     });
 });

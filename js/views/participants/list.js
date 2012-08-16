@@ -84,10 +84,10 @@ define([
                 this.collection = new ParticipantsCollection();
 
                 // get the participants collection from server
-                this.collection.fetch(
+                this.collection.goTo(this.askedPage,
                     {
                         success:function () {
-                            this.collection.goTo(this.askedPage);
+                            //this.collection.goTo(this.askedPage);
                             this.showTemplate(partials);
                             if (selectLast) {
                                 this.selectLast(this.$el, "li.thumbnail");
