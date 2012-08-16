@@ -56,20 +56,30 @@ define([
 
         },
 
-        previousPage:function (event) {
+        /**
+         * switch to previous page
+         *
+         * @param event
+         * @param selectLast boolean - true if the last element of the previous page should be selected
+         */
+        previousPage:function (event, selectLast) {
 
-            event.stopPropagation();
-            event.preventDefault();
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
 
             if (this.collection.info().prev) {
-                Pubsub.publish(App.Events.NEW_PAGE, [this.collection.info().prev]);
+                Pubsub.publish(App.Events.NEW_PAGE, [this.collection.info().prev, selectLast]);
             }
         },
 
         nextPage:function (event) {
 
-            event.stopPropagation();
-            event.preventDefault();
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
 
             if (this.collection.info().next) {
                 Pubsub.publish(App.Events.NEW_PAGE, [this.collection.info().next]);

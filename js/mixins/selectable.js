@@ -7,14 +7,15 @@ define([
          * Select an element
          *
          * @param type optional selection type : 'previous' or 'next'. Otherwise or null : 'next'
+         *
+         * @return {*} the newly selected element
          */
         selectElement:function ($el, selector, type) {
 
             // get currently selected element. If no, select the first one
             var $selected = this.findSelected($el, selector);
             if (!$selected || $selected.length == 0) {
-                this.selectFirst($el, selector);
-                return;
+                return this.selectFirst($el, selector);
             }
 
             // get the element to select and, if any, select it and give it focus
@@ -26,11 +27,11 @@ define([
 
                 switch (type) {
                     case 'previous':
-                        this.selectFirst($el, selector);
-                        return;
+                        $toSelect = this.selectFirst($el, selector);
+                        break;
                     case 'next':
                         if ($selected.hasClass("disabled")) {
-                           $toSelect = this.findPreviousSelect($selected, selector);
+                            $toSelect = this.findPreviousSelect($selected, selector);
                         }
                         else {
                             $toSelect = $selected;
@@ -42,6 +43,7 @@ define([
             $('li.thumbnail > a').blur();
             $toSelect.find('a').focus();
 
+            return $toSelect;
         },
 
         selectNext:function ($el, selector) {
@@ -64,6 +66,24 @@ define([
                 $('li.thumbnail > a').blur();
                 $toSelect.find('a').focus();
             }
+
+            return $toSelect;
+        },
+
+        selectLast:function ($el, selector) {
+            var $toSelect = $el.find(selector + ":last-child");
+
+            if ($toSelect.hasClass("disabled")) {
+                $toSelect = this.findPreviousSelect($toSelect, selector);
+            }
+
+            // select the element, remove focus from others and give it focus
+            if ($toSelect && $toSelect.length != 0) {
+                $('li.thumbnail > a').blur();
+                $toSelect.find('a').focus();
+            }
+
+            return $toSelect;
         },
 
         findSelected:function ($el, selector) {

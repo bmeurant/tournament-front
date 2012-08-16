@@ -40,8 +40,8 @@ define([
 
                 this.handlers.push(Pubsub.subscribe(App.Events.ELEM_DELETED_FROM_BAR, this.participantDeleted.bind(this)));
                 this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CANCELED, this.cancelDeletions.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.NEXT_CALLED, this.selectNext.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.PREVIOUS_CALLED, this.selectPrevious.bind(this)));
+                this.handlers.push(Pubsub.subscribe(App.Events.NEXT_CALLED, this.selectNextElem.bind(this)));
+                this.handlers.push(Pubsub.subscribe(App.Events.PREVIOUS_CALLED, this.selectPreviousElem.bind(this)));
                 this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
                 this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this)));
                 this.handlers.push(Pubsub.subscribe(App.Events.ENTER_CALLED, this.showSelected.bind(this)));
@@ -73,9 +73,10 @@ define([
              * Render this view
              *
              * @param partials optional object containing partial views elements to render. if null, render all
+             * @param selectLast optional boolean. if true select the last element after rendering
              * @return {*} the current view
              */
-            render:function (partials) {
+            render:function (partials, selectLast) {
 
                 this.initDeleted();
 
@@ -88,6 +89,9 @@ define([
                         success:function () {
                             this.collection.goTo(this.askedPage);
                             this.showTemplate(partials);
+                            if (selectLast) {
+                                this.selectLast(this.$el, "li.thumbnail");
+                            }
                         }.bind(this),
                         error:function () {
                             Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
@@ -271,12 +275,23 @@ define([
                 }
             },
 
-            selectNext:function () {
-                this.selectElement(this.$el, "li.thumbnail", "next");
+            selectNextElem:function (event) {
+                var $selected = this.findSelected(this.$el, "li.thumbnail");
+                var $newSelected = this.selectElement(this.$el, "li.thumbnail", "next");
+
+                if ($selected.attr('id') == $newSelected.attr('id')) {
+                    this.paginationView.nextPage();
+                }
+
             },
 
-            selectPrevious:function () {
-                this.selectElement(this.$el, "li.thumbnail", "previous");
+            selectPreviousElem:function (event) {
+                var $selected = this.findSelected(this.$el, "li.thumbnail");
+                var $newSelected = this.selectElement(this.$el, "li.thumbnail", "previous");
+
+                if ($selected.attr('id') == $newSelected.attr('id')) {
+                    this.paginationView.previousPage(event, true);
+                }
             },
 
             /**
@@ -316,9 +331,10 @@ define([
                 Backbone.View.prototype.close.apply(this, arguments);
             },
 
-            newPage:function (id) {
+            newPage:function (id, selectLast) {
                 this.askedPage = id;
-                this.render({participants:true});
+
+                this.render({participants:true}, selectLast);
             },
 
             initDeleted:function () {
@@ -330,7 +346,7 @@ define([
                 }
             },
 
-            beforeClose: function() {
+            beforeClose:function () {
                 this.hideTooltips();
             }
 
