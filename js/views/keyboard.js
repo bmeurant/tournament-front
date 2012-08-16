@@ -1,7 +1,8 @@
 define([
     'jquery',
     'backbone',
-    'pubsub'
+    'pubsub',
+    'keymaster'
 ], function ($, Backbone, Pubsub) {
 
     /**
@@ -9,95 +10,51 @@ define([
      */
     return Backbone.View.extend({
 
-        LEFT_ARROW:37,
-        RIGHT_ARROW:39,
-        H:72,
-        L:76,
-        Z:90,
-        S:83,
-        A:65,
-        X:88,
-        D:68,
-        F:70,
-        P:80,
-        T:84,
-        G:71,
-        K:75,
-        DEL:46,
-        ENTER:13,
-        ECHAP:27,
-        PAGE_UP:33,
-        PAGE_DOWN:34,
-        QUESTION_MARK:188,
-        CTRL:17,
-
-        bindings:{},
-        ctrlDown:false,
-
         events:{
-            "keydown":"onKeyDown",
-            "keyup":"onKeyUp"
         },
 
         initialize:function () {
 
             this.setElement(document);
 
-            this.bindings[this.LEFT_ARROW] = {event:App.Events.PREVIOUS_CALLED};
-            this.bindings[this.RIGHT_ARROW] = {event:App.Events.NEXT_CALLED};
-            this.bindings[this.H] = {event:App.Events.HOME_CALLED};
-            this.bindings[this.L] = {event:App.Events.LIST_CALLED};
-            this.bindings[this.DEL] = {event:App.Events.DELETE_ELEM};
-            this.bindings[this.D] = {event:App.Events.DELETIONS_CALLED};
-            this.bindings[this.A] = {event:App.Events.ADD_CALLED};
-            this.bindings[this.X] = {event:App.Events.CONFIRM_DELS_CALLED, needCtrl:true};
-            this.bindings[this.Z] = {event:App.Events.CANCEL_DELS_CALLED, needCtrl:true};
-            this.bindings[this.P] = {event:App.Events.PARTICIPANTS_HOME_CALLED};
-            this.bindings[this.T] = {event:App.Events.TEAMS_HOME_CALLED};
-            this.bindings[this.G] = {event:App.Events.GT_HOME_CALLED};
-            this.bindings[this.F] = {event:App.Events.FIND_CALLED};
-            this.bindings[this.ENTER] = {event:App.Events.ENTER_CALLED, acceptInputs:true};
-            this.bindings[this.ECHAP] = {event:App.Events.ECHAP_CALLED};
-            this.bindings[this.PAGE_UP] = {event:App.Events.PAGE_UP_CALLED, acceptInputs:true};
-            this.bindings[this.PAGE_DOWN] = {event:App.Events.PAGE_DOWN_CALLED, acceptInputs:true};
-            this.bindings[this.QUESTION_MARK] = {event:App.Events.QUESTION_MARK_CALLED};
-            this.bindings[this.K] = {event:App.Events.KEYBOARD_CALLED};
+            this.originalFilter = key.filter;
+            key.filter = this.filter.bind(this);
+
+            key('left', function(event){this.pushEvent(App.Events.PREVIOUS_CALLED, event)}.bind(this));
+            key('right', function(event){this.pushEvent(App.Events.NEXT_CALLED, event)}.bind(this));
+            key('h', function(event){this.pushEvent(App.Events.HOME_CALLED, event)}.bind(this));
+            key('l', function(event){this.pushEvent(App.Events.LIST_CALLED, event)}.bind(this));
+            key('del', function(event){this.pushEvent(App.Events.DELETE_ELEM, event)}.bind(this));
+            key('d', function(event){this.pushEvent(App.Events.DELETIONS_CALLED, event)}.bind(this));
+            key('a', function(event){this.pushEvent(App.Events.ADD_CALLED, event)}.bind(this));
+            key('ctrl+x', function(event){this.pushEvent(App.Events.CONFIRM_DELS_CALLED, event)}.bind(this));
+            key('ctrl+z', function(event){this.pushEvent(App.Events.CANCEL_DELS_CALLED, event)}.bind(this));
+            key('p', function(event){this.pushEvent(App.Events.PARTICIPANTS_HOME_CALLED, event)}.bind(this));
+            key('t', function(event){this.pushEvent(App.Events.TEAMS_HOME_CALLED, event)}.bind(this));
+            key('g', function(event){this.pushEvent(App.Events.GT_HOME_CALLED, event)}.bind(this));
+            key('f', function(event){this.pushEvent(App.Events.FIND_CALLED, event)}.bind(this));
+            key('enter', function(event){this.pushEvent(App.Events.ENTER_CALLED, event)}.bind(this));
+            key('esc', function(event){this.pushEvent(App.Events.ECHAP_CALLED, event)}.bind(this));
+            key('pageup', function(event){this.pushEvent(App.Events.PAGE_UP_CALLED, event)}.bind(this));
+            key('pagedown', function(event){this.pushEvent(App.Events.PAGE_DOWN_CALLED, event)}.bind(this));
+            key('?', function(event){this.pushEvent(App.Events.HELP_CALLED, event)}.bind(this));
+            key('k', function(event){this.pushEvent(App.Events.KEYBOARD_CALLED, event)}.bind(this));
 
         },
 
-        onKeyDown:function (event) {
+        pushEvent:function (appEvent, event) {
 
-            //alert(event.which);
-            if (event.which == this.CTRL) {
-                this.ctrlDown = true;
-            }
-
-            var binding = this.bindings[event.which];
-
-            // publish event based on binding if no active modal
-            // and if the current event should be activated on inputs or the current target is not input
-            // and the event does not need ctrl activated or ctrl is activated
-            if (binding && !this.isModalActive()
-                && (binding.acceptInputs || !this.targetIsInput(event))
-                && (!binding.needCtrl || this.ctrlDown)) {
-                Pubsub.publish(binding.event, [event]);
-            }
-        },
-
-        onKeyUp:function (event) {
-            if (event.which == this.CTRL) {
-                this.ctrlDown = false;
-            }
-        },
-
-        targetIsInput:function (event) {
-            return (typeof event.target !== "undefined" &&
-                (event.target.nodeName == "INPUT" ||
-                    event.target.nodeName == "TEXTAREA"))
+            Pubsub.publish(appEvent, [event]);
         },
 
         isModalActive:function () {
             return $(".modal").is(":visible");
+        },
+
+        filter: function(event) {
+            if (this.isModalActive()) return false;
+
+            return this.originalFilter.apply(this, [event]);
         }
 
     });

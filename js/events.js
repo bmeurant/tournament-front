@@ -37,7 +37,7 @@ App.Events = {
     NEW_PAGE:"NewPage",
     PAGE_UP_CALLED:"PageUpCalled",
     PAGE_DOWN_CALLED:"PageDownCalled",
-    QUESTION_MARK_CALLED:"QuestionMarkCalled",
+    HELP_CALLED:"QuestionMarkCalled",
     KEYBOARD_CALLED:"KeyboardCalled"
 };
 
