@@ -5,8 +5,9 @@ define([
     'backbone-queryparams',
     'views/participants/list',
     'views/participants/participant',
-    'views/deletions/list'
-], function ($, _, Backbone, BackboneQueryParams, ParticipantListView, ParticipantView, DeletionsView) {
+    'views/deletions/list',
+    'views/help/help'
+], function ($, _, Backbone, BackboneQueryParams, ParticipantListView, ParticipantView, DeletionsView, HelpView) {
 
     var AppRouter = Backbone.Router.extend({
         routes:{
@@ -17,6 +18,7 @@ define([
             "participant/:id/edit":"editParticipant",
             "participants":"listParticipants",
             "deletions":"showDeletions",
+            "help":"showHelp",
             // Default
             '*path':'defaultAction'
         },
@@ -39,6 +41,10 @@ define([
 
         showDeletions:function () {
             this.showView($('#content'), DeletionsView, []);
+        },
+
+        showHelp:function () {
+            this.showView($('#content'), HelpView, []);
         },
 
         defaultAction:function () {

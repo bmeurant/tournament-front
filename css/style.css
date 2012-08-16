@@ -209,7 +209,7 @@ h6 img.icon {
     padding: 0;
 }
 
-.shortcuts-container hr {
+hr {
     margin-top: 3px;
     margin-bottom: 5px;
 }
@@ -218,7 +218,7 @@ h6 img.icon {
     max-height: none;
 }
 
-.shortcuts-container h4 {
+h4 {
     margin-top: 15px;
 }
 

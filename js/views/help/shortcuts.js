@@ -6,7 +6,7 @@ define([
     'bootstrap-modal',
     'text!templates/help/shortcuts.html',
     'text!templates/help/shortcuts/global.html',
-    'pubsub',
+    'pubsub'
 ], function ($, _, Backbone, Handlebars, BootstrapModal, shortcutsTemplate, globalTemplate, Pubsub) {
 
     return Backbone.View.extend({
