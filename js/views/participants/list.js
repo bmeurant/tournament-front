@@ -87,7 +87,6 @@ define([
                 this.collection.goTo(this.askedPage,
                     {
                         success:function () {
-                            //this.collection.goTo(this.askedPage);
                             this.showTemplate(partials);
                             if (selectLast) {
                                 this.selectLast(this.$el, "li.thumbnail");
