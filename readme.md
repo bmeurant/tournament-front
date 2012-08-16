@@ -33,6 +33,7 @@ Ces outils sont les suivants :
 - **Support des paramètres pour les vues : [Backbone Query Parameters][backbone-query-parameters]**
 - **Pagination de liste : [Backbone Paginator][backbone-paginator]**
 - **Liste d'appels asynchrones : [Async][async]**
+- **Dispatch de raccourcis clavier : [keymaster][keymaster]**
 
 ---
 ### Moteur de template : Handlebars
@@ -645,6 +646,20 @@ Ainsi, malgré ce twick bien dommage, **je retiens quand même cette lib pour to
 asynchrone à paralléliser** - que l'on souhaite ou non disposer d'un callback final.
 
 ---
+### Dispatch de reccourcis clavier : keymaster
+
+**[keymaster][keymaster]** est une micro librairie permettant de définir des listeners sur des raccourcis clavier
+et de les propager. La syntaxe est élégante, elle est très simple et fonctionnellement très complète :
+
+- gestion de multiples touches spéciales
+- chainages divers au travers d'un nombre importants de "modifieurs"
+- filtrage sur certains éléments source
+- ...
+
+Elle est tellement micro que la oc parle d'elle même mais ca me semble un must pour toute application avec raccourcis
+clavier.
+
+---
 ### CSS : LESS ?
 
 TODO
@@ -1234,9 +1249,6 @@ Le mixin est définit dans `js/mixins/selectable` :
 Cette question reste à adresser dans mon cas mais cela me parait indispensable dans le cas d'une application de taille
 importante.
 
----
-### Lazy loading avec requireJS ?
-
 TODO
 
 ---
@@ -1260,3 +1272,4 @@ TODO
 [backbone-paginator]: http://addyosmani.github.com/backbone.paginator/ "Backbone Paginator"
 [async]: https://github.com/caolan/async/ "Async"
 [backbone-boilerplate]: https://github.com/tbranyen/backbone-boilerplate "Backbone boilerplate"
+[keymaster]: https://github.com/madrobby/keymaster "keymaster"
