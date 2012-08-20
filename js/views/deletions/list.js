@@ -149,6 +149,7 @@ define([
             },
 
             render:function () {
+                this.hideTooltips();
                 this.initCollection();
                 this.emptyJSONCollection();
                 this.populateCollection();

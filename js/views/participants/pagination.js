@@ -69,7 +69,7 @@ define([
                 event.preventDefault();
             }
 
-            if (this.collection.info().prev) {
+            if (this.collection.info().previous) {
                 Pubsub.publish(App.Events.NEW_PAGE, [this.collection.info().previous, selectLast]);
             }
         },
