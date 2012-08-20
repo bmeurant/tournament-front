@@ -2,44 +2,40 @@
 Tournament-front
 ================
 
-Ce projet est une **application exemple** basée sur **[Resthub js][resthubjs]**.
+This project is a **sample application based on **[Resthub js][resthubjs]**.
 
+With this application I wanted to address the following questions:
 
-A travers cette application j'ai cherché à adresser els questions suivantes :
+- How to organize my views?
+- What strategy for rendering?
+- How to manage navigation between multiple views?
+- How to set up `deep linking` ?
+- How to define multiple routers and their contents?
+- And so on ...
 
-- Comment organiser ses vues ?
-- Quelle stratégie de rendering ?
-- Comment gérer la navigation entre de multiples vues ?
-- Comment mettre en place du deep linking ?
-- Comment définir plusieurs routeurs et leur contenu ?
-- etc.
-
-Cette application exemple devrait fonctionnellement permettre de créer, gérer et planifier des tournois et des jeux
-constitués de participants et/ou d'équipes et reposant sur un ensemble de règles définies dynamiquement.
-
----
-Outils complémentaires
-----------------------
-
-En plus des outils standards embarqués par **[Resthub js][resthubjs]**, j'ai progressivement ajouté des libs et frameworks complémentaires
-pour répondre à des besoins particuliers.
-
-**Question** : Ces outils peuvent-ils / doivent-ils être intégrés à la stack **[Resthub js][resthubjs]** ?
-
-Ces outils sont les suivants :
-
-- **Moteur de template : [Handlebars][handlebars]**
-- **Validation de formulaire : [Backbone Validation][backbone-validation]**
-- **Support des paramètres pour les vues : [Backbone Query Parameters][backbone-query-parameters]**
-- **Pagination de liste : [Backbone Paginator][backbone-paginator]**
-- **Liste d'appels asynchrones : [Async][async]**
-- **Dispatch de raccourcis clavier : [keymaster][keymaster]**
+In functional terms, this application should help to create, manage and plan tournaments and games
+made of participants and / or teams and based on a set of dynamically defined rules.
 
 ---
-### Moteur de template : Handlebars
+Tools
+-----
 
-Le moteur de template par défaut est fournit par **[Underscore js][underscore]** qui embarque du micro templating javascript
-combiné aux helpers underscore. Il repose sur une syntaxe à la JSP :
+Some libs, embedded or not in **[Resthub js][resthubjs]** were gradually added to meet special needs.
+
+These tools are mainly:
+
+- **Template engine: [Handlebars][handlebars]**
+- **Form Validation: [Backbone Validation][backbone-validation]**
+- **Parameters support on view routing: [Backbone Query Parameters][backbone-query-parameters]**
+- **Paginated lists: [Paginator Backbone][backbone-paginator]**
+- **Asynchronous calls: [Async][async]**
+- **Dispatching keyboard shortcuts: [Keymaster][Keymaster]**
+
+---
+### Template engine : Handlebars
+
+The default template engine is **[Underscore js][underscore]** which embeds a micro javascript templating lib
+combined to underscore helpers. It is based on a 'JSP-like' syntax:
 
     <% _.each(participants, function(participant, index){
         if (_.indexOf(deleted, participant.id) < 0) { %>
@@ -48,12 +44,12 @@ combiné aux helpers underscore. Il repose sur une syntaxe à la JSP :
                     <a href="/participant/<%= participant.id %>" class="plain participant-thumb">
                         <div class="participant-thumb">
                             <% if (!participant.picture_url) { %>
-                            <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
-                            <% }
+                                <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
+                                <% }
                             else
                             { %>
-                            <img class="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
-                            <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
+                                <img class="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
+                                <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
                             <% } %>
                         </div>
                         <h5><%= participant.firstname %>&nbsp;<%= participant.lastname %></h5>
@@ -62,10 +58,10 @@ combiné aux helpers underscore. Il repose sur une syntaxe à la JSP :
         <% }
     }); %>
 
-Cela peut paraître initialement simple je ne trouve **vraiment pas ça très élégant** car cela conduit rapidement à **déplacer une bonne
-partie de la logique de la vue vers le template** et rend très difficile la réutilisation de ces templates.
+This may seem simple at first but **I really don't find it elegant**, it quickly leads to **move a good part
+of the view logic to the template** and makes very difficult the reuse of templates.
 
-Je suis donc rapidement passé à un **moteur de template logic-less**, en l'occurrence **[Handlebars][handlebars]**.
+So I switched to a **logic-less template engine**: **[Handlebars][handlebars]**.
 
     {{#each participants}}
         {{#with this}}
@@ -88,19 +84,19 @@ Je suis donc rapidement passé à un **moteur de template logic-less**, en l'occ
         {{/with}}
     {{/each}}
 
-... Ça a quand même plus de gueule :-)
+... much more elegant, isn't it ?
 
-Évidemment, cette opération a nécessité de définir des **Helpers [Handlebars][handlebars]** afin d'implémenter, au sein de la vue,
-la logique qui n'est plus dans le template.
+Obviously, this requires to define **[Handlebars][handlebars] Helpers** to implement, into the view, the logic that
+is no longer present in templates.
 
-Dans notre exemple :
+In our example:
 
-- Ajouter la classe css `selected` si nécessaire
-- Ajouter la classe css `disabled` si nécessaire
-- Déterminer si l'élément courant est en cours de suppression
-- Afficher un lien personnalisé pour la photo
+- Add css class `selected` if necessary
+- Add css class `disabled` if necessary
+- Say if the current element is being deleted
+- Display a custom photo link
 
-**Helpers spécifiques à la vue**:
+**View-specific helpers**:
 
     initialize:function () {
 
@@ -125,7 +121,7 @@ Dans notre exemple :
         ...
     }
 
-**Helpers globaux (`handlebars-helpers.js`) :**
+**Global helpers (`handlebars-helpers.js`):**
 
     initialize:function () {
 
@@ -138,62 +134,60 @@ Dans notre exemple :
         ...
     }
 
-Le fait d'avoir à définir ces templates peut paraître un peu rébarbatif au départ mais la syntaxe est autrement plus
-élégante, la majorité des helpers sont réutilisables et en réfléchissant un peu on réduit très facilement le
-boilerplate.
+Having to define these helpers may seem a bit boring at first, but the syntax is much more elegant,
+the majority of these helpers can be easily reused and, with a little bit of reflexion, we can reduce the amount of
+technical code.
 
-Et **la logique a réellement été déplacée dans la vue**, ce qui est sa juste place et va nous faciliter grandement la
-maintenance et la réutilisation.
+And **logic was actually moved to the view**, which is its right place, and this will greatly facilitate maintenance
+and reuse.
 
 ---
-### Validation de formulaire : Backbone Validation
+### Form Validation : Backbone Validation
 
-**[Backbone][backbone]** ne fournit **aucun outillage pour la gestion de formulaires ou leur validation**. Les attributs du
-modèle n'ont pas à être précisés, encore moins leur format ou les contraintes qui leur sont liées.
+**[Backbone][backbone]** does not provide natively **any tool for form or validation management**. It is not necessary
+to specify model attributes or related constraints.
 
-En termes de validation, **[Backbone][backbone]** fournit seulement des méthodes vides `validate` et `isValid` qui peuvent
-être implémentées par chaque développeur. La seule garantie est que la méthode `validate` est appelée avant un `save`
-qu'elle empêche en cas d'erreur. Et encore ... la validation d'un formulaire complet n'est pas évidente (gestion
-d'un tableau d'erreur custom ... ) et les erreurs ne sont pas dissociées des erreurs propres à la méthode `save`.
+In terms of validation, **[Backbone][backbone]** provides only empty methods `validate` and `isValid` that can
+be implemented by each developer. The only guarantee that the `validate` method is called before a `save` (canceled
+on error). But a complete form validation is not obvious (custom error array management ... )
+And the errors are not distinguishable from inherent `save` errors (communication and so on).
 
-Comme un solide gestionnaire de validation me parait indispensable, j'ai cherché un outil adapté selon les critères
-suivants :
+As a strong validation handler is essential to me, I looked for a suitable tool according to following criteria:
 
-- facile à utiliser et à comprendre (KISS)
-- **facile à personnaliser et à étendre**
-- possibilité de gérer des **formulaires complexes**
-- un ensemble de validateurs built-in conséquent
-- compatible html5
-- compatible **[Twitter Bootstrap][twitter-bootstrap]**
+- Easy to use and understand (KISS)
+- **Easy to customize and extend**
+- Ability to **manage complex forms**
+- A complete set of built-in validators
+- html5 compatible
+- **[Twitter Bootstrap][twitter-bootstrap]** compatible
 
-J'ai commencé par tester **[Backbone Forms][backbone-forms]** qui semble un très bon outil. Mais il est en fait composé de deux parties :
-**la logique de validation et un outil complet de génération dynamique de formulaire**. On fournit juste la description
-des champs du model avec leurs contraintes et le formulaire est auto généré.
+I started by testing **[Backbone Forms][backbone-forms]** which seems a very good tool.
+But it is actually a two parts tool: **a validation logic** and **a complete tool for generating dynamic form**.
+You just have to provide model fields description with constraints and form is auto generated.
 
-Cela peut sembler prometteur (même si je ne suis pas fan de ces approches 'scaffolding' et encore moins lorsqu'elles sont
-dynamiques). Mais le problème c'est que ces deux outils sont indissociables et qu'en essayant de customiser mon formulaire
-j'ai atteint très rapidement les limites de la personnalisation : Je n'ai pas pu générer un formulaire sur deux colonnes
-(peut-être possible mais très compliqué). Il est par exemple rigoureusement impossible de traiter deux fieldsets du même
-formulaire de manière différente sans surcharger le coeur de la lib.
+This may sound promising (although I'm not fan of these '​​scaffolding' things - and even less when
+dynamic). But the problem is that these tools cannot be used independently and I quickly reached the limits of customization:
+I was not able to generate a form with two columns (may be it's me ...). For example it was impossible for me to treat
+differently two form fieldsets without overloading the heart of the lib.
 
-J'ai même essayé de récupérer le code généré pour "débrancher" ensuite la génération mais celle-ci semble se faire
-dynamiquement avant chaque validation et ne peut pas (en tout cas facilement) être "bypassée".
+I even tried to get the generated HTML code and then "disconnect" the form generation but it seems to be
+dynamically called before each validation and cannot (at least easily) be bypassed.
 
-**J'ai donc abandonné [Backbone Forms][backbone-forms]** qui me paraît un très bon candidat pour une application devant être capable de
-générer des formulaires dynamiquement mais pas du tout adapté à une personnalisation avancée.
+So I gave up **[Backbone Forms][backbone-forms]** which I think is a very good candidate for an application that need to
+dynamically generate forms but not suitable for advanced customization.
 
-Je me suis donc tourné vers **[Backbone Validation][backbone-validation]** qui m'a bien plus convaincu. Cette lib se concentre en effet **uniquement
-sur l'aspect validation** et nous laisse la main libre sur le formulaire. Cette approche me convient bien mieux, ne représente
-au final pas plus de travail que la customisation d'un formulaire auto-généré (voire moins) et n'impose **aucune limite**.
-La lib dispose d'un **nombre très important de validateurs built-in** et propose des **mécanismes de personnalisation et
-d'extension** de validateurs efficaces.
+I came to look at **[Backbone Validation][backbone-validation]** and was more convinced. This lib **only focus on
+validation aspects** and leaves us free to write our form. I feel much more comfortable with this approach, it does
+not represent much more (probably less) work than the customization of a self-generated form and there is **no limit**.
+The lib has **a very large number of built-in validators** and **provides effective validators customization and
+extension mechanisms**.
 
-**[Backbone Validation][backbone-validation]** ne propose pas non plus de lien automatique entre le formulaire et le modèle et nous laisse le choix
-d'utiliser une lib dédiée ou d'implémenter nous, avant la validation, le traitement qui va récupérer les valeurs du formulaire
-pour les setter au modèle. Le fonctionnement de **[Backbone Validation][backbone-validation]** **s'inscrit parfaitement dans le workflow standard
-de** **[Backbone][backbone]** via les méthodes `validate` et `is valid`.
+**[Backbone Validation][backbone-validation]** does not neither propose automatic linking between form and model and
+leaves us the choice to use a dedicated lib or to implement custom behaviour (before the validation, process all form values
+to set to model). The behaviour of **[Backbone Validation][backbone-validation] perfectly matches standard
+[Backbone][backbone] workflow** through `validate` and `isValid` methods.
 
-**Model** : définition des contraintes:
+**Model** : constraints definition:
 
     define([
         'underscore',
@@ -232,7 +226,7 @@ de** **[Backbone][backbone]** via les méthodes `validate` et `is valid`.
 
     });
 
-** Formulaire HTML5** :
+**HTML5 Form** :
 
     {{#with participant}}
         <form class="form-horizontal">
@@ -295,7 +289,7 @@ de** **[Backbone][backbone]** via les méthodes `validate` et `is valid`.
     {{/with}}
 
 
-**Vue** : initialisation et utilisation :
+**View** : initialization and usage:
 
     initialize:function () {
 
@@ -333,9 +327,9 @@ de** **[Backbone][backbone]** via les méthodes `validate` et `is valid`.
         }
     },
 
-Et enfin, globalement, extension des callbacks pour mise à jour des erreurs de validation pour un formulaire avec **[Twitter Bootstrap][twitter-bootstrap]**
+And finally: extend callbacks to update form with validation errors managed by **[Twitter Bootstrap][twitter-bootstrap]**
 
-backbone-validation.ext.js:
+`backbone-validation.ext.js`:
 
     /**
      * Backbone Validation extension: Defines custom callbacks for valid and invalid
@@ -359,24 +353,21 @@ backbone-validation.ext.js:
     });
 
 ---
-###Support des paramètres pour les vues  : Backbone Query Parameters
+###Parameters support on view routing: Backbone Query Parameters
 
-Lorsque j'ai souhaité ajouter un paramètre à ma vue liste sous la forme `participants?page=2` j'ai été confronté
-au problème suivant : la gestion des routes **[Backbone][backbone]** permet de définir les routes
-`"participants":"listParticipants"` et `"participants?:param":"listParticipantsParameters"`. Cependant le
-fonctionnement standard me semble insuffisant :
+**[Backbone][backbone]** routes management allows to define permet such routes :
+`"participants":"listParticipants"` and `"participants?:param":"listParticipantsParameters"`. But the native
+ behaviour seems not sufficient:
 
-- la **gestion d'un nombre de paramètres inconnu** (type `?page=2&filter=filtre`) n'est pas évidente
-- il est nécessaire de définir (au moins) 2 routes pour gérer les appels avec ou sans paramètres sans duplication
-  et sans trop de boilerplate
+- **management of an unknown number of parameters ** (ex `?page=2&filter=filter`) is not obvious
+- we have to define (at least) two routes to handle calls with or without parameters without duplication
+and without too much technical code
 
-Le fonctionnement que j'attendais était plutôt la **définition d'une unique route vers une méthode prenant en
-paramètre optionnel un tableau des paramètres de requêtes**.
+Expected behaviour was that the **map a single route to a method with an array of request parameter as optional parameter.**
 
-La librairie **[Backbone Query Parameters][backbone-query-parameters]** fournit justement ce fonctionnel ainsi qu'un gestionnaire d'expressions
-régulière applicable à la gestion des routes.
+**[Backbone Query Parameters][backbone-query-parameters] ** provides precisely this functionality.
 
-Grâce à cette lib, incluse une fois pour toute dans mon router principal, j'ai pu obtenir le résultat suivant :
+With this lib, included once and for all in my main router, I could get the following result:
 
 **router.js** :
 
@@ -393,14 +384,12 @@ Grâce à cette lib, incluse une fois pour toute dans mon router principal, j'ai
 
     listParticipants:function (params) {
         ...
-        // création de la vue via une fonction générique (cf. gestion des zombies et rendering)
-        // le constructeur de la vue prend un paramètre params
+        // view creation through a generic method (cf. zombies and rendering)
         this.showView($('#content'), ParticipantListView, [params]);
     },
 
-Ainsi, le tableau des paramètres de requête est récupéré automatiquement sans **aucun traitement supplémentaire** et
-ce, **quelque soit le nombre de ces paramètres**. Il peut ensuite être passé au constructeur de la vue pour
-initialisation :
+Query parameters array is automatically recovered **without any further operation** and **whatever the number
+of these parameters**. It can then be passed to the view constructor for initialization:
 
 **list.js** :
 
@@ -417,22 +406,18 @@ initialisation :
         ..
     },
 
-Cette lib est assez légère et bien foutue et, franchement, **je vois mal comment se passer du fonctionnel qu'elle
-propose**.
+This lib is pretty light and really cool and, honestly, **It is an absolute must have**.
 
 ---
-### Pagination de liste : Backbone Paginator
+### List pagination : Backbone Paginator
 
-J'ai également cherché une lib qui me permette de proposer une pagination de mes listes. Je suis très vite tombé
-sur **[Backbone Paginator][backbone-paginator]**. La lib  propose des
-mécanismes de pagination coté client (`Paginator.clientPager`) ou de se brancher sur une api
-server paginée (`Paginator.requestPager`). La configuration de ces objets et très complète : gestion de filtres,
-d'ordre, etc.
+I also search for a lib allowing me to paginate my lists. I quickly found **[Backbone Paginator][backbone-paginator]**.
+The lib offers both client side pagination (`Paginator.clientPager`) and integration with server side pagination
+(`Paginator.requestPager`). It includes management of filters, sorting, etc.
 
-#### Pagination côté client
+#### Client side pagination
 
-Cette lib repose sur l'**extension des collections [Backbone][backbone]**. Il faut donc ajouter les options
-nécessaires à la collection :
+This lib extends **[Backbone][backbone]** collections. So adding options to collections is necessary:
 
     var participantsCollection = Backbone.Paginator.clientPager.extend({
         model:participantModel,
@@ -468,8 +453,8 @@ nécessaires à la collection :
         }
     });
 
-On récupère ensuite la collection de manière classique : s'agissant d'un pagination client on exécute un
-fetch complet puis on choisit la page courante :
+We get then the collection and, as this is a client side operation, we classically `fecth` the collection and then
+ask for the right page:
 
     /**
      * Render this view
@@ -502,8 +487,7 @@ fetch complet puis on choisit la page courante :
         return this;
     },
 
-A noter q'une fois la collection récupérée `collection.info()` permet d'obtenir tout un tas d'information sur
-l'état courant de la collection :
+Once the collection retrieved, `collection.info()` allows to get information about current state:
 
     totalUnfilteredRecords
     totalRecords
@@ -517,13 +501,11 @@ l'état courant de la collection :
     endRecord
 
 
-Cette lib me convient donc tout à fait et se montre efficace, intuitive et simple d'utilisation pour le moment.
+#### Server side pagination
 
-#### Pagination côté serveur
+Once server side pagination implemented, client adaptation is very easy:
 
-Une fois la pagination côté serveur implémentée, l'adaptation est très facile :
-
-On renseigne les **paramètres à envoyer au server** dans la collection `collections/participants.js` :
+We set **parameters to send to server** in `collections/participants.js`:
 
     server_api:{
         'page':function () {
@@ -535,7 +517,7 @@ On renseigne les **paramètres à envoyer au server** dans la collection `collec
         }
     },
 
-Puis, dans le même fichier, on implémente le parser pour récupérer la réponse et initialiser la collection et le pager :
+Then, in the same file, we provide a parser to get the response back and initialize collection and pager:
 
     parse:function (response) {
         var participants = response.content;
@@ -545,8 +527,8 @@ Puis, dans le même fichier, on implémente le parser pour récupérer la répon
         return participants;
     }
 
-Et enfin, on modifie l'appel au serveur : cette fois, la méthode `goTo()` étend `fecth` et doit donc être appelée à sa
-place et non à son retour (`views/participants/list.js`) :
+Finally, we change server call : this time the `goTo` method extend `fetch` and should be called instead
+(`views/participants/list.js`) :
 
     // get the participants collection from server
     this.collection.goTo(this.askedPage,
@@ -563,28 +545,25 @@ place et non à son retour (`views/participants/list.js`) :
         });
     return this;
 
-Le reste est inchangé si ce n'est le collection.info() qui dispose de moins d'éléments :
+All other code stay inchanged but the collection.info() is a little bit thinner:
 
     totalRecords
     currentPage
     perPage
     totalPages
     lastPage
-    // ces deux là ne sont originellement pas présents mais une pull-request est en attente
-    previous
-    next
 
 ---
-### Liste d'appels asynchrones : Async.js
+### Asynchronous calls : Async.js
 
-Autre problématique récurrente : les appels asynchrones successifs pour lesquels on souhaite disposer d'un
-traitement final permettant d'afficher le résultat de l'ensemble des appels : nombre d'erreurs, tous successfull,
+Other recurrent problem: parallel asynchronous calls for which we want to have a
+final processing in order to display the results of the entire process: number of errors, successes,
 etc.
 
-Basiquement, chaque appel asynchrone dispose d'un callback appelé à la fin de son traitement propre (succès ou erreur).
-Sans outillage, on est donc obligé de mettre en place un **comptage manuel des fonctions appelées et un décompte lors
-de l'appel du callback de chacune d'entre elles**. Le callback final est alors appelé à la fin de chaque appel unitaire
-mais ne s'exécute que si plus aucun callback ne reste à appeler. Cela donne :
+Basically, each asynchronous call define a callback invoked at the end of his own treatment (success or error).
+Without tools, we are thus obliged to implement a **manual count of called functions and a count
+of callbacks called to compare**. The final callback is then called at the end of each call unit
+but executed only if there is no more callback to call. This gives:
 
     /**
      * Effective deletion of all element ids stored in the collection
@@ -631,27 +610,25 @@ mais ne s'exécute que si plus aucun callback ne reste à appeler. Cela donne :
         }
     },
 
-C'est fonctionnel mais c'est quand même ** beaucoup de boilerplate** !!!
+This code work but there is **too much technical code** !
 
-Suite à des conseils avisés, je me suis donc intéressé à la lib **[Async][async]**. Cette lib propose un ensemble de
-helpers pour effectuer des **traitements asynchrone en parallèle** et resynchroniser la fin de ces traitements via un callback
-final.
+Following advice, I took a look at **[Async][async]**. This lib provides a set of helpers to perform **asynchronous
+parallel processing** and synchronize the end of these treatments through a final callback called once.
 
-Cette lib est initialement destinée à un server nodeJs mais est également **implémentée côté browser**.
+This lib is initially developed for nodeJS server but has been **implemented on browser side**.
 
-Sur le papier, la méthode dont j'avais besoin était le `forEach`. Je me suis cependant rapidement confronté au problème
-suivant : tous les helpers de cette lib sont conçus pour tout arrêter (et passer au callback final) à la première erreur.
-Or j'avais besoin d'exécuter toutes mes fonctions puis, qu'elles aient réussi ou échouer, de dresser un bilan à remonter
-à l'utilisateur.
+Theoretically, the method I need is `forEach`. However, I faced the following problem: all of these helpers
+are designed to stop everything (and call the final callback) when the first error occurs.
+But I needed to perform all my server calls and only then, whether successful or fail, return global results
+to the user.
 
-Il n'existe malheureusement aucune option dans cette lib ni dans une autre (à ma connaissance) qui implémente cette
-fonctionnalité (malgré des demandes similaires sur les mailings lists) ...
+Unfortunately there is no appropriate option (despite similar requests on mailing lists) ...
 
-J'ai donc du twicker un peu et utiliser, en lieu et place du `forEach`, la fonction `map` qui renvoie, elle, un tableau
-de résultats dans lequel je peux enregistrer les succès. Le paramètre error du callback final ne peut être utilisé sous
-peine de voir l'ensemble des appels stoppé. Le callback est donc systématiquement appelé avec un paramètre err à `null`
-et un wrapper de l'objet associé à un type `success`ou `error`. Je peux ainsi en déduire le nombre d'erreurs sans pour autant
-interrompre mes traitements :
+So I made a little twick and used, instead of `forEach`, the `map` function that returns a result array
+in which I can register successes and errors. error parameter of the final callback cannot be used without
+stopping everything. So, the callback is always called with an `null` err parameter and a custom wrapper containing the
+returned object and the type of the result: `success` or `error`. I can then globally count errors without
+interrupting my calls:
 
     /**
      * Effective deletion of all element ids stored in the collection
@@ -695,24 +672,18 @@ interrompre mes traitements :
         ...
     },
 
-Le code est ainsi **beaucoup plus élégant, avec beaucoup moins de boilerplate**.
-
-Ainsi, malgré ce twick bien dommage, **je retiens quand même cette lib pour tout ce qui concerne un empilement d'appels
-asynchrone à paralléliser** - que l'on souhaite ou non disposer d'un callback final.
-
 ---
-### Dispatch de reccourcis clavier : keymaster
+### Dispatching keyboard shortcuts: keymaster
 
-**[keymaster][keymaster]** est une micro librairie permettant de définir des listeners sur des raccourcis clavier
-et de les propager. La syntaxe est élégante, elle est très simple et fonctionnellement très complète :
+**[Keymaster][keymaster]** is a micro library allowing to define listeners on keyboard shortcuts
+and propagate them. The syntax is elegant, it is very simple but very complete:
 
-- gestion de multiples touches spéciales
-- chainages divers au travers d'un nombre importants de "modifieurs"
-- filtrage sur certains éléments source
+- Management of multiple hotkeys
+- Chaining through an important number of "modifiers"
+- Source DOM element type filtering
 - ...
 
-Elle est tellement micro que la doc parle d'elle même mais ca me semble un must pour toute application avec raccourcis
-clavier.
+It is so simple that the doc is self sufficient - this tools is a must have.
 
 ---
 ### CSS : LESS ?
@@ -720,65 +691,70 @@ clavier.
 TODO
 
 ---
-Considérations d'architecture et questions ouvertes
----------------------------------------------------
+Architectural considerations and questions
+------------------------------------------
 
-**[Backbone][backbone]** est une lib plus qu'un framework et propose un certain nombre d'outils **sans jamais imposer ni
-même parfois proposer de cadre** en termes d'architecture et de design de l'application.
+**[Backbone][backbone]** is more a lib than a framework and provides some tools but never **forces us adopting a given
+structure or pattern**.
 
-Il me semble donc indispensable d'explorer les différentes façons d'adresser ces problématiques d'en dégager ensuite
-des guidelines et bonnes pratiques pour l'utilisation et l'organisation d'une application avec **[Backbone][backbone]**.
+This means that each developer / team can (**have to**) define best practices, guidelines and patterns to organize
+and structure properly a **[Backbone][backbone]** application.
 
-Un certain nombre de **questions restent ouvertes** sans solution pleinement satisfaisante et
-nécessitent pour certaines, une meilleure compréhension de ma part des mécanismes sous-jacents de ces libs et
-notamment de **[Backbone][backbone]**.
-
-Alternatives, propositions et discussions sont bien évidemment bienvenues.
+These are mines but they could be incomplete (or worst ...), suggestions and reactions are welcomed.
 
 ---
-### Utilisation de routeurs
+### Routers usage
 
-**[Backbone][backbone]** fournit un objet routeur permettant d'**organiser la navigation entre les différentes vues** de
-l'application. Malgré cela certains exemples n'en font pas uage et préfèrent déléguer à chaque vue la responsabilité
-de passer la main à la suivante, de l'initialiser, etc.
+**[Backbone][backbone]** provides a router object allowing to manage **navigation between different views**.
+Despite this, some examples does not make usage of routers and prefer delegating to each view the responsibility to
+setup and initialize the next view and so on ...
 
-Il me semble que cet usage est à déconseiller pour plusieurs raisons :
+I think that it is not a good practice for multiple reasons:
 
-- On introduit un **couplage fort** entre les vues en termes fonctionnels mais aussi techniques (gestion du cycle de vie, etc.)
-  L'évolutivité de l'application en est fortement réduite
-- On introduit **beaucoup de boilerplate** dans chaque vue pour préparer la suivante, se 'nettoyer', etc. ce code
-  technique se trouve alors éparpillé dans l'application et est **difficilement capitalisable**
-- L'affichage de chaque vue est totalement dépendante de la précédente : **pas de `deep-linking`**. Autrement dit il est
-  impossible d'accéder directement à une vue par son url et il n'existe q'une url : celle de l'application
+- We introduce a **strong coupling** between views in functional but also technical terms (life cycle management, etc..)
+and the expandability of the application is greatly reduced
+- We introduce **a lot of technical code** in each view to prepare next (cleaning, etc.). This technical code
+is then scattered all over the application and **difficult to capitalize**.
+- Each view is totally dependent on the previous one: **no `deep linking`**. It is then impossible to directly get a
+view by its url (in fact there is only one url : the application url). The application is not bookmarkable, cannot be
+easily explored and indexed by search engine roots, etc.
 
-Pour toutes ces raison (et sûrement des tas d'autres), les routeurs **[Backbone][backbone]** doivent être utilisés pour
-naviguer entre les vues :
+Router usage:
 
     var AppRouter = Backbone.Router.extend({
         routes:{
             // Define some URL routes
+            "participant/:id":"showParticipant",
+            "participant/:id/edit":"editParticipant",
             '*path':'defaultAction'
         },
 
         defaultAction:function () {
-            this.navigate("participants", true);
+            ...
+        },
+
+        showParticipant:function (id) {
+            ...
+        },
+
+        editParticipant:function (id) {
+            ...
         }
     });
 
 ---
-### 'Intelligence' des routeurs
+### Routers 'smartness'
 
-Une fois que l'on a dit que l'utilisation des routeurs était à privilégier, reste à identifier précisément leur
-responsabilité.
+I think that routers are necessary, that's the point but what are their responsibilities ?
 
-Le routeur définit les différentes routes de l'application et associe à chacune d'elle un traitement.
+I believe a router is only responsible to define application routes and bind a handler to each one.
 
-De mon point de vue, ce traitement doit se résumer strictement à :
+This handler does nothing other than :
 
-- **Créer** la vue associée à la route en se contentant d'appeler son constructeur avec d'éventuels paramètres
-- Demander à cette vue de **s'afficher** dans un conteneur donné
+- **Create** the view relate to the current route, calling its constructor
+- Ask to this view to "render" in a given container
 
-Par exemple:
+For example:
 
     routes:{
         // Define some URL routes
@@ -789,8 +765,8 @@ Par exemple:
         this.showView($('#content'), ParticipantListView, [params]);
     },
 
-**Ce n'est pas au routeur d'organiser les autres vues** si elles existe en fonction de la nouvelle vue créée comme j'avais
-pu le faire dans une précédente version :
+**This is not the router responsibility to organize other views** depending on the new rendered view as I made in a previous
+version of this application:
 
     listParticipants:function (params) {
         classes.Views.HeaderView.setMenu(ParticipantsMenuView);
@@ -798,71 +774,60 @@ pu le faire dans une précédente version :
         this.showView($('#content'), ParticipantListView, [params]);
     },
 
-Cette opération doit être effectuée la vue `header` abonnée à un évènement de changement de vue.
+This operation should be done by the `header` view that subscribed to a dedicated event.
 
-**NB** : évidemment, si il n'existe dans l'application aucune vue `header`en charge de ces opérations, cela peut
-être effectuée par une `main view` mais je ne pense pas que cela soit pertinent dans le routeur.
+**NB** : obviously, this could be done by a `main view` but I don't think that is the router responsibility
 
-Certains exemples en ligne proposent des implémentations de routeurs **appelant des fonction "métier" de la vue** à
-afficher :
+Some online examples show routers implementations that **calls business functions** from the view:
 
     list: function() {
         var list = new Collection();
         list.fetch({success: function(){
             $("#content").html(new ListView({model: list}).el);
         }});
-        this.headerView.selectMenuItem('list-menu');
     },
 
-Même si dans cet exemple le routeur effectue peu d'opérations, ce n'est à mon sens pas à lui de demander à la vue de
-mettre à jour son model, de gérer les success et errors de l'appel au serveur, etc. Je préfère un modèle ou **le routeur
-se contente de lui demander de se rendre** ...
+Again, this is not the router responsibility to update view model or to manager success or errors from the server call.
+I prefer a model in which the router only ask : `view.render()`.
 
 ---
 ### Main view or not ?
 
-Le NB ci-dessus ouvre une autre question. Faut-il une `Main view` globale en charge de l'ensemble de l'organisation de l'application ?
+The above paragraph opens another question. Is a `Main view`, responsible for the overall application organization,
+necessary ?
 
-Dans mon cas, l'organisation de mes différentes vues et la présences de vues annexes de contrôle et de navigation :
-`header`, `menu`, etc. m'a fait répondre à cette question par la négative : je n'ai pas éprouvé le besoin d'ajouter
-cette vue principale puisque ma vue `header`, notamment se chargeait déjà des adaptations en questions.
+In my case, the existence of control and navigation views (`header`, `menu`, etc..) made me answer no to this question.
+I did not feel the need to add a main view this as my `header` view was already in charge of this.
 
-Cependant, la réponse peut-être différente selon les applications et, dans tous les cas, une vue doit se charger de ces
-opérations qui ne doivent pas être laissées au routeur (cf. § précédent).
-
-En particulier, dans cette application, j'ai du créer une vue `footer` pour gérer les évènements sur les boutons d'aide
-(dont un en fenêtre modale) et une `KeyboardView` pour centraliser les évènements clavier sur le document. Deux
-éléments qui auraient pu être traités par une vue principale ... sujet ouvert, donc ...
+However, the answer may be different for each application but, in all cases, the responsibility should not be
+left to the router (see previous §).
 
 ---
-### Le problème des vues zombies
+### Zombies views problem
 
-Lorsqu'on travaille avec un routeur **[Backbone][backbone]**, celui-ci est classiquement an charge d'instancier et
-de demander à la vue associée à la route appelée de se rendre (voir plus haut). On est alors confronté au problème
-suivant :
+When a **[Backbone][backbone]** create and render a new view, we are faced to the following problem:
 
-**Chaque nouvelle instanciation d'une vue déclare de nouveaux bindings sans pour autant que les précédents soient
-désactivés**. On se retrouve donc avec de multiples instances active d'une même vue même si une seule d'entre elles est
-rendue puisqu'elles partagent le même `root element` et se remplacent donc les unes les autres d'un point de vue DOM.
-Il est alors perturbant de constater qu'**un click sur le bouton `delete` génère plusieurs requêtes de suppression sur le
-serveur** ...
+**Each new view instance declare new bindings without disabling those of the previous one**.
+We then have with multiple active instances of the same view even if only one of them is currently rendered
+since they share the same `root element` and replace each other from a DOM perspective.
+We not then that when the user **click on the `delete` button multiple deletion requests are generated on
+server side ... **
 
-Ce problème est référencé dans [ce très bon post](http://lostechies.com/derickbailey/2011/09/15/zombies-run-managing-page-transitions-in-backbone-apps/)
+This issue is referenced in [this excellent post](http://lostechies.com/derickbailey/2011/09/15/zombies-run-managing-page-transitions-in-backbone-apps/)
 
-On doit alors trouver un moyen de garantir l'unicité d'une vue donnée à un instant t. Plusieurs solutions pour cela :
+We must find a way to ensure uniqueness of a given view at a time. Several solutions exist:
 
-- **Utilisation exclusive de Singletons** : cf. plus loin. Cela nécessite de mettre en place une logique de
-rafraîchissement de la vue via l'implémentation d'une fonction `reset` dans chacune d'entre elles qui sera appelée
-en lieu et place du constructeur. Les vues **[Backbone][backbone]** peuvent être étendues pour ajouter la signature
-ce cette méthode, laissée vide pour une implémentation spécifique par vue.
-- **Extension des vues [Backbone][backbone]** pour ajouter une méthode `close` chargée d'appeler les méthodes déjà
-présentes : `remove` (suppression du DOM), `unbind`, etc. Comme le suggère Derick Bailey dans son post.
+- **Exclusive use of Singletons**: cf. later. This requires to logically refresh the view
+implementing of a `reset` function in each one. This method will be called instead of the constructor.
+**[Backbone][backbone]** views can be extended to add a such method, that is left empty and requires to be
+implemented bt the developer.
+- **Extension of [Backbone][backbone] views** to add a `closed` method calling all existing methods:
+`remove` (deletion of the DOM), `unbind`, etc.. As suggested by Derick Bailey in his post.
 
-La seconde solution m'a parue préférable parce qu'elle s'intègre mieux, je trouve, dans le cycle de vie des vues
-**[Backbone][backbone]**, conserve l'approche standard d'initialisation et peut être proposée sous forme d'extension
-générique sans ajouter quoique ce soit aux vues.
+I preferred the second solution because it fits better, I think, in **[Backbone][backbone]** views lifecycle and conserve
+standard initialization approach. Moreover, it can be proposed as a **generic extension** without adding anything into views.
 
-J'ai donc implémenté l'extension suivante (`libs/extensions/backbone.ext.js`) :
+I then implemented the extension (`libs/extensions/backbone.ext.js`):
 
         /**
          *  Backbone extension:
@@ -903,14 +868,14 @@ J'ai donc implémenté l'extension suivante (`libs/extensions/backbone.ext.js`) 
             }
         };
 
-Il s'agit de l'implémentation proposée par Derick Bailey à laquelle j'ai apporté les modifications suivantes :
+This is, in fact, Derick Bailey extension with some additions:
 
-- Suppression de toutes les souscriptions Pubsub qui provoquent le même effet
-- unbind des évènements liés au model (pas sûr que cela soit nécessaire)
-- unbind des callbacks de validation
+- Removing of all PubSub subscriptions
+- Unbinding of model related events related (not sure if this is necessary)
+- Unbinding of validation callbacks
 
-Concernant le "unsubscribe" Pubsub, pour pouvoir appliquer une solution générique j'ai du appliquer la convention
-suivante dans l'ensemble de mes vues :
+About PubSub "unsubscribe", to be able to apply a generic solution, I had to define and apply a convention in all
+of my views:
 
     handlers:[],
 
@@ -926,12 +891,12 @@ suivante dans l'ensemble de mes vues :
         ...
     }
 
-Soit le référencement de chaque souscription dans un tableau de handlers, puisque Pubsub ne permet un unbind qu'à
-partir d'un handler donné.
+i.e. referencing each subscription in a handlers array because pubsub unbind is only possible from the original
+handler ref.
 
-Reste à appeler cette méthode close à chaque changement de vue dans le routeur. Pour cela il est nécessaire de
-stocker en permanence une **référence vers la vue active et de la clore avant d'en initialiser une nouvelle** via
-une méthode unique dédiée dans notre routeur :
+We still have to call this method each time we switch between views in router. In the current implementation, it is
+necessary to store **a permanent reference** to the current main view and **close it before initializing the next
+one**. This is done by a dedicated method in router:
 
     listParticipants:function (params) {
         this.showView($('#content'), ParticipantListView, [params]);
@@ -974,19 +939,20 @@ une méthode unique dédiée dans notre routeur :
         return view;
     }
 
-A noter qu'il est également nécessaire de s'occuper transitivement des "Sous vues" si elles existent (cf. plus loin).
+**NB**: It is also necessary to transitively close all nested views if any (cf. later).
+**NB 2**: These mechanisms could be enhanced with an automatic detection when removing a view root element from DOM ...
 
 ---
-### Sous vues
+### Nested views
 
-Une sous vue est une **vue embarquée dans une vue de plus haut niveau et dont le cycle de vie est totalement inféodé à celui
-de son parent** : elles n'existent que pendant la durée de l'existence du parent et ne peuvent lui survivre.
+A nested view is a **view that is embedded in another more global one. Its lifecycle is totally dependent and managed
+by its parent view**: These views cannot exist without their parent and cannot survive to it.
 
-Dans le système décrit précédemment, seules sont gérées par le routeur les vues principales, charge à elles d'initialiser,
-rendre et donc de clore également les vues qu'elles embarquent.
+In the previously described mechanism, the router only manage main views. These views are so responsible for initializing,
+rendering and closing their nested views.
 
-Il est donc nécessaire pour chaque vue comportant des sous vues, que la vue parente les ferment proprement à sa propre
-fermeture, via une surcharge de la méthode close (sans oublier de rappeler la méthode originelle) :
+It is therefore necessary that each parent view properly close its nested views during its own closure. This is done
+with a close method overload (don't forget to recall the original method):
 
     return Backbone.View.extend({
 
@@ -1014,19 +980,17 @@ fermeture, via une surcharge de la méthode close (sans oublier de rappeler la m
         }
     });
 
-De cette manière, les sous vues sont également fermées correctement.
-
 ---
-### Vues Singleton
+### Singleton views
 
-Le sujet des vues Singletons a déjà été en partie abordé plus haut mais mérite quelques précisions.
-Je ne considère comme 'vue singleton' que les vues de contrôle qui ne nécessitent donc aucun `reset` depuis le
-controller et se mettent à jour en souscrivant aux évènements générés par les autres vues.
+Singleton views subject has been partially discussed beside but deserves some clarification.
+I do consider as 'singleton view' only control views that do not require any `reset` from router
+and are exclusively updated by subscribing to events generated by other views.
 
-Par définition, ces vues sont uniques sur toute l'application et ne sont instanciées qu'une seule et unique fois,
-le plus souvent au démarrage.
+By definition, these views are unique throughout the application and are instantiated once and only once,
+most often at startup.
 
-Dans cet exemple, elles sont initialisé dans le fichier `app.js` :
+In this example, they are initialized in the `app.js`:
 
     // Define global singleton views
     App.Views.HeaderView = new HeaderView();
@@ -1038,40 +1002,38 @@ Dans cet exemple, elles sont initialisé dans le fichier `app.js` :
     App.Views.ShortcutsView = new ShortcutsView();
     App.Views.KeyboardView = new KeyboardView();
 
-On constate qu'elles sont ajoutées au namespace `App.Views` ... pour l'instant sans utilité aucune - simplement, cela
-me gênait de les voir disparaître dans la nature sans possibilité de les retrouver si besoin :-)
+We can see that they are added to the namespace `App.Views` ... for now without any benefit or requirement - but it
+bothered me to see them disappear into the wild without the possibility of finding them later if needed :-)
 
-Plus globalement, concernant ces vues spécifiques, se pose la question justement de la manière d'y accéder et
-éventuellement de la manière de garantir leur unicité en rendant impossible leur instanciation ultérieure.
+More generally, regarding these specific views, the question is how to get them later and possibly how to ensure their
+uniqueness by making it impossible any multiple instantiation.
 
-J'ai pour l'instant adopté la doctrine de Julien Askhenas, le créateur de **[Backbone][backbone]** dans cette
-[Pull Request](https://github.com/documentcloud/backbone/pull/1299) : "if you just want one of an object ... just make one".
-Je ne les ai donc créé qu'une seule fois :-)
+I have so far adopted the doctrine of Julien Askhenas, creator of **[Backbone][backbone]** in this
+[Pull Request] (https://github.com/documentcloud/backbone/pull/1299): "if you just want one year of object ... just make one."
 
-Je reste partagé sur ce point et n'exclue pas de trouver mieux ...
+I remain divided on this point and does not exclude to find better ...
 
 ---
-### Stratégie globale et cohérente de rendering
+### Global rendering strategy
 
-Concernant la manière de rendre les vues, ici encore **[Backbone][backbone] nous laisse nous débrouiller** et trouver
-la meilleure façon de le faire pour notre besoin. Il est donc nécessaire de définir une stratégie globale de rendering
-à appliquer de manière systématique sous peine de créer une nouvelle manière à chaque vue ...
+Concerning rendering, **[Backbone][backbone] again lets us find and manage the best way to fit our specific needs**.
+It is therefore necessary to define a global and comprehensive rendering strategy.
 
-Pour cela, Ian Storm Taylor nous donne [quelques pistes](http://ianstormtaylor.com/rendering-views-in-backbonejs-isnt-always-simple/).
+Ian Taylor Storm gives us [some ideas](http://ianstormtaylor.com/rendering-views-in-backbonejs-isnt-always-simple/).
 
-En résumé notre stratégie de rendering doit nous permettre de respecter les principes suivants :
+To summarize, our strategy of rendering should allow us to fulfil following rules:
 
-- Une vue doit pouvoir être rendue plusieurs fois de suite sans effet de bord
-- L'organisation du DOM et l'ordre de positionnement des éléments doit être définit dans les templates et pas dans les vues
-- Appeler plusieurs fois render doit maintenir la vue dans le même état
-- Rendre plusieurs fois une vue ne doit pas consister à la supprimer et la recréer
+- A view should be rendered multiple times without side effects
+- DOM organization and elements positioning order must be defined in templates, not in views
+- Multiple calls to render must maintain view in the same state
+- Multiple calls to render should not consist to delete and recreate view
 
-Ces différents principes nous amènent à certaines conclusions :
+These means:
 
-- Pas de changement d'état : incrément, etc. dans une fonction `render()`
-- Ce sont les templates et le layout général qui définissent les éléments dans lesquels les vues seront rendues :
+- No state change: increment, etc.. in `render ()`
+- Templates and general layout define the elements in which views will be rendered
 
-Par exemple :
+For example:
 
     <div class="header"></div>
 
@@ -1090,10 +1052,8 @@ Par exemple :
         </footer>
     </div>
 
-En particulier, cela signifie qu'il ne faut **en aucun cas que l'élément root de la vue (`this.el`) soit l'élément
-dans lequel la vue doit se rendre** mais simplement le conteneur de plus haut niveau de cette vue.
-
-Ce qui signifie que ceci n'est pas souhaitable :
+It means, for example that the ** view root element (`this.el`) should not be the container element in which it has
+to be rendered**. This should be avoided:
 
     new MyView($('.container'));
 
@@ -1106,13 +1066,12 @@ Ce qui signifie que ceci n'est pas souhaitable :
         ...
     });
 
-En effet, dans la logique **[Backbone][backbone]**, le `this.el` est inféodé à la vue qui le crée et le supprime. Si
-l'on détourne ce mécanisme, tout appel à `MyView.remove()` supprimera de manière irrémédiable le container et empêchera
-tout rendering futur.
+Indeed, in **[Backbone][backbone]** logic, `this.el` is strongly linked to its parent view. If we bypass this
+mechanism, any calls to `MyView.remove()` will irreversibly remove the container and prevent any future rendering.
 
-- Ne pas stocker en dur le container dans lequel la vue sera rendue pour permettre de la rendre ailleurs.
+- Do not hard code the view container to allow render the view later and elsewhere.
 
-Ce qui signifie qu'il est préférable éviter :
+This should be also avoided:
 
     new MyView().render();
 
@@ -1126,8 +1085,8 @@ Ce qui signifie qu'il est préférable éviter :
       },
     });
 
-Avec ces différentes contraintes et quelques autres (notamment le fait de laisser le soin aux templates) de définir
-l'ordre (et donc d'éviter de faire de `appendTo` directement dans `this.$el`), on obtient le pattern, suivant :
+With these constraints and principles and some others (let templates define order - and so avoid call directly
+`appendTo` from `this.$el`) we get the following pattern:
 
     return Backbone.View.extend({
 
@@ -1143,33 +1102,31 @@ l'ordre (et donc d'éviter de faire de `appendTo` directement dans `this.$el`), 
         }
     });
 
-On remarque que la méthode `render` retourne `this` de manière à ce que l'on puisse ensuite insérer le html de cette
-manière depuis l'extérieur de la vue (le routeur ou une vue parent) :
+We note that `render` returns `this` to allow inserting the generated html from an external handler (router or parent view):
 
     $('.container').html(new MyView().render().el);
 
-De cette manière ce n'est pas la vue qui décide ou se rendre mais un élément de plus haut niveau, il est possible de la
-rendre plusieurs fois sans effet indésirable (ce qui ne serait pas le cas avec une succession de `appendTo`) et l'appel
-à la méthode `remove` supprime l'élément de plus haut niveau de la vue (par défaut une div) mais pas le conteneur principal.
+This way, the view does not decide itself where to render but delegates this to an upper element. It is then possible to
+perform multiple view rendering with no side effect (which would not be the case with a succession of `appendTo` calls).
+The call to `remove` removes the element of highest level of the view (a div by default) but keeps the main container.
 
-Dans notre cas, cette opération est effectuée de manière générique dans la méthode `showView` du routeur (cf.plus haut).
+In our case, this is done in a generic way by the `showView` method in router (cf. above).
 
 ---
-### Gestion effective du PushState
+### Effective PushState management
 
-**[Backbone][backbone]** permet d'activer le `pushState` et donc de permettre d'utiliser de vrais liens et non uniquement
-des ancres `#` ce qui est bien mieux pour la navigation et indispensable au référencement et à l'indexation de l'application :
+**[Backbone][backbone]** allows `pushState` activation that permits usage of real links instead of simple anchors `#`.
+PushState offers better navigation experience and better indexation and search engine ranking:
 
     Backbone.history.start({pushState:true, root:"/"});
 
-L'option `root` permet de demander à  **[Backbone][backbone]** d'ajouter systématiquement ce path comme contexte de l'application.
+`root` option allows to ask **[Backbone][backbone]** to define this path as application context;
 
-Cependant, **[Backbone][backbone]** s'arrête ici et si l'accès direct aux vues par leur url fonctionne, **chaque lien provoque
-un rechargement complet de l'application** ! **[Backbone][backbone]** n'intercepte en effet pas les lien html et il est nécessaire
-de l'implémenter soi-même.
+However, **[Backbone][backbone]** stops here. Direct access to views by url works fine but, each link leads to **
+a full reload**! **[Backbone][backbone]** does not intercept html links and it is necessary to implement it ourselves.
 
-Tim Branyen, le créateur de **[Backbone boilerplate][backbone-boilerplate]** propose la solution suivante que j'ai intégré à mes
-extensions **[Backbone][backbone]** en y ajoutant un test pour vérifier l'activation du pushState :
+Branyen Tim, the creator of **[Backbone boilerplate][backbone-boilerplate]** proposes the following solution that
+I have added to my extensions with a complementary a test to check pushState activation:
 
     // force all links to be handled by Backbone pushstate - no get will be send to server
     $(document).on('click', 'a:not([data-bypass])', function (evt) {
@@ -1188,16 +1145,15 @@ extensions **[Backbone][backbone]** en y ajoutant un test pour vérifier l'activ
         }
     });
 
-Ainsi chaque click sur un lien sera intercepté et effectuera une navigation **[Backbone][backbone]** plutôt qu'un rechargement.
-Si l'on souhaite faire des liens externes, il suffit d'utiliser l'attribut `data-bypass` comme ceci :
+Any click on a link will be intercepted and bound to a **[Backbone][backbone]** navigation instead. I we want to
+provide external links, we still have to use the `data-bypass` attribute:
 
     <a data-bypass href="http://bitbucket.org/bmeurant/tournament-front" target="_blank">
 
 ---
-### Extension des libs
+### libs extensions
 
-Pour ne pas surcharger le code d'extensions en vrac pour les libs utilisées, ces extensions sont isolées et placées dans
-un répertoire `js/libs/extensions` :
+To avoid scattering libs extensions in our applicative code, extensions are isolated in a `js/libs/extensions` directory:
 
     |-- js
         |-- libs
@@ -1206,7 +1162,7 @@ un répertoire `js/libs/extensions` :
                 |-- backbone.ext.js
                 |-- handlebars.helpers.ext.js
 
-Les extensions sont chargées au démarrage de l'application (`app.js`) :
+Extensions are loaded at startup (`app.js`):
 
     define([
         'jquery',
@@ -1224,9 +1180,9 @@ Les extensions sont chargées au démarrage de l'application (`app.js`) :
     ],
 
 ---
-### Helpers Handlebars
+### Handlebars Helpers
 
-Dans la mesure du possible, les helpers Handlebars sont définis globalement (dans une extension) et chargés statiquement :
+If possible, Handlebars helpers are defined globally (in an extension) and statically loaded:
 
     Handlebars.registerHelper('ifequals', function (value1, value2, options) {
 
@@ -1237,8 +1193,8 @@ Dans la mesure du possible, les helpers Handlebars sont définis globalement (da
         }
     });
 
-Cependant, certains helpers sont spécifiques à une vue et doivent être non seulement définis dans cette vue mais également
-lors de son instanciation et non de manière statique (utilisation du `this`) :
+However, some helpers are view-specific and must be defined not only locally but also
+once instantiated and not statically (use of `this`):
 
     Handlebars.registerHelper('disabled', function (id) {
         return (this.deleted.indexOf(id) >= 0) ? 'disabled' : '';
@@ -1247,12 +1203,12 @@ lors de son instanciation et non de manière statique (utilisation du `this`) :
 ---
 ### Mixins
 
-Les mixins remplacent avantageusement la définition de méthodes utilitaires au sein d'un namespace global.
+Mixins are a better alternative to the definition of utility methods in a global namespace.
 
-cf. **[Backbone Patterns](http://ricostacruz.com/backbone-patterns/#mixins)**.
+cf. ** [Backbone Patterns] (# http://ricostacruz.com/backbone-patterns/ mixins) **.
 
-Les vues `participant/list` et `deletions/list` déclarent par exemple tous les deux le mixin `selectable` qui fournit
-un ensemble de méthodes et de comportements permettant de gérer la sélection d'un élément de liste :
+Views `participants/list` and `deletions/list` declare, for example, the `selectable` mixin which provides
+a set of methods and behaviors to manage list items selection on keyboard:
 
     return Backbone.View.extend(
         _.extend({}, Selectable, Paginable, {
@@ -1261,7 +1217,7 @@ un ensemble de méthodes et de comportements permettant de gérer la sélection 
 
     }));
 
-Le mixin est définit dans `js/mixins/selectable` :
+Mixin is defined in `js/mixins/selectable`:
 
     define([
         'jquery'
@@ -1299,20 +1255,24 @@ Le mixin est définit dans `js/mixins/selectable` :
     });
 
 ---
-### Routeurs multiples
+### Multiple routers
 
-Cette question reste à adresser dans mon cas mais cela me parait indispensable dans le cas d'une application de taille
-importante.
-
-TODO
-
----
-### Internationalisation ?
+Multiples routers were not yet implemented in my case but I think that is absolutely required in a large application.
 
 TODO
 
 ---
-### Login / Logout & Sécurisation ?
+### Internationalization ?
+
+TODO
+
+---
+### Login / Logout & Security ?
+
+TODO
+
+---
+### Dynamic require in routers ?
 
 TODO
 
