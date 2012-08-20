@@ -101,45 +101,45 @@ In our example:
 
 **View-specific helpers**:
 
-    ```js
-    initialize:function () {
+```js
+initialize:function () {
 
-        ...
+    ...
 
-        Handlebars.registerHelper('if_deleted', function (id, options) {
-            if (this.deleted.indexOf(id) >= 0) {
-                return options.fn(this);
-            } else {
-                return options.inverse(this);
-            }
-        }.bind(this);
+    Handlebars.registerHelper('if_deleted', function (id, options) {
+        if (this.deleted.indexOf(id) >= 0) {
+            return options.fn(this);
+        } else {
+            return options.inverse(this);
+        }
+    }.bind(this);
 
-        Handlebars.registerHelper('disabled', function (id) {
-            return (this.deleted.indexOf(id) >= 0) ? 'disabled' : '';
-        }.bind(this));
+    Handlebars.registerHelper('disabled', function (id) {
+        return (this.deleted.indexOf(id) >= 0) ? 'disabled' : '';
+    }.bind(this));
 
-        Handlebars.registerHelper('selected', function (id) {
-            return (this.idSelected && this.idSelected == id) ? "selected" : "";
-        }.bind(this));
+    Handlebars.registerHelper('selected', function (id) {
+        return (this.idSelected && this.idSelected == id) ? "selected" : "";
+    }.bind(this));
 
-        ...
-    }
-    ```
+    ...
+}
+```
 
 **Global helpers (`handlebars-helpers.js`):**
 
-    ```js
-    initialize:function () {
+```js
+initialize:function () {
 
-        ...
+    ...
 
-        Handlebars.registerHelper('photo_link', function (picture_url) {
-            return "http://localhost:3000/api" + picture_url;
-        });
+    Handlebars.registerHelper('photo_link', function (picture_url) {
+        return "http://localhost:3000/api" + picture_url;
+    });
 
-        ...
-    }
-    ```
+    ...
+}
+```
 
 Having to define these helpers may seem a bit boring at first, but the syntax is much more elegant,
 the majority of these helpers can be easily reused and, with a little bit of reflexion, we can reduce the amount of
@@ -196,176 +196,175 @@ to set to model). The behaviour of **[Backbone Validation][backbone-validation] 
 
 **Model** : constraints definition:
 
-    ```js
-    define([
-        'underscore',
-        'backbone',
-        'backbone-validation'
-    ], function (_, Backbone) {
+```js
+define([
+    'underscore',
+    'backbone',
+    'backbone-validation'
+], function (_, Backbone) {
 
-        /**
-         * Definition of a Participant model object
-         */
-        var ParticipantModel = Backbone.Model.extend({
-            urlRoot:"http://localhost:3000/api/participant",
-            defaults:{
+    /**
+     * Definition of a Participant model object
+     */
+    var ParticipantModel = Backbone.Model.extend({
+        urlRoot:"http://localhost:3000/api/participant",
+        defaults:{
 
+        },
+
+        // Defines validation options (see Backbone-Validation)
+        validation:{
+            firstname:{
+                required:true
             },
-
-            // Defines validation options (see Backbone-Validation)
-            validation:{
-                firstname:{
-                    required:true
-                },
-                lastname:{
-                    required:true
-                },
-                email:{
-                    required:false,
-                    pattern:'email'
-                }
+            lastname:{
+                required:true
             },
-
-            initialize:function () {
+            email:{
+                required:false,
+                pattern:'email'
             }
+        },
 
-        });
-        return ParticipantModel;
+        initialize:function () {
+        }
 
     });
-    ```
+    return ParticipantModel;
+
+});
+```
 
 **HTML5 Form** :
 
-    ```html
-    {{#with participant}}
-        <form class="form-horizontal">
-            <fieldset>
-                <div class="row">
-                    <div class="span8">
-                        <div class="control-group">
-                            {{#if id}}
-                                <label for="participantId" class="control-label">Id:</label>
-                                <div class="controls">
-                                    <input id="participantId" name="id" type="text" value="{{id}}" disabled/>
-                                </div>
-                            {{/if}}
-                        </div>
-
-                        <div class="control-group">
-                            <label for="firstname" class="control-label">First name:</label>
+```html
+{{#with participant}}
+    <form class="form-horizontal">
+        <fieldset>
+            <div class="row">
+                <div class="span8">
+                    <div class="control-group">
+                        {{#if id}}
+                            <label for="participantId" class="control-label">Id:</label>
                             <div class="controls">
-                                <input type="text" id="firstname" name="firstname" required="true" value="{{firstname}}" tabindex="1" autofocus="autofocus"/>
-                                <span class="help-inline"></span>
+                                <input id="participantId" name="id" type="text" value="{{id}}" disabled/>
                             </div>
-                        </div>
-
-                        <div class="control-group">
-                            <label for="lastname" class="control-label">Last name:</label>
-                            <div class="controls">
-                                <input type="text" id="lastname" name="lastname" required="true" value="{{lastname}}" tabindex="2"/>
-                                <span class="help-inline"></span>
-                            </div>
-                        </div>
-
-                        <div class="control-group">
-                            <label for="email" class="control-label">email address:</label>
-                            <div class="controls">
-                                <input type="email" id="email" name="email" value="{{email}}" tabindex="3"/>
-                                <span class="help-inline"></span>
-                            </div>
-                        </div>
-
+                        {{/if}}
                     </div>
 
-                    <div class="span3">
-                        <div class="well">
-                            <p class="photo">
-                                {{#if picture_url}}
-                                    <img class="photo" src="{{photo_link picture_url}}" alt="" draggable="false"/>
-                                    <p hidden><img src="{{photo_link pict_min}}"/></p>
-                                {{else}}
-                                    <img class="photo" src="/img/participants/no-photo.jpg" alt="" draggable="false"/>
-                                {{/if}}
-                            </p>
-
-                            <p>To change the picture, drag a new picture from your file system onto the box above.</p>
+                    <div class="control-group">
+                        <label for="firstname" class="control-label">First name:</label>
+                        <div class="controls">
+                            <input type="text" id="firstname" name="firstname" required="true" value="{{firstname}}" tabindex="1" autofocus="autofocus"/>
+                            <span class="help-inline"></span>
                         </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="lastname" class="control-label">Last name:</label>
+                        <div class="controls">
+                            <input type="text" id="lastname" name="lastname" required="true" value="{{lastname}}" tabindex="2"/>
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="email" class="control-label">email address:</label>
+                        <div class="controls">
+                            <input type="email" id="email" name="email" value="{{email}}" tabindex="3"/>
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="span3">
+                    <div class="well">
+                        <p class="photo">
+                            {{#if picture_url}}
+                                <img class="photo" src="{{photo_link picture_url}}" alt="" draggable="false"/>
+                                <p hidden><img src="{{photo_link pict_min}}"/></p>
+                            {{else}}
+                                <img class="photo" src="/img/participants/no-photo.jpg" alt="" draggable="false"/>
+                            {{/if}}
+                        </p>
+
+                        <p>To change the picture, drag a new picture from your file system onto the box above.</p>
                     </div>
                 </div>
-            </fieldset>
-            <input type="submit" style="display:none" value="Submit"/>
-        </form>
-    {{/with}}
-    ```
-
+            </div>
+        </fieldset>
+        <input type="submit" style="display:none" value="Submit"/>
+    </form>
+{{/with}}
+```
 
 **View** : initialization and usage:
 
-    ```js
-    initialize:function () {
-
-        ...
-
-        // allow backbone-validation view callbacks (for error display)
-        Backbone.Validation.bind(this);
-
-        ...
-    },
+```js
+initialize:function () {
 
     ...
 
-    /**
-     * Save the current participant (update or create depending of the existence of a valid model.id)
-     */
-    saveParticipant:function () {
+    // allow backbone-validation view callbacks (for error display)
+    Backbone.Validation.bind(this);
 
-        // build array of form attributes to refresh model
-        var attributes = {};
-        this.$el.find("form input[type!='submit']").each(function (index, value) {
-            attributes[value.name] = value.value;
-            this.model.set(value.name, value.value);
-        }.bind(this));
+    ...
+},
 
-        // save model if it's valid, display alert otherwise
-        if (this.model.isValid()) {
-            this.model.save(null, {
-                success:this.onSaveSuccess.bind(this),
-                error:this.onSaveError.bind(this)
-            });
-        }
-        else {
-            Pubsub.publish(App.Events.ALERT_RAISED, ['Warning!', 'Fix validation errors and try again', 'alert-warning']);
-        }
-    },
-    ```
+...
+
+/**
+ * Save the current participant (update or create depending of the existence of a valid model.id)
+ */
+saveParticipant:function () {
+
+    // build array of form attributes to refresh model
+    var attributes = {};
+    this.$el.find("form input[type!='submit']").each(function (index, value) {
+        attributes[value.name] = value.value;
+        this.model.set(value.name, value.value);
+    }.bind(this));
+
+    // save model if it's valid, display alert otherwise
+    if (this.model.isValid()) {
+        this.model.save(null, {
+            success:this.onSaveSuccess.bind(this),
+            error:this.onSaveError.bind(this)
+        });
+    }
+    else {
+        Pubsub.publish(App.Events.ALERT_RAISED, ['Warning!', 'Fix validation errors and try again', 'alert-warning']);
+    }
+},
+```
 
 And finally: extend callbacks to update form with validation errors managed by **[Twitter Bootstrap][twitter-bootstrap]**
 
 `backbone-validation.ext.js`:
 
-    ```js
-    /**
-     * Backbone Validation extension: Defines custom callbacks for valid and invalid
-     * model attributes
-     */
-    _.extend(Backbone.Validation.callbacks, {
-        valid:function (view, attr, selector) {
+```js
+/**
+ * Backbone Validation extension: Defines custom callbacks for valid and invalid
+ * model attributes
+ */
+_.extend(Backbone.Validation.callbacks, {
+    valid:function (view, attr, selector) {
 
-            // find matching form input and remove error class and text if any
-            var attrSelector = '[' + selector + '~=' + attr + ']';
-            view.$(attrSelector).parent().parent().removeClass('error');
-            view.$(attrSelector + ' + span.help-inline').text('');
-        },
-        invalid:function (view, attr, error, selector) {
+        // find matching form input and remove error class and text if any
+        var attrSelector = '[' + selector + '~=' + attr + ']';
+        view.$(attrSelector).parent().parent().removeClass('error');
+        view.$(attrSelector + ' + span.help-inline').text('');
+    },
+    invalid:function (view, attr, error, selector) {
 
-            // find matching form input and add error class and text error
-            var attrSelector = '[' + selector + '~=' + attr + ']';
-            view.$(attrSelector).parent().parent().addClass('error');
-            view.$(attrSelector + ' + span.help-inline').text(error);
-        }
-    });
-    ```
+        // find matching form input and add error class and text error
+        var attrSelector = '[' + selector + '~=' + attr + ']';
+        view.$(attrSelector).parent().parent().addClass('error');
+        view.$(attrSelector + ' + span.help-inline').text(error);
+    }
+});
+```
 
 ---
 ###Parameters support on view routing: Backbone Query Parameters
@@ -386,44 +385,44 @@ With this lib, included once and for all in my main router, I could get the foll
 
 **router.js** :
 
-    ```js
-    routes:{
-        // Define some URL routes
-        ...
-
-        "participants":"listParticipants",
-
-        ...
-    },
-
+```js
+routes:{
+    // Define some URL routes
     ...
 
-    listParticipants:function (params) {
-        ...
-        // view creation through a generic method (cf. zombies and rendering)
-        this.showView($('#content'), ParticipantListView, [params]);
-    },
-    ```
+    "participants":"listParticipants",
+
+    ...
+},
+
+...
+
+listParticipants:function (params) {
+    ...
+    // view creation through a generic method (cf. zombies and rendering)
+    this.showView($('#content'), ParticipantListView, [params]);
+},
+```
 
 Query parameters array is automatically recovered **without any further operation** and **whatever the number
 of these parameters**. It can then be passed to the view constructor for initialization:
 
 **list.js** :
 
-    ```js
-    askedPage:1,
+```js
+askedPage:1,
 
-    initialize:function (params) {
+initialize:function (params) {
 
-        ...
+    ...
 
-        if (params) {
-            if (params.page && this.isValidPageNumber(params.page)) this.askedPage = parseInt(params.page);
-        }
+    if (params) {
+        if (params.page && this.isValidPageNumber(params.page)) this.askedPage = parseInt(params.page);
+    }
 
-        ..
-    },
-    ```
+    ..
+},
+```
 
 This lib is pretty light and really cool and, honestly, **It is an absolute must have**.
 
@@ -438,92 +437,92 @@ The lib offers both client side pagination (`Paginator.clientPager`) and integra
 
 This lib extends **[Backbone][backbone]** collections. So adding options to collections is necessary:
 
-    ```js
-    var participantsCollection = Backbone.Paginator.clientPager.extend({
-        model:participantModel,
-        paginator_core:{
-            // the type of the request (GET by default)
-            type:'GET',
+```js
+var participantsCollection = Backbone.Paginator.clientPager.extend({
+    model:participantModel,
+    paginator_core:{
+        // the type of the request (GET by default)
+        type:'GET',
 
-            // the type of reply (jsonp by default)
-            dataType:'json',
+        // the type of reply (jsonp by default)
+        dataType:'json',
 
-            // the URL (or base URL) for the service
-            url:'http://localhost:3000/api/participants'
-        },
-        paginator_ui:{
-            // the lowest page index your API allows to be accessed
-            firstPage:1,
+        // the URL (or base URL) for the service
+        url:'http://localhost:3000/api/participants'
+    },
+    paginator_ui:{
+        // the lowest page index your API allows to be accessed
+        firstPage:1,
 
-            // which page should the paginator start from
-            // (also, the actual page the paginator is on)
-            currentPage:1,
+        // which page should the paginator start from
+        // (also, the actual page the paginator is on)
+        currentPage:1,
 
-            // how many items per page should be shown
-            perPage:12,
+        // how many items per page should be shown
+        perPage:12,
 
-            // a default number of total pages to query in case the API or
-            // service you are using does not support providing the total
-            // number of pages for us.
-            // 10 as a default in case your service doesn't return the total
-            totalPages:10
-        },
-        parse:function (response) {
-            return response;
-        }
-    });
-    ```
+        // a default number of total pages to query in case the API or
+        // service you are using does not support providing the total
+        // number of pages for us.
+        // 10 as a default in case your service doesn't return the total
+        totalPages:10
+    },
+    parse:function (response) {
+        return response;
+    }
+});
+```
 
 We get then the collection and, as this is a client side operation, we classically `fecth` the collection and then
 ask for the right page:
 
-    ```js
-    /**
-     * Render this view
-     *
-     * @param partials optional object containing partial views elements to render. if null, render all
-     * @param selectLast optional boolean. if true select the last element after rendering
-     * @return {*} the current view
-     */
-    render:function (partials, selectLast) {
+```js
+/**
+ * Render this view
+ *
+ * @param partials optional object containing partial views elements to render. if null, render all
+ * @param selectLast optional boolean. if true select the last element after rendering
+ * @return {*} the current view
+ */
+render:function (partials, selectLast) {
 
-        this.initDeleted();
+    this.initDeleted();
 
-        // reinit collection to force refresh
-        this.collection = new ParticipantsCollection();
+    // reinit collection to force refresh
+    this.collection = new ParticipantsCollection();
 
-        // get the participants collection from server
-        this.collection.fetch(
-            {
-                success:function () {
-                    this.collection.goTo(this.askedPage);
-                    this.showTemplate(partials);
-                    if (selectLast) {
-                        this.selectLast(this.$el, "li.thumbnail");
-                    }
-                }.bind(this),
-                error:function (collection, response) {
-                    Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
+    // get the participants collection from server
+    this.collection.fetch(
+        {
+            success:function () {
+                this.collection.goTo(this.askedPage);
+                this.showTemplate(partials);
+                if (selectLast) {
+                    this.selectLast(this.$el, "li.thumbnail");
                 }
-            });
-        return this;
-    },
-    ```
+            }.bind(this),
+            error:function (collection, response) {
+                Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
+            }
+        });
+    return this;
+},
+```
 
 Once the collection retrieved, `collection.info()` allows to get information about current state:
 
-    ```js
-    totalUnfilteredRecords
-    totalRecords
-    currentPage
-    perPage
-    totalPages
-    lastPage
-    previous
-    next
-    startRecord
-    endRecord
-    ```
+```js
+totalUnfilteredRecords
+totalRecords
+currentPage
+perPage
+totalPages
+lastPage
+previous
+next
+startRecord
+endRecord
+```
 
 
 #### Server side pagination
@@ -532,59 +531,59 @@ Once server side pagination implemented, client adaptation is very easy:
 
 We set **parameters to send to server** in `collections/participants.js`:
 
-    ```js
-    server_api:{
-        'page':function () {
-            return this.currentPage;
-        },
-
-        'perPage':function () {
-            return this.perPage;
-        }
+```js
+server_api:{
+    'page':function () {
+        return this.currentPage;
     },
-    ```
+
+    'perPage':function () {
+        return this.perPage;
+    }
+},
+```
 
 Then, in the same file, we provide a parser to get the response back and initialize collection and pager:
 
-    ```js
-    parse:function (response) {
-        var participants = response.content;
-        this.totalPages = response.totalPages;
-        this.totalRecords = response.totalElements;
-        this.lastPage = this.totalPages;
-        return participants;
-    }
-    ```
+```js
+parse:function (response) {
+    var participants = response.content;
+    this.totalPages = response.totalPages;
+    this.totalRecords = response.totalElements;
+    this.lastPage = this.totalPages;
+    return participants;
+}
+```
 
 Finally, we change server call : this time the `goTo` method extend `fetch` and should be called instead
 (`views/participants/list.js`) :
 
-    ```js
-    // get the participants collection from server
-    this.collection.goTo(this.askedPage,
-        {
-            success:function () {
-                this.showTemplate(partials);
-                if (selectLast) {
-                    this.selectLast(this.$el, "li.thumbnail");
-                }
-            }.bind(this),
-            error:function () {
-                Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
+```js
+// get the participants collection from server
+this.collection.goTo(this.askedPage,
+    {
+        success:function () {
+            this.showTemplate(partials);
+            if (selectLast) {
+                this.selectLast(this.$el, "li.thumbnail");
             }
-        });
-    return this;
-    ```
+        }.bind(this),
+        error:function () {
+            Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
+        }
+    });
+return this;
+```
 
 All other code stay inchanged but the collection.info() is a little bit thinner:
 
-    ```js
-    totalRecords
-    currentPage
-    perPage
-    totalPages
-    lastPage
-    ```
+```js
+totalRecords
+currentPage
+perPage
+totalPages
+lastPage
+```
 
 ---
 ### Asynchronous calls : Async.js
@@ -598,52 +597,52 @@ Without tools, we are thus obliged to implement a **manual count of called funct
 of callbacks called to compare**. The final callback is then called at the end of each call unit
 but executed only if there is no more callback to call. This gives:
 
-    ```js
-    /**
-     * Effective deletion of all element ids stored in the collection
-     */
-    deleteElements:function () {
+```js
+/**
+ * Effective deletion of all element ids stored in the collection
+ */
+deleteElements:function () {
 
-        var self = this;
-        var nbWaitingCallbacks = 0;
+    var self = this;
+    var nbWaitingCallbacks = 0;
 
-        $.each(this.collection, function (type, idArray) {
-            $.each(idArray, function (index, currentId) {
-                nbWaitingCallbacks += 1;
+    $.each(this.collection, function (type, idArray) {
+        $.each(idArray, function (index, currentId) {
+            nbWaitingCallbacks += 1;
 
-                $.ajax({
-                    url:'http://localhost:3000/api/participant/' + currentId,
-                    type:'DELETE'
+            $.ajax({
+                url:'http://localhost:3000/api/participant/' + currentId,
+                type:'DELETE'
+            })
+                .done(function () {
+                    nbWaitingCallbacks -= 1;
+                    self.afterRemove(nbWaitingCallbacks);
                 })
-                    .done(function () {
-                        nbWaitingCallbacks -= 1;
-                        self.afterRemove(nbWaitingCallbacks);
-                    })
-                    .fail(function (jqXHR) {
-                        if (jqXHR.status != 404) {
-                            self.recordError(type, currentId);
-                        }
-                        nbWaitingCallbacks -= 1;
-                        self.afterRemove(nbWaitingCallbacks);
-                    });
-            });
+                .fail(function (jqXHR) {
+                    if (jqXHR.status != 404) {
+                        self.recordError(type, currentId);
+                    }
+                    nbWaitingCallbacks -= 1;
+                    self.afterRemove(nbWaitingCallbacks);
+                });
         });
-    },
+    });
+},
 
-    /**
-     * Callback called after an ajax deletion request
-     *
-     * @param nbWaitingCallbacks number of callbacks that we have still to wait before close request
-     */
-    afterRemove:function (nbWaitingCallbacks) {
+/**
+ * Callback called after an ajax deletion request
+ *
+ * @param nbWaitingCallbacks number of callbacks that we have still to wait before close request
+ */
+afterRemove:function (nbWaitingCallbacks) {
 
-        // if there is still callbacks waiting, do nothing. Otherwise it means that all request have
-        // been performed : we can manage global behaviours
-        if (nbWaitingCallbacks == 0) {
-            this.reintegrateErrors();
-        }
-    },
-    ```
+    // if there is still callbacks waiting, do nothing. Otherwise it means that all request have
+    // been performed : we can manage global behaviours
+    if (nbWaitingCallbacks == 0) {
+        this.reintegrateErrors();
+    }
+},
+```
 
 This code work but there is **too much technical code** !
 
@@ -665,49 +664,49 @@ stopping everything. So, the callback is always called with an `null` err parame
 returned object and the type of the result: `success` or `error`. I can then globally count errors without
 interrupting my calls:
 
-    ```js
-    /**
-     * Effective deletion of all element ids stored in the collection
-     */
-    deleteElements:function () {
+```js
+/**
+ * Effective deletion of all element ids stored in the collection
+ */
+deleteElements:function () {
 
-        ...
+    ...
 
-        async.map(elements, this.deleteFromServer.bind(this), this.afterRemove.bind(this));
-    },
+    async.map(elements, this.deleteFromServer.bind(this), this.afterRemove.bind(this));
+},
 
-    deleteFromServer:function (elem, deleteCallback) {
-        $.ajax({
-            url:'http://localhost:3000/api/' + elem.type + '/' + elem.id,
-            type:'DELETE'
-        })
-        .done(function () {
-            deleteCallback(null, {type:"success", elem:elem});
-        })
-        .fail(function (jqXHR) {
-            if (jqXHR.status == 404) {
-                // element obviously already deleted from server. Ignore it and remove from local collection
-                this.collection[elem.type].splice(elem.index, 1);
-            }
+deleteFromServer:function (elem, deleteCallback) {
+    $.ajax({
+        url:'http://localhost:3000/api/' + elem.type + '/' + elem.id,
+        type:'DELETE'
+    })
+    .done(function () {
+        deleteCallback(null, {type:"success", elem:elem});
+    })
+    .fail(function (jqXHR) {
+        if (jqXHR.status == 404) {
+            // element obviously already deleted from server. Ignore it and remove from local collection
+            this.collection[elem.type].splice(elem.index, 1);
+        }
 
-            // callback is called with null error parameter because otherwise it breaks the
-            // loop and top on first error :-(
-            deleteCallback(null, {type:"error", elem:elem});
-        }.bind(this));
-    },
+        // callback is called with null error parameter because otherwise it breaks the
+        // loop and top on first error :-(
+        deleteCallback(null, {type:"error", elem:elem});
+    }.bind(this));
+},
 
-    /**
-     * Callback called after all ajax deletion requests
-     *
-     * @param err always null because default behaviour break map on first error
-     * @param results array of fetched models : contain null value in cas of error
-     */
-    afterRemove:function (err, results) {
+/**
+ * Callback called after all ajax deletion requests
+ *
+ * @param err always null because default behaviour break map on first error
+ * @param results array of fetched models : contain null value in cas of error
+ */
+afterRemove:function (err, results) {
 
-        // no more test
-        ...
-    },
-    ```
+    // no more test
+    ...
+},
+```
 
 ---
 ### Dispatching keyboard shortcuts: keymaster
@@ -758,28 +757,28 @@ easily explored and indexed by search engine roots, etc.
 
 Router usage:
 
-    ```js
-    var AppRouter = Backbone.Router.extend({
-        routes:{
-            // Define some URL routes
-            "participant/:id":"showParticipant",
-            "participant/:id/edit":"editParticipant",
-            '*path':'defaultAction'
-        },
+```js
+var AppRouter = Backbone.Router.extend({
+    routes:{
+        // Define some URL routes
+        "participant/:id":"showParticipant",
+        "participant/:id/edit":"editParticipant",
+        '*path':'defaultAction'
+    },
 
-        defaultAction:function () {
-            ...
-        },
+    defaultAction:function () {
+        ...
+    },
 
-        showParticipant:function (id) {
-            ...
-        },
+    showParticipant:function (id) {
+        ...
+    },
 
-        editParticipant:function (id) {
-            ...
-        }
-    });
-    ```
+    editParticipant:function (id) {
+        ...
+    }
+});
+```
 
 ---
 ### Routers 'smartness'
@@ -795,27 +794,27 @@ This handler does nothing other than :
 
 For example:
 
-    ```js
-    routes:{
-        // Define some URL routes
-        "participants":"listParticipants",
-    },
+```js
+routes:{
+    // Define some URL routes
+    "participants":"listParticipants",
+},
 
-    listParticipants:function (params) {
-        this.showView($('#content'), ParticipantListView, [params]);
-    },
-    ```
+listParticipants:function (params) {
+    this.showView($('#content'), ParticipantListView, [params]);
+},
+```
 
 **This is not the router responsibility to organize other views** depending on the new rendered view as I made in a previous
 version of this application:
 
-    ```js
-    listParticipants:function (params) {
-        classes.Views.HeaderView.setMenu(ParticipantsMenuView);
-        classes.Views.HeaderView.selectMenuItem('element-menu');
-        this.showView($('#content'), ParticipantListView, [params]);
-    },
-    ```
+```js
+listParticipants:function (params) {
+    classes.Views.HeaderView.setMenu(ParticipantsMenuView);
+    classes.Views.HeaderView.selectMenuItem('element-menu');
+    this.showView($('#content'), ParticipantListView, [params]);
+},
+```
 
 This operation should be done by the `header` view that subscribed to a dedicated event.
 
@@ -823,14 +822,14 @@ This operation should be done by the `header` view that subscribed to a dedicate
 
 Some online examples show routers implementations that **calls business functions** from the view:
 
-    ```js
-    list: function() {
-        var list = new Collection();
-        list.fetch({success: function(){
-            $("#content").html(new ListView({model: list}).el);
-        }});
-    },
-    ```
+```js
+list: function() {
+    var list = new Collection();
+    list.fetch({success: function(){
+        $("#content").html(new ListView({model: list}).el);
+    }});
+},
+```
 
 Again, this is not the router responsibility to update view model or to manager success or errors from the server call.
 I prefer a model in which the router only ask : `view.render()`.
@@ -874,46 +873,46 @@ standard initialization approach. Moreover, it can be proposed as a **generic ex
 
 I then implemented the extension (`libs/extensions/backbone.ext.js`):
 
-        ```js
-        /**
-         *  Backbone extension:
-         *
-         *  Defines a new function close properly cleaning current active view.
-         *      - remove validation and model bindings, if any
-         *      - remove PubSub bindings, if any
-         *      - remove view bindings, if any
-         *      - remove this.el
-         */
-        Backbone.View.prototype.close = function () {
+```js
+/**
+ *  Backbone extension:
+ *
+ *  Defines a new function close properly cleaning current active view.
+ *      - remove validation and model bindings, if any
+ *      - remove PubSub bindings, if any
+ *      - remove view bindings, if any
+ *      - remove this.el
+ */
+Backbone.View.prototype.close = function () {
 
-            // unsubscribe all PubSub events. Otherwise these events would still be launched and listened
-            // and unexpected  handlers would be called conducing to perform a same action twice or more
-            if (this.handlers) {
-                $.each(this.handlers, function (index, value) {
-                    Pubsub.unsubscribe(value);
-                });
-            }
+    // unsubscribe all PubSub events. Otherwise these events would still be launched and listened
+    // and unexpected  handlers would be called conducing to perform a same action twice or more
+    if (this.handlers) {
+        $.each(this.handlers, function (index, value) {
+            Pubsub.unsubscribe(value);
+        });
+    }
 
-            // unbind all model (if exists) and validation events
-            if (this.model && this.model.unbind) {
-                if (Backbone.Validation) {
-                    Backbone.Validation.unbind(this);
-                }
-                this.model.unbind();
-            }
+    // unbind all model (if exists) and validation events
+    if (this.model && this.model.unbind) {
+        if (Backbone.Validation) {
+            Backbone.Validation.unbind(this);
+        }
+        this.model.unbind();
+    }
 
-            // remove html content
-            this.remove();
+    // remove html content
+    this.remove();
 
-            // unbind view events
-            this.unbind();
+    // unbind view events
+    this.unbind();
 
-            // optionally call a close method if exists
-            if (this.onClose) {
-                this.onClose();
-            }
-        };
-        ```
+    // optionally call a close method if exists
+    if (this.onClose) {
+        this.onClose();
+    }
+};
+```
 
 This is, in fact, Derick Bailey extension with some additions:
 
@@ -924,21 +923,21 @@ This is, in fact, Derick Bailey extension with some additions:
 About PubSub "unsubscribe", to be able to apply a generic solution, I had to define and apply a convention in all
 of my views:
 
-    ```js
-    handlers:[],
+```js
+handlers:[],
 
-    initialize:function () {
+initialize:function () {
 
-        ...
+    ...
 
-        this.handlers.push(Pubsub.subscribe(App.Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
-        this.handlers.push(Pubsub.subscribe(App.Events.ADD_CALLED, this.addElement.bind(this)));
-        this.handlers.push(Pubsub.subscribe(App.Events.LIST_CALLED, this.backToListElement.bind(this)));
-        this.handlers.push(Pubsub.subscribe(App.Events.ECHAP_CALLED, this.backToElementHome.bind(this)));
+    this.handlers.push(Pubsub.subscribe(App.Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
+    this.handlers.push(Pubsub.subscribe(App.Events.ADD_CALLED, this.addElement.bind(this)));
+    this.handlers.push(Pubsub.subscribe(App.Events.LIST_CALLED, this.backToListElement.bind(this)));
+    this.handlers.push(Pubsub.subscribe(App.Events.ECHAP_CALLED, this.backToElementHome.bind(this)));
 
-        ...
-    }
-    ```
+    ...
+}
+```
 
 i.e. referencing each subscription in a handlers array because pubsub unbind is only possible from the original
 handler ref.
@@ -947,48 +946,48 @@ We still have to call this method each time we switch between views in router. I
 necessary to store **a permanent reference** to the current main view and **close it before initializing the next
 one**. This is done by a dedicated method in router:
 
-    ```js
-    listParticipants:function (params) {
-        this.showView($('#content'), ParticipantListView, [params]);
-    },
+```js
+listParticipants:function (params) {
+    this.showView($('#content'), ParticipantListView, [params]);
+},
 
-    ...
+...
 
-    /**
-     * This methods wrap initialization and rendering of main view in order to guarantee
-     * that any previous main view is properly closed and unbind.
-     *
-     * Otherwise events and listeners are raise twice or more and the application becomes unstable
-     *
-     * @param $selector jquery selector in which the view has to be rendered
-     * @param View View to create
-     * @param args optional view constructor arguments
-     * @return {Object} created View
-     */
-    showView:function ($selector, View, args) {
-        // initialize args if null
-        args = args || [];
+/**
+ * This methods wrap initialization and rendering of main view in order to guarantee
+ * that any previous main view is properly closed and unbind.
+ *
+ * Otherwise events and listeners are raise twice or more and the application becomes unstable
+ *
+ * @param $selector jquery selector in which the view has to be rendered
+ * @param View View to create
+ * @param args optional view constructor arguments
+ * @return {Object} created View
+ */
+showView:function ($selector, View, args) {
+    // initialize args if null
+    args = args || [];
 
-        // clean previous view
-        if (App.Views.currentView) {
-            App.Views.currentView.close();
-        }
-
-        // insertion of this in arguments in order to perform dynamic constructor call
-        args.splice(0, 0, this);
-
-        // call constructor and initialize view
-        var view = new (Function.prototype.bind.apply(View, args));
-
-        // render view
-        $selector.html(view.render().el);
-
-        // replace global accessor of current view
-        App.Views.currentView = view;
-
-        return view;
+    // clean previous view
+    if (App.Views.currentView) {
+        App.Views.currentView.close();
     }
-    ```
+
+    // insertion of this in arguments in order to perform dynamic constructor call
+    args.splice(0, 0, this);
+
+    // call constructor and initialize view
+    var view = new (Function.prototype.bind.apply(View, args));
+
+    // render view
+    $selector.html(view.render().el);
+
+    // replace global accessor of current view
+    App.Views.currentView = view;
+
+    return view;
+}
+```
 
 **NB**: It is also necessary to transitively close all nested views if any (cf. later).
 **NB 2**: These mechanisms could be enhanced with an automatic detection when removing a view root element from DOM ...
@@ -1005,33 +1004,33 @@ rendering and closing their nested views.
 It is therefore necessary that each parent view properly close its nested views during its own closure. This is done
 with a close method overload (don't forget to recall the original method):
 
-    ```js
-    return Backbone.View.extend({
+```js
+return Backbone.View.extend({
 
+    ...
+
+    initialize:function (params) {
         ...
+        this.paginationView = new PaginationView();
+    },
 
-        initialize:function (params) {
-            ...
-            this.paginationView = new PaginationView();
-        },
+    render: function() {
+        ...
+        this.paginationView.render(this.collection);
+        ...
+    },
 
-        render: function() {
-            ...
-            this.paginationView.render(this.collection);
-            ...
-        },
+    /**
+     * Close the current view and any of its embedded components in order
+     * to unbind events and handlers that should not be triggered anymore
+     */
+    close:function () {
 
-        /**
-         * Close the current view and any of its embedded components in order
-         * to unbind events and handlers that should not be triggered anymore
-         */
-        close:function () {
-
-            this.paginationView.close();
-            Backbone.View.prototype.close.apply(this, arguments);
-        }
-    });
-    ```
+        this.paginationView.close();
+        Backbone.View.prototype.close.apply(this, arguments);
+    }
+});
+```
 
 ---
 ### Singleton views
@@ -1045,17 +1044,17 @@ most often at startup.
 
 In this example, they are initialized in the `app.js`:
 
-    ```js
-    // Define global singleton views
-    App.Views.HeaderView = new HeaderView();
-    $('.header').html(App.Views.HeaderView.render().el);
-    App.Views.AlertsView = new AlertsView();
-     $('.alerts').html(App.Views.AlertsView.render().el);
-    App.Views.FooterView = new FooterView();
-    $('footer').html(App.Views.FooterView.render().el);
-    App.Views.ShortcutsView = new ShortcutsView();
-    App.Views.KeyboardView = new KeyboardView();
-    ```
+```js
+// Define global singleton views
+App.Views.HeaderView = new HeaderView();
+$('.header').html(App.Views.HeaderView.render().el);
+App.Views.AlertsView = new AlertsView();
+ $('.alerts').html(App.Views.AlertsView.render().el);
+App.Views.FooterView = new FooterView();
+$('footer').html(App.Views.FooterView.render().el);
+App.Views.ShortcutsView = new ShortcutsView();
+App.Views.KeyboardView = new KeyboardView();
+```
 
 We can see that they are added to the namespace `App.Views` ... for now without any benefit or requirement - but it
 bothered me to see them disappear into the wild without the possibility of finding them later if needed :-)
@@ -1090,40 +1089,40 @@ These means:
 
 For example:
 
-    ```html
-    <div class="header"></div>
+```html
+<div class="header"></div>
 
-    <div class="container">
-        <div class="row">
-            <div class="alerts span12>"></div>
-        </div>
-
-        <div class="row">
-            <div id="content" class="span12>"></div>
-        </div>
-
-        <div class="modal hide" id="shortcuts"></div>
-
-        <footer class="footer row">
-        </footer>
+<div class="container">
+    <div class="row">
+        <div class="alerts span12>"></div>
     </div>
-    ```
+
+    <div class="row">
+        <div id="content" class="span12>"></div>
+    </div>
+
+    <div class="modal hide" id="shortcuts"></div>
+
+    <footer class="footer row">
+    </footer>
+</div>
+```
 
 It means, for example that the ** view root element (`this.el`) should not be the container element in which it has
 to be rendered**. This should be avoided:
 
-    ```js
-    new MyView($('.container'));
+```js
+new MyView($('.container'));
 
-    return Backbone.View.extend({
+return Backbone.View.extend({
 
-        initialize:function (el) {
-            this.setElement(el);
-        }
+    initialize:function (el) {
+        this.setElement(el);
+    }
 
-        ...
-    });
-    ```
+    ...
+});
+```
 
 Indeed, in **[Backbone][backbone]** logic, `this.el` is strongly linked to its parent view. If we bypass this
 mechanism, any calls to `MyView.remove()` will irreversibly remove the container and prevent any future rendering.
@@ -1132,44 +1131,44 @@ mechanism, any calls to `MyView.remove()` will irreversibly remove the container
 
 This should be also avoided:
 
-    ```js
-    new MyView().render();
+```js
+new MyView().render();
 
-    return Backbone.View.extend({
+return Backbone.View.extend({
 
-      ...
+  ...
 
-      render:function () {
-          $('.container').html(this.template());
-          return this;
-      },
-    });
-    ```
+  render:function () {
+      $('.container').html(this.template());
+      return this;
+  },
+});
+```
 
 With these constraints and principles and some others (let templates define order - and so avoid call directly
 `appendTo` from `this.$el`) we get the following pattern:
 
-    ```js
-    return Backbone.View.extend({
+```js
+return Backbone.View.extend({
 
-        // Cache the template function for a single item.
-        template:Handlebars.compile(template),
+    // Cache the template function for a single item.
+    template:Handlebars.compile(template),
 
-        initialize:function () {
-        },
+    initialize:function () {
+    },
 
-        render:function () {
-            this.$el.html(this.template());
-            return this;
-        }
-    });
-    ```
+    render:function () {
+        this.$el.html(this.template());
+        return this;
+    }
+});
+```
 
 We note that `render` returns `this` to allow inserting the generated html from an external handler (router or parent view):
 
-    ```js
-    $('.container').html(new MyView().render().el);
-    ```
+```js
+$('.container').html(new MyView().render().el);
+```
 
 This way, the view does not decide itself where to render but delegates this to an upper element. It is then possible to
 perform multiple view rendering with no side effect (which would not be the case with a succession of `appendTo` calls).
@@ -1183,9 +1182,9 @@ In our case, this is done in a generic way by the `showView` method in router (c
 **[Backbone][backbone]** allows `pushState` activation that permits usage of real links instead of simple anchors `#`.
 PushState offers better navigation experience and better indexation and search engine ranking:
 
-    ```js
-    Backbone.history.start({pushState:true, root:"/"});
-    ```
+```js
+Backbone.history.start({pushState:true, root:"/"});
+```
 
 `root` option allows to ask **[Backbone][backbone]** to define this path as application context;
 
@@ -1195,31 +1194,31 @@ a full reload**! **[Backbone][backbone]** does not intercept html links and it i
 Branyen Tim, the creator of **[Backbone boilerplate][backbone-boilerplate]** proposes the following solution that
 I have added to my extensions with a complementary a test to check pushState activation:
 
-    ```js
-    // force all links to be handled by Backbone pushstate - no get will be send to server
-    $(document).on('click', 'a:not([data-bypass])', function (evt) {
+```js
+// force all links to be handled by Backbone pushstate - no get will be send to server
+$(document).on('click', 'a:not([data-bypass])', function (evt) {
 
-        if (Backbone.history.options.pushState) {
+    if (Backbone.history.options.pushState) {
 
-            var href = this.href;
-            var protocol = this.protocol + '//';
-            href = href.slice(protocol.length);
-            href = href.slice(href.indexOf("/") + 1);
+        var href = this.href;
+        var protocol = this.protocol + '//';
+        href = href.slice(protocol.length);
+        href = href.slice(href.indexOf("/") + 1);
 
-            if (href.slice(protocol.length) !== protocol) {
-                evt.preventDefault();
-                Backbone.history.navigate(href, true);
-            }
+        if (href.slice(protocol.length) !== protocol) {
+            evt.preventDefault();
+            Backbone.history.navigate(href, true);
         }
-    });
-    ```
+    }
+});
+```
 
 Any click on a link will be intercepted and bound to a **[Backbone][backbone]** navigation instead. I we want to
 provide external links, we still have to use the `data-bypass` attribute:
 
-    ```html
-    <a data-bypass href="http://github.com/bmeurant/tournament-front" target="_blank">
-    ```
+```html
+<a data-bypass href="http://github.com/bmeurant/tournament-front" target="_blank">
+```
 
 ---
 ### libs extensions
@@ -1235,47 +1234,47 @@ To avoid scattering libs extensions in our applicative code, extensions are isol
 
 Extensions are loaded at startup (`app.js`):
 
-    ```js
-    define([
-        'jquery',
-        'underscore',
-        'backbone.ext',
-        'backbone-validation.ext',
-        'router',
-        'views/header',
-        'views/alerts',
-        'views/help/shortcuts',
-        'views/footer',
-        'views/keyboard',
-        'handlebars',
-        'handlebars.helpers'
-    ],
-    ```
+```js
+define([
+    'jquery',
+    'underscore',
+    'backbone.ext',
+    'backbone-validation.ext',
+    'router',
+    'views/header',
+    'views/alerts',
+    'views/help/shortcuts',
+    'views/footer',
+    'views/keyboard',
+    'handlebars',
+    'handlebars.helpers'
+],
+```
 
 ---
 ### Handlebars Helpers
 
 If possible, Handlebars helpers are defined globally (in an extension) and statically loaded:
 
-    ```js
-    Handlebars.registerHelper('ifequals', function (value1, value2, options) {
+```js
+Handlebars.registerHelper('ifequals', function (value1, value2, options) {
 
-        if (value1 == value2) {
-            return options.fn(this);
-        } else {
-            return options.inverse(this);
-        }
-    });
-    ```
+    if (value1 == value2) {
+        return options.fn(this);
+    } else {
+        return options.inverse(this);
+    }
+});
+```
 
 However, some helpers are view-specific and must be defined not only locally but also
 once instantiated and not statically (use of `this`):
 
-    ```js
-    Handlebars.registerHelper('disabled', function (id) {
-        return (this.deleted.indexOf(id) >= 0) ? 'disabled' : '';
-    }.bind(this));
-    ```
+```js
+Handlebars.registerHelper('disabled', function (id) {
+    return (this.deleted.indexOf(id) >= 0) ? 'disabled' : '';
+}.bind(this));
+```
 
 ---
 ### Mixins
@@ -1287,53 +1286,53 @@ cf. ** [Backbone Patterns] (# http://ricostacruz.com/backbone-patterns/ mixins) 
 Views `participants/list` and `deletions/list` declare, for example, the `selectable` mixin which provides
 a set of methods and behaviors to manage list items selection on keyboard:
 
-    ```js
-    return Backbone.View.extend(
-        _.extend({}, Selectable, Paginable, {
+```js
+return Backbone.View.extend(
+    _.extend({}, Selectable, Paginable, {
 
-        ...
+    ...
 
-    }));
-    ```
+}));
+```
 
 Mixin is defined in `js/mixins/selectable`:
 
-    ```js
-    define([
-        'jquery'
-    ], function ($) {
+```js
+define([
+    'jquery'
+], function ($) {
 
-        return {
-            /**
-             * Select an element
-             *
-             * @param type optional selection type : 'previous' or 'next'. Otherwise or null : 'next'
-             */
-            selectElement:function ($el, selector, type) {
-                ...
-            },
-
-            selectNext:function ($el, selector) {
-                ...
-            },
-
-            selectPrevious:function ($el, selector) {
-                ...
-            },
-
-            selectFirst:function ($el, selector) {
-                ...
-            },
-
-            findSelected:function ($el, selector) {
-                return $el.find(selector + ".selected");
-            },
-
+    return {
+        /**
+         * Select an element
+         *
+         * @param type optional selection type : 'previous' or 'next'. Otherwise or null : 'next'
+         */
+        selectElement:function ($el, selector, type) {
             ...
+        },
 
-        };
-    });
-    ```
+        selectNext:function ($el, selector) {
+            ...
+        },
+
+        selectPrevious:function ($el, selector) {
+            ...
+        },
+
+        selectFirst:function ($el, selector) {
+            ...
+        },
+
+        findSelected:function ($el, selector) {
+            return $el.find(selector + ".selected");
+        },
+
+        ...
+
+    };
+});
+```
 
 ---
 ### Multiple routers
