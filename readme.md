@@ -1,4 +1,3 @@
-
 Tournament-front
 ================
 
@@ -37,6 +36,7 @@ These tools are mainly:
 The default template engine is **[Underscore js][underscore]** which embeds a micro javascript templating lib
 combined to underscore helpers. It is based on a 'JSP-like' syntax:
 
+    ```html
     <% _.each(participants, function(participant, index){
         if (_.indexOf(deleted, participant.id) < 0) { %>
             <li id="<%= participant.id %>" class="thumbnail <% if (id_selected == participant.id) {print ('selected');}%>" draggable="true">
@@ -57,12 +57,14 @@ combined to underscore helpers. It is based on a 'JSP-like' syntax:
             </li>
         <% }
     }); %>
+    ```
 
 This may seem simple at first but **I really don't find it elegant**, it quickly leads to **move a good part
 of the view logic to the template** and makes very difficult the reuse of templates.
 
 So I switched to a **logic-less template engine**: **[Handlebars][handlebars]**.
 
+    ```html
     {{#each participants}}
         {{#with this}}
             <li id="{{id}}" class="thumbnail {{selected id}} {{disabled id}}" draggable="true">
@@ -83,6 +85,7 @@ So I switched to a **logic-less template engine**: **[Handlebars][handlebars]**.
             </li>
         {{/with}}
     {{/each}}
+    ```
 
 ... much more elegant, isn't it ?
 
@@ -98,6 +101,7 @@ In our example:
 
 **View-specific helpers**:
 
+    ```js
     initialize:function () {
 
         ...
@@ -120,9 +124,11 @@ In our example:
 
         ...
     }
+    ```
 
 **Global helpers (`handlebars-helpers.js`):**
 
+    ```js
     initialize:function () {
 
         ...
@@ -133,6 +139,7 @@ In our example:
 
         ...
     }
+    ```
 
 Having to define these helpers may seem a bit boring at first, but the syntax is much more elegant,
 the majority of these helpers can be easily reused and, with a little bit of reflexion, we can reduce the amount of
@@ -189,6 +196,7 @@ to set to model). The behaviour of **[Backbone Validation][backbone-validation] 
 
 **Model** : constraints definition:
 
+    ```js
     define([
         'underscore',
         'backbone',
@@ -225,9 +233,11 @@ to set to model). The behaviour of **[Backbone Validation][backbone-validation] 
         return ParticipantModel;
 
     });
+    ```
 
 **HTML5 Form** :
 
+    ```html
     {{#with participant}}
         <form class="form-horizontal">
             <fieldset>
@@ -287,10 +297,12 @@ to set to model). The behaviour of **[Backbone Validation][backbone-validation] 
             <input type="submit" style="display:none" value="Submit"/>
         </form>
     {{/with}}
+    ```
 
 
 **View** : initialization and usage:
 
+    ```js
     initialize:function () {
 
         ...
@@ -326,11 +338,13 @@ to set to model). The behaviour of **[Backbone Validation][backbone-validation] 
             Pubsub.publish(App.Events.ALERT_RAISED, ['Warning!', 'Fix validation errors and try again', 'alert-warning']);
         }
     },
+    ```
 
 And finally: extend callbacks to update form with validation errors managed by **[Twitter Bootstrap][twitter-bootstrap]**
 
 `backbone-validation.ext.js`:
 
+    ```js
     /**
      * Backbone Validation extension: Defines custom callbacks for valid and invalid
      * model attributes
@@ -351,6 +365,7 @@ And finally: extend callbacks to update form with validation errors managed by *
             view.$(attrSelector + ' + span.help-inline').text(error);
         }
     });
+    ```
 
 ---
 ###Parameters support on view routing: Backbone Query Parameters
@@ -371,6 +386,7 @@ With this lib, included once and for all in my main router, I could get the foll
 
 **router.js** :
 
+    ```js
     routes:{
         // Define some URL routes
         ...
@@ -387,12 +403,14 @@ With this lib, included once and for all in my main router, I could get the foll
         // view creation through a generic method (cf. zombies and rendering)
         this.showView($('#content'), ParticipantListView, [params]);
     },
+    ```
 
 Query parameters array is automatically recovered **without any further operation** and **whatever the number
 of these parameters**. It can then be passed to the view constructor for initialization:
 
 **list.js** :
 
+    ```js
     askedPage:1,
 
     initialize:function (params) {
@@ -405,6 +423,7 @@ of these parameters**. It can then be passed to the view constructor for initial
 
         ..
     },
+    ```
 
 This lib is pretty light and really cool and, honestly, **It is an absolute must have**.
 
@@ -419,6 +438,7 @@ The lib offers both client side pagination (`Paginator.clientPager`) and integra
 
 This lib extends **[Backbone][backbone]** collections. So adding options to collections is necessary:
 
+    ```js
     var participantsCollection = Backbone.Paginator.clientPager.extend({
         model:participantModel,
         paginator_core:{
@@ -452,10 +472,12 @@ This lib extends **[Backbone][backbone]** collections. So adding options to coll
             return response;
         }
     });
+    ```
 
 We get then the collection and, as this is a client side operation, we classically `fecth` the collection and then
 ask for the right page:
 
+    ```js
     /**
      * Render this view
      *
@@ -486,9 +508,11 @@ ask for the right page:
             });
         return this;
     },
+    ```
 
 Once the collection retrieved, `collection.info()` allows to get information about current state:
 
+    ```js
     totalUnfilteredRecords
     totalRecords
     currentPage
@@ -499,6 +523,7 @@ Once the collection retrieved, `collection.info()` allows to get information abo
     next
     startRecord
     endRecord
+    ```
 
 
 #### Server side pagination
@@ -507,6 +532,7 @@ Once server side pagination implemented, client adaptation is very easy:
 
 We set **parameters to send to server** in `collections/participants.js`:
 
+    ```js
     server_api:{
         'page':function () {
             return this.currentPage;
@@ -516,9 +542,11 @@ We set **parameters to send to server** in `collections/participants.js`:
             return this.perPage;
         }
     },
+    ```
 
 Then, in the same file, we provide a parser to get the response back and initialize collection and pager:
 
+    ```js
     parse:function (response) {
         var participants = response.content;
         this.totalPages = response.totalPages;
@@ -526,10 +554,12 @@ Then, in the same file, we provide a parser to get the response back and initial
         this.lastPage = this.totalPages;
         return participants;
     }
+    ```
 
 Finally, we change server call : this time the `goTo` method extend `fetch` and should be called instead
 (`views/participants/list.js`) :
 
+    ```js
     // get the participants collection from server
     this.collection.goTo(this.askedPage,
         {
@@ -544,14 +574,17 @@ Finally, we change server call : this time the `goTo` method extend `fetch` and 
             }
         });
     return this;
+    ```
 
 All other code stay inchanged but the collection.info() is a little bit thinner:
 
+    ```js
     totalRecords
     currentPage
     perPage
     totalPages
     lastPage
+    ```
 
 ---
 ### Asynchronous calls : Async.js
@@ -565,6 +598,7 @@ Without tools, we are thus obliged to implement a **manual count of called funct
 of callbacks called to compare**. The final callback is then called at the end of each call unit
 but executed only if there is no more callback to call. This gives:
 
+    ```js
     /**
      * Effective deletion of all element ids stored in the collection
      */
@@ -609,6 +643,7 @@ but executed only if there is no more callback to call. This gives:
             this.reintegrateErrors();
         }
     },
+    ```
 
 This code work but there is **too much technical code** !
 
@@ -630,6 +665,7 @@ stopping everything. So, the callback is always called with an `null` err parame
 returned object and the type of the result: `success` or `error`. I can then globally count errors without
 interrupting my calls:
 
+    ```js
     /**
      * Effective deletion of all element ids stored in the collection
      */
@@ -671,6 +707,7 @@ interrupting my calls:
         // no more test
         ...
     },
+    ```
 
 ---
 ### Dispatching keyboard shortcuts: keymaster
@@ -721,6 +758,7 @@ easily explored and indexed by search engine roots, etc.
 
 Router usage:
 
+    ```js
     var AppRouter = Backbone.Router.extend({
         routes:{
             // Define some URL routes
@@ -741,6 +779,7 @@ Router usage:
             ...
         }
     });
+    ```
 
 ---
 ### Routers 'smartness'
@@ -756,6 +795,7 @@ This handler does nothing other than :
 
 For example:
 
+    ```js
     routes:{
         // Define some URL routes
         "participants":"listParticipants",
@@ -764,15 +804,18 @@ For example:
     listParticipants:function (params) {
         this.showView($('#content'), ParticipantListView, [params]);
     },
+    ```
 
 **This is not the router responsibility to organize other views** depending on the new rendered view as I made in a previous
 version of this application:
 
+    ```js
     listParticipants:function (params) {
         classes.Views.HeaderView.setMenu(ParticipantsMenuView);
         classes.Views.HeaderView.selectMenuItem('element-menu');
         this.showView($('#content'), ParticipantListView, [params]);
     },
+    ```
 
 This operation should be done by the `header` view that subscribed to a dedicated event.
 
@@ -780,12 +823,14 @@ This operation should be done by the `header` view that subscribed to a dedicate
 
 Some online examples show routers implementations that **calls business functions** from the view:
 
+    ```js
     list: function() {
         var list = new Collection();
         list.fetch({success: function(){
             $("#content").html(new ListView({model: list}).el);
         }});
     },
+    ```
 
 Again, this is not the router responsibility to update view model or to manager success or errors from the server call.
 I prefer a model in which the router only ask : `view.render()`.
@@ -829,6 +874,7 @@ standard initialization approach. Moreover, it can be proposed as a **generic ex
 
 I then implemented the extension (`libs/extensions/backbone.ext.js`):
 
+        ```js
         /**
          *  Backbone extension:
          *
@@ -867,6 +913,7 @@ I then implemented the extension (`libs/extensions/backbone.ext.js`):
                 this.onClose();
             }
         };
+        ```
 
 This is, in fact, Derick Bailey extension with some additions:
 
@@ -877,6 +924,7 @@ This is, in fact, Derick Bailey extension with some additions:
 About PubSub "unsubscribe", to be able to apply a generic solution, I had to define and apply a convention in all
 of my views:
 
+    ```js
     handlers:[],
 
     initialize:function () {
@@ -890,6 +938,7 @@ of my views:
 
         ...
     }
+    ```
 
 i.e. referencing each subscription in a handlers array because pubsub unbind is only possible from the original
 handler ref.
@@ -898,6 +947,7 @@ We still have to call this method each time we switch between views in router. I
 necessary to store **a permanent reference** to the current main view and **close it before initializing the next
 one**. This is done by a dedicated method in router:
 
+    ```js
     listParticipants:function (params) {
         this.showView($('#content'), ParticipantListView, [params]);
     },
@@ -938,6 +988,7 @@ one**. This is done by a dedicated method in router:
 
         return view;
     }
+    ```
 
 **NB**: It is also necessary to transitively close all nested views if any (cf. later).
 **NB 2**: These mechanisms could be enhanced with an automatic detection when removing a view root element from DOM ...
@@ -954,6 +1005,7 @@ rendering and closing their nested views.
 It is therefore necessary that each parent view properly close its nested views during its own closure. This is done
 with a close method overload (don't forget to recall the original method):
 
+    ```js
     return Backbone.View.extend({
 
         ...
@@ -979,6 +1031,7 @@ with a close method overload (don't forget to recall the original method):
             Backbone.View.prototype.close.apply(this, arguments);
         }
     });
+    ```
 
 ---
 ### Singleton views
@@ -992,6 +1045,7 @@ most often at startup.
 
 In this example, they are initialized in the `app.js`:
 
+    ```js
     // Define global singleton views
     App.Views.HeaderView = new HeaderView();
     $('.header').html(App.Views.HeaderView.render().el);
@@ -1001,6 +1055,7 @@ In this example, they are initialized in the `app.js`:
     $('footer').html(App.Views.FooterView.render().el);
     App.Views.ShortcutsView = new ShortcutsView();
     App.Views.KeyboardView = new KeyboardView();
+    ```
 
 We can see that they are added to the namespace `App.Views` ... for now without any benefit or requirement - but it
 bothered me to see them disappear into the wild without the possibility of finding them later if needed :-)
@@ -1035,6 +1090,7 @@ These means:
 
 For example:
 
+    ```html
     <div class="header"></div>
 
     <div class="container">
@@ -1051,10 +1107,12 @@ For example:
         <footer class="footer row">
         </footer>
     </div>
+    ```
 
 It means, for example that the ** view root element (`this.el`) should not be the container element in which it has
 to be rendered**. This should be avoided:
 
+    ```js
     new MyView($('.container'));
 
     return Backbone.View.extend({
@@ -1065,6 +1123,7 @@ to be rendered**. This should be avoided:
 
         ...
     });
+    ```
 
 Indeed, in **[Backbone][backbone]** logic, `this.el` is strongly linked to its parent view. If we bypass this
 mechanism, any calls to `MyView.remove()` will irreversibly remove the container and prevent any future rendering.
@@ -1073,6 +1132,7 @@ mechanism, any calls to `MyView.remove()` will irreversibly remove the container
 
 This should be also avoided:
 
+    ```js
     new MyView().render();
 
     return Backbone.View.extend({
@@ -1084,10 +1144,12 @@ This should be also avoided:
           return this;
       },
     });
+    ```
 
 With these constraints and principles and some others (let templates define order - and so avoid call directly
 `appendTo` from `this.$el`) we get the following pattern:
 
+    ```js
     return Backbone.View.extend({
 
         // Cache the template function for a single item.
@@ -1101,10 +1163,13 @@ With these constraints and principles and some others (let templates define orde
             return this;
         }
     });
+    ```
 
 We note that `render` returns `this` to allow inserting the generated html from an external handler (router or parent view):
 
+    ```js
     $('.container').html(new MyView().render().el);
+    ```
 
 This way, the view does not decide itself where to render but delegates this to an upper element. It is then possible to
 perform multiple view rendering with no side effect (which would not be the case with a succession of `appendTo` calls).
@@ -1118,7 +1183,9 @@ In our case, this is done in a generic way by the `showView` method in router (c
 **[Backbone][backbone]** allows `pushState` activation that permits usage of real links instead of simple anchors `#`.
 PushState offers better navigation experience and better indexation and search engine ranking:
 
+    ```js
     Backbone.history.start({pushState:true, root:"/"});
+    ```
 
 `root` option allows to ask **[Backbone][backbone]** to define this path as application context;
 
@@ -1128,6 +1195,7 @@ a full reload**! **[Backbone][backbone]** does not intercept html links and it i
 Branyen Tim, the creator of **[Backbone boilerplate][backbone-boilerplate]** proposes the following solution that
 I have added to my extensions with a complementary a test to check pushState activation:
 
+    ```js
     // force all links to be handled by Backbone pushstate - no get will be send to server
     $(document).on('click', 'a:not([data-bypass])', function (evt) {
 
@@ -1144,11 +1212,14 @@ I have added to my extensions with a complementary a test to check pushState act
             }
         }
     });
+    ```
 
 Any click on a link will be intercepted and bound to a **[Backbone][backbone]** navigation instead. I we want to
 provide external links, we still have to use the `data-bypass` attribute:
 
-    <a data-bypass href="http://bitbucket.org/bmeurant/tournament-front" target="_blank">
+    ```html
+    <a data-bypass href="http://github.com/bmeurant/tournament-front" target="_blank">
+    ```
 
 ---
 ### libs extensions
@@ -1164,6 +1235,7 @@ To avoid scattering libs extensions in our applicative code, extensions are isol
 
 Extensions are loaded at startup (`app.js`):
 
+    ```js
     define([
         'jquery',
         'underscore',
@@ -1178,12 +1250,14 @@ Extensions are loaded at startup (`app.js`):
         'handlebars',
         'handlebars.helpers'
     ],
+    ```
 
 ---
 ### Handlebars Helpers
 
 If possible, Handlebars helpers are defined globally (in an extension) and statically loaded:
 
+    ```js
     Handlebars.registerHelper('ifequals', function (value1, value2, options) {
 
         if (value1 == value2) {
@@ -1192,13 +1266,16 @@ If possible, Handlebars helpers are defined globally (in an extension) and stati
             return options.inverse(this);
         }
     });
+    ```
 
 However, some helpers are view-specific and must be defined not only locally but also
 once instantiated and not statically (use of `this`):
 
+    ```js
     Handlebars.registerHelper('disabled', function (id) {
         return (this.deleted.indexOf(id) >= 0) ? 'disabled' : '';
     }.bind(this));
+    ```
 
 ---
 ### Mixins
@@ -1210,15 +1287,18 @@ cf. ** [Backbone Patterns] (# http://ricostacruz.com/backbone-patterns/ mixins) 
 Views `participants/list` and `deletions/list` declare, for example, the `selectable` mixin which provides
 a set of methods and behaviors to manage list items selection on keyboard:
 
+    ```js
     return Backbone.View.extend(
         _.extend({}, Selectable, Paginable, {
 
         ...
 
     }));
+    ```
 
 Mixin is defined in `js/mixins/selectable`:
 
+    ```js
     define([
         'jquery'
     ], function ($) {
@@ -1253,6 +1333,7 @@ Mixin is defined in `js/mixins/selectable`:
 
         };
     });
+    ```
 
 ---
 ### Multiple routers
