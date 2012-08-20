@@ -36,56 +36,56 @@ These tools are mainly:
 The default template engine is **[Underscore js][underscore]** which embeds a micro javascript templating lib
 combined to underscore helpers. It is based on a 'JSP-like' syntax:
 
-    ```html
-    <% _.each(participants, function(participant, index){
-        if (_.indexOf(deleted, participant.id) < 0) { %>
-            <li id="<%= participant.id %>" class="thumbnail <% if (id_selected == participant.id) {print ('selected');}%>" draggable="true">
-                <input type="hidden" value="<%= index %>"/>
-                    <a href="/participant/<%= participant.id %>" class="plain participant-thumb">
-                        <div class="participant-thumb">
-                            <% if (!participant.picture_url) { %>
-                                <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
-                                <% }
-                            else
-                            { %>
-                                <img class="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
-                                <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
-                            <% } %>
-                        </div>
-                        <h5><%= participant.firstname %>&nbsp;<%= participant.lastname %></h5>
-                    </a>
-            </li>
-        <% }
-    }); %>
-    ```
+```html
+<% _.each(participants, function(participant, index){
+    if (_.indexOf(deleted, participant.id) < 0) { %>
+        <li id="<%= participant.id %>" class="thumbnail <% if (id_selected == participant.id) {print ('selected');}%>" draggable="true">
+            <input type="hidden" value="<%= index %>"/>
+                <a href="/participant/<%= participant.id %>" class="plain participant-thumb">
+                    <div class="participant-thumb">
+                        <% if (!participant.picture_url) { %>
+                            <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
+                            <% }
+                        else
+                        { %>
+                            <img class="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
+                            <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
+                        <% } %>
+                    </div>
+                    <h5><%= participant.firstname %>&nbsp;<%= participant.lastname %></h5>
+                </a>
+        </li>
+    <% }
+}); %>
+```
 
 This may seem simple at first but **I really don't find it elegant**, it quickly leads to **move a good part
 of the view logic to the template** and makes very difficult the reuse of templates.
 
 So I switched to a **logic-less template engine**: **[Handlebars][handlebars]**.
 
-    ```html
-    {{#each participants}}
-        {{#with this}}
-            <li id="{{id}}" class="thumbnail {{selected id}} {{disabled id}}" draggable="true">
-                <a href="/participant/{{id}}" class="plain participant-thumb">
-                    <div class="participant-thumb">
-                        {{#if picture_url}}
-                            <img class="photo" src="{{photo_link picture_url}}" alt="" draggable="false"/>
-                            <p hidden><img src="{{photo_link pict_min}}"/></p>
-                        {{else}}
-                            <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
-                        {{/if}}
-                    </div>
-                    <h5>{{firstname}}&nbsp;{{lastname}}</h5>
-                </a>
-                {{#if_deleted id}}
-                    <div class="foreground"></div>
-                {{/if_deleted}}
-            </li>
-        {{/with}}
-    {{/each}}
-    ```
+```html
+{{#each participants}}
+    {{#with this}}
+        <li id="{{id}}" class="thumbnail {{selected id}} {{disabled id}}" draggable="true">
+            <a href="/participant/{{id}}" class="plain participant-thumb">
+                <div class="participant-thumb">
+                    {{#if picture_url}}
+                        <img class="photo" src="{{photo_link picture_url}}" alt="" draggable="false"/>
+                        <p hidden><img src="{{photo_link pict_min}}"/></p>
+                    {{else}}
+                        <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
+                    {{/if}}
+                </div>
+                <h5>{{firstname}}&nbsp;{{lastname}}</h5>
+            </a>
+            {{#if_deleted id}}
+                <div class="foreground"></div>
+            {{/if_deleted}}
+        </li>
+    {{/with}}
+{{/each}}
+```
 
 ... much more elegant, isn't it ?
 
