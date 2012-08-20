@@ -750,7 +750,7 @@ I think that it is not a good practice for multiple reasons:
 - We introduce a **strong coupling** between views in functional but also technical terms (life cycle management, etc..)
 and the expandability of the application is greatly reduced
 - We introduce **a lot of technical code** in each view to prepare next (cleaning, etc.). This technical code
-is then scattered all over the application and **difficult to capitalize**.
+is then scattered all over the application and **difficult to reuse**.
 - Each view is totally dependent on the previous one: **no `deep linking`**. It is then impossible to directly get a
 view by its url (in fact there is only one url : the application url). The application is not bookmarkable, cannot be
 easily explored and indexed by search engine roots, etc.
