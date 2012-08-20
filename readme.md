@@ -2,7 +2,7 @@
 Tournament-front
 ================
 
-This project is a **sample application based on **[Resthub js][resthubjs]**.
+This project is a **sample application based on [Resthub js][resthubjs]**.
 
 With this application I wanted to address the following questions:
 
