@@ -1,23 +1,21 @@
-<ul class="thumbnails">
-    {{#each participants}}
-        {{#with this}}
-            <li id="{{id}}" class='thumbnail {{ifequalsinline ../id_selected id "selected"}} {{disabled id}}' draggable="true" rel="tooltip">
-                <a href="/participant/{{id}}" class="plain participant-thumb">
-                    <div class="participant-thumb">
-                        {{#if picture_url}}
-                            <img class="photo" src="{{photo_link picture_url}}" alt="participant photo" draggable="false"/>
-                            <p hidden><img src="{{photo_link pict_min}}"/></p>
-                        {{else}}
-                            <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt="participant default photo"/>
-                        {{/if}}
-                    </div>
-                    <h5>{{firstname}}&nbsp;{{lastname}}</h5>
-                </a>
-                {{#if_deleted id}}
-                    <div class="foreground"></div>
-                {{/if_deleted}}
-            </li>
-        {{/with}}
-    {{/each}}
-</ul>
+{{#each participants}}
+    {{#with this}}
+        <li id="{{id}}" class='thumbnail participant {{ifequalsinline ../id_selected id "selected"}} {{disabled id}}' draggable="true" rel="tooltip">
+            <a href="/participant/{{id}}" class="plain participant-thumb">
+                <div class="participant-thumb">
+                    {{#if picture_url}}
+                        <img class="photo" src="{{photo_link picture_url}}" alt="participant photo" draggable="false"/>
+                        <p hidden><img src="{{photo_link pict_min}}"/></p>
+                    {{else}}
+                        <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt="participant default photo"/>
+                    {{/if}}
+                </div>
+                <h5>{{firstname}}&nbsp;{{lastname}}</h5>
+            </a>
+            {{#if_deleted id}}
+                <div class="foreground"></div>
+            {{/if_deleted}}
+        </li>
+    {{/with}}
+{{/each}}
 

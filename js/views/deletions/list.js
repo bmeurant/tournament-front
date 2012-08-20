@@ -216,7 +216,7 @@ define([
 
                 var idElem = event.currentTarget.getAttribute("id");
 
-                this.cancelDeletion(idElem);
+                this.cancelDeletion(this.getElementType(idElem), idElem);
             },
 
             /**
@@ -226,7 +226,8 @@ define([
 
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
                 if ($selected && $selected.length > 0) {
-                    this.cancelDeletion($selected.attr("id"));
+                    var idElem = $selected.attr("id");
+                    this.cancelDeletion(this.getElementType(idElem), idElem);
                 }
             },
 
@@ -237,7 +238,8 @@ define([
 
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
                 if ($selected && $selected.length > 0) {
-                    this.confirmDeletion($selected.attr("id"));
+                    var idElem = $selected.attr("id");
+                    this.confirmDeletion(this.getElementType(idElem), idElem);
                 }
             },
 
@@ -248,11 +250,17 @@ define([
                 }
                 var idElem = event.currentTarget.getAttribute("id");
 
-                this.confirmDeletion(idElem);
+                this.confirmDeletion(this.getElementType(idElem), idElem);
             },
 
-            confirmDeletion:function (idElem) {
-                var elem = this.findElement(idElem);
+            /**
+             * Confirm element deletion by sending delete request to server
+             *
+             * @param elemType type of the element to delete
+             * @param idElem id of the element to delete
+             */
+            confirmDeletion:function (elemType, idElem) {
+                var elem = this.findElement(elemType, idElem);
                 this.deleteFromServer(elem, this.onElementDeleted.bind(this));
             },
 
@@ -271,33 +279,32 @@ define([
             /**
              * Cancel element deletion by removing it from current deletions collection and from the current view
              *
+             * @param elemType type of the element to delete
              * @param idElem id of the element to delete
              */
-            cancelDeletion:function (idElem) {
+            cancelDeletion:function (elemType, idElem) {
 
-                var elem = this.findElement(idElem);
+                var elem = this.findElement(elemType, idElem);
                 this.removeAndSave(elem);
 
                 Pubsub.publish(App.Events.DELETION_CANCELED);
                 Pubsub.publish(App.Events.ALERT_RAISED, ['Success!', 'Element deletion canceled', 'alert-success'])
             },
 
-            findElement:function (idElem) {
+            findElement:function (elemType, idElem) {
                 // get collection from local storage
                 this.initCollection();
 
                 var elem = {};
 
                 // find and remove the element from the deletions collection
-                $.each(this.collection, function (type, idArray) {
-                    $.each(idArray, function (index, id) {
-                        if (id == idElem) {
-                            elem.id = id;
-                            elem.index = index;
-                            elem.type = type;
-                            return false;
-                        }
-                    }.bind(this));
+                $.each(this.collection[elemType], function (index, id) {
+                    if (id == idElem) {
+                        elem.id = id;
+                        elem.index = index;
+                        elem.type = elemType;
+                        return false;
+                    }
                 }.bind(this));
 
                 return elem;
@@ -388,6 +395,14 @@ define([
 
             beforeClose:function () {
                 this.hideTooltips();
+            },
+
+            /**
+             * Retrieve element type from a dom selected or clicked li element
+             * @param liElemId
+             */
+            getElementType:function (liElemId) {
+                if ($('#' + liElemId).hasClass("participant")) return "participant";
             }
 
         }));
