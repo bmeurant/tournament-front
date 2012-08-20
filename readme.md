@@ -865,8 +865,8 @@ We must find a way to ensure uniqueness of a given view at a time. Several solut
 implementing of a `reset` function in each one. This method will be called instead of the constructor.
 **[Backbone][backbone]** views can be extended to add a such method, that is left empty and requires to be
 implemented bt the developer.
-- **Extension of [Backbone][backbone] views** to add a `closed` method calling all existing methods:
-`remove` (deletion of the DOM), `unbind`, etc.. As suggested by Derick Bailey in his post.
+- **Extension of [Backbone][backbone] views** to add a `close` method calling all existing methods:
+`remove` (deletion of the DOM), `undelegateEvents`, etc.. As suggested by Derick Bailey in his post.
 
 I preferred the second solution because it fits better, I think, in **[Backbone][backbone]** views lifecycle and conserve
 standard initialization approach. Moreover, it can be proposed as a **generic extension** without adding anything into views.
@@ -905,12 +905,7 @@ Backbone.View.prototype.close = function () {
     this.remove();
 
     // unbind view events
-    this.unbind();
-
-    // optionally call a close method if exists
-    if (this.onClose) {
-        this.onClose();
-    }
+    this.undelegateEvents();
 };
 ```
 

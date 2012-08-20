@@ -42,11 +42,11 @@
         this.remove();
 
         // unbind view events
-        this.unbind();
+        this.undelegateEvents();
 
-        // optionally call a close method if exists
-        if (this.onClose) {
-            this.onClose();
+        // optionally call a post close method if exists
+        if (this.afterClose) {
+            this.afterClose();
         }
     };
 
