@@ -20,7 +20,7 @@ define([
             dataType:'json',
 
             // the URL (or base URL) for the service
-            url:App.Config.serverRootURL + '/participant'
+            url:App.Config.serverRootURL + '/participant/search'
         },
         paginator_ui:{
             // the lowest page index your API allows to be accessed
@@ -44,7 +44,7 @@ define([
                 return this.currentPage;
             },
 
-            'perPage':function () {
+            'size':function () {
                 return this.perPage;
             }
 
