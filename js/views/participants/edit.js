@@ -236,7 +236,7 @@ define([
 
                 // upload on server
                 $.ajax({
-                    url:'http://localhost:3000/api/participant/' + id + '/photo',
+                    url:App.Config.serverRootURL + '/participant/' + id + '/photo',
                     type:'POST',
                     data:data,
                     processData:false,

@@ -132,7 +132,7 @@ Dans notre exemple :
         ...
 
         Handlebars.registerHelper('photo_link', function (picture_url) {
-            return "http://localhost:3000/api" + picture_url;
+            return App.Config.serverRootURL + picture_url;
         });
 
         ...
@@ -205,7 +205,7 @@ de** **[Backbone][backbone]** via les méthodes `validate` et `is valid`.
          * Definition of a Participant model object
          */
         var ParticipantModel = Backbone.Model.extend({
-            urlRoot:"http://localhost:3000/api/participant",
+            urlRoot:App.Config.serverRootURL + "/participant",
             defaults:{
 
             },
@@ -444,7 +444,7 @@ nécessaires à la collection :
             dataType:'json',
 
             // the URL (or base URL) for the service
-            url:'http://localhost:3000/api/participants'
+            url:App.Config.serverRootURL + '/participant'
         },
         paginator_ui:{
             // the lowest page index your API allows to be accessed
@@ -599,7 +599,7 @@ mais ne s'exécute que si plus aucun callback ne reste à appeler. Cela donne :
                 nbWaitingCallbacks += 1;
 
                 $.ajax({
-                    url:'http://localhost:3000/api/participant/' + currentId,
+                    url:App.Config.serverRootURL + '/participant/' + currentId,
                     type:'DELETE'
                 })
                     .done(function () {
@@ -665,7 +665,7 @@ interrompre mes traitements :
 
     deleteFromServer:function (elem, deleteCallback) {
         $.ajax({
-            url:'http://localhost:3000/api/' + elem.type + '/' + elem.id,
+            url:App.Config.serverRootURL + '/' + elem.type + '/' + elem.id,
             type:'DELETE'
         })
         .done(function () {

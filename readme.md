@@ -134,7 +134,7 @@ initialize:function () {
     ...
 
     Handlebars.registerHelper('photo_link', function (picture_url) {
-        return "http://localhost:3000/api" + picture_url;
+        return App.Config.serverRootURL + picture_url;
     });
 
     ...
@@ -207,7 +207,7 @@ define([
      * Definition of a Participant model object
      */
     var ParticipantModel = Backbone.Model.extend({
-        urlRoot:"http://localhost:3000/api/participant",
+        urlRoot:App.Config.serverRootURL + "/participant",
         defaults:{
 
         },
@@ -448,7 +448,7 @@ var participantsCollection = Backbone.Paginator.clientPager.extend({
         dataType:'json',
 
         // the URL (or base URL) for the service
-        url:'http://localhost:3000/api/participants'
+        url:App.Config.serverRootURL + '/participants'
     },
     paginator_ui:{
         // the lowest page index your API allows to be accessed
@@ -611,7 +611,7 @@ deleteElements:function () {
             nbWaitingCallbacks += 1;
 
             $.ajax({
-                url:'http://localhost:3000/api/participant/' + currentId,
+                url:App.Config.serverRootURL + '/participant/' + currentId,
                 type:'DELETE'
             })
                 .done(function () {
@@ -677,7 +677,7 @@ deleteElements:function () {
 
 deleteFromServer:function (elem, deleteCallback) {
     $.ajax({
-        url:'http://localhost:3000/api/' + elem.type + '/' + elem.id,
+        url:App.Config.serverRootURL +'/' + elem.type + '/' + elem.id,
         type:'DELETE'
     })
     .done(function () {

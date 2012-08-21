@@ -304,7 +304,7 @@ define([
          */
         deleteFile:function (id, callbackSuccess) {
             $.ajax({
-                url:'http://localhost:3000/api/participant/' + id + '/photo',
+                url:App.Config.serverRootURL + '/participant/' + id + '/photo',
                 type:'DELETE'
             })
                 .done(function () {

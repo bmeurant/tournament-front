@@ -44,7 +44,8 @@ require([
     'underscore',
     'underscore.string',
     'async',
-    'events'
+    'events',
+    'config'
     // Some plugins have to be loaded in order due to their non AMD compliance
     // Because these scripts are not "modules" they do not pass any values to the definition function below
 ], function (App, $, _, _s) {

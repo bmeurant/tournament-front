@@ -101,7 +101,7 @@ define([
             },
 
             fetchElement:function (elem, fetchCallback) {
-                $.getJSON('http://localhost:3000/api/' + elem.type + '/' + elem.id)
+                $.getJSON(App.Config.serverRootURL +'/' + elem.type + '/' + elem.id)
                     .done(function (data) {
                     // add model to current collection and call callback
                     this.JSONCollection[elem.type].push(data);

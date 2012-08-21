@@ -15,7 +15,7 @@ define([
         var initialize = function () {
 
             Handlebars.registerHelper('photo_link', function (picture_url) {
-                return "http://localhost:3000/api" + picture_url;
+                return App.Config.serverRootURL + picture_url;
             });
 
             // Define global singleton views

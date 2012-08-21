@@ -86,7 +86,7 @@ define([
 
         deleteFromServer:function (elem, deleteCallback) {
             $.ajax({
-                url:'http://localhost:3000/api/' + elem.type + '/' + elem.id,
+                url:App.Config.serverRootURL +'/' + elem.type + '/' + elem.id,
                 type:'DELETE'
             })
                 .done(function () {
