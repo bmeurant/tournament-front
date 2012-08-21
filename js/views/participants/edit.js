@@ -165,9 +165,7 @@ define([
 
                 // if model pictureFile has changed, upload on server
                 if (this.pictureFile) {
-                    this.uploadFile(this.pictureFile, this.model.id,
-                        this.afterSave().bind(this)
-                    );
+                    this.uploadFile(this.pictureFile, this.model.id, this.afterSave.bind(this));
                 } else {
                     this.afterSave();
                 }

@@ -43,12 +43,12 @@ combined to underscore helpers. It is based on a 'JSP-like' syntax:
             <input type="hidden" value="<%= index %>"/>
                 <a href="/participant/<%= participant.id %>" class="plain participant-thumb">
                     <div class="participant-thumb">
-                        <% if (!participant.picture_url) { %>
+                        <% if (!participant.pictureUrl) { %>
                             <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
                             <% }
                         else
                         { %>
-                            <img class="photo" src="<%= server_url %><%= participant.picture_url %>" alt="" draggable="false"/>
+                            <img class="photo" src="<%= server_url %><%= participant.pictureUrl %>" alt="" draggable="false"/>
                             <p hidden><img src="<%= server_url %><%= participant.pict_min %>"/></p>
                         <% } %>
                     </div>
@@ -70,8 +70,8 @@ So I switched to a **logic-less template engine**: **[Handlebars][handlebars]**.
         <li id="{{id}}" class="thumbnail {{selected id}} {{disabled id}}" draggable="true">
             <a href="/participant/{{id}}" class="plain participant-thumb">
                 <div class="participant-thumb">
-                    {{#if picture_url}}
-                        <img class="photo" src="{{photo_link picture_url}}" alt="" draggable="false"/>
+                    {{#if pictureUrl}}
+                        <img class="photo" src="{{photo_link pictureUrl}}" alt="" draggable="false"/>
                         <p hidden><img src="{{photo_link pict_min}}"/></p>
                     {{else}}
                         <img class="photo" src="/img/participants/no-photo.jpg" draggable="false" alt=""/>
@@ -133,8 +133,8 @@ initialize:function () {
 
     ...
 
-    Handlebars.registerHelper('photo_link', function (picture_url) {
-        return App.Config.serverRootURL + picture_url;
+    Handlebars.registerHelper('photo_link', function (pictureUrl) {
+        return App.Config.serverRootURL + pictureUrl;
     });
 
     ...
@@ -281,8 +281,8 @@ define([
                 <div class="span3">
                     <div class="well">
                         <p class="photo">
-                            {{#if picture_url}}
-                                <img class="photo" src="{{photo_link picture_url}}" alt="" draggable="false"/>
+                            {{#if pictureUrl}}
+                                <img class="photo" src="{{photo_link pictureUrl}}" alt="" draggable="false"/>
                                 <p hidden><img src="{{photo_link pict_min}}"/></p>
                             {{else}}
                                 <img class="photo" src="/img/participants/no-photo.jpg" alt="" draggable="false"/>

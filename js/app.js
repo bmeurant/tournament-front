@@ -14,8 +14,8 @@ define([
 ], function ($, _, BackboneExtension, BackboneValidation, Router, HeaderView, AlertsView, ShortcutsView, FooterView, KeyboardView, Handlebars) {
         var initialize = function () {
 
-            Handlebars.registerHelper('photo_link', function (picture_url) {
-                return App.Config.serverRootURL + picture_url;
+            Handlebars.registerHelper('photo_link', function (pictureUrl) {
+                return App.Config.serverRootURL + pictureUrl;
             });
 
             // Define global singleton views
