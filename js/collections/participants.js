@@ -20,7 +20,7 @@ define([
             dataType:'json',
 
             // the URL (or base URL) for the service
-            url:'http://localhost:3000/api/participants'
+            url:'http://localhost:3000/api/participant'
         },
         paginator_ui:{
             // the lowest page index your API allows to be accessed
