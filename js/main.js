@@ -14,6 +14,13 @@ require.config({
         },
         'handlebars':{
             exports:'Handlebars'
+        },
+        'backbone':{
+            deps:[
+                'underscore',
+                'jquery'
+            ],
+            exports:'Backbone'
         }
     },
 
@@ -43,7 +50,8 @@ require.config({
         keymaster:"libs/keymaster"
     }
 
-});
+})
+;
 
 // namespaces for Singleton views and routers
 App = {
