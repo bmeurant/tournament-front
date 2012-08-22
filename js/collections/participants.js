@@ -20,7 +20,7 @@ define([
             dataType:'json',
 
             // the URL (or base URL) for the service
-            url:App.Config.serverRootURL + '/participant/search'
+            url:App.Config.serverRootURL + '/participant'
         },
         paginator_ui:{
             // the lowest page index your API allows to be accessed
