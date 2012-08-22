@@ -3,6 +3,15 @@
 require.config({
 
     shim:{
+        'underscore':{
+            exports:'_'
+        },
+        'underscore.string':{
+            deps:[
+                'underscore'
+            ],
+            exports:'_s'
+        },
         'handlebars':{
             exports:'Handlebars'
         }
@@ -47,20 +56,12 @@ require([
 
     // Load our app module and pass it to our definition function
     'app',
-    'jquery',
-    'underscore',
-    'underscore.string',
     'async',
     'events',
     'config'
     // Some plugins have to be loaded in order due to their non AMD compliance
     // Because these scripts are not "modules" they do not pass any values to the definition function below
-], function (App, $, _, _s) {
-
-    // Merge Underscore and Underscore.String
-    _.str = _s;
-    _.mixin(_.str.exports());
-    _.str.include('Underscore.string', 'string');
+], function (App) {
 
     // The "app" dependency is passed in as "App"
     // Again, the other dependencies passed in are not "AMD" therefore don't pass a parameter to this function
