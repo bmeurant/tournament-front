@@ -1,6 +1,13 @@
 // Require.js allows us to configure shortcut alias
 // Their usage will become more apparent further along in the tutorial.
 require.config({
+
+    shim:{
+        'handlebars':{
+            exports:'Handlebars'
+        }
+    },
+
     paths:{
         jquery:'libs/jquery',
         underscore:'libs/underscore',
