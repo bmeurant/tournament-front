@@ -40,7 +40,7 @@ require.config({
         'bootstrap-tooltip':'libs/bootstrap-tooltip',
         use:"libs/use",
         async:"libs/async",
-        pubsub:'libs/pubsub',
+        pubsub:'libs/resthub/pubsub',
         localstorage:"libs/localstorage",
         text:"libs/text",
         i18n:"libs/i18n",
