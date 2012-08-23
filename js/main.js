@@ -38,13 +38,13 @@ require.config({
         'bootstrap':'libs/bootstrap',
         use:"libs/use",
         async:"libs/async",
-        pubsub:'libs/resthub/pubsub',
+        pubsub:'resthub/pubsub',
         localstorage:"libs/localstorage",
         text:"libs/text",
         i18n:"libs/i18n",
         templates:"/templates",
         handlebars:"libs/handlebars",
-        'handlebars-helpers':"libs/resthub/handlebars-helpers",
+        'handlebars-helpers':"resthub/handlebars-helpers",
         keymaster:"libs/keymaster"
     }
 
