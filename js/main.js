@@ -30,6 +30,11 @@ require.config({
                 'jquery'
             ],
             exports:'Backbone.Paginator'
+        },
+        async:{
+            deps:[
+                'underscore'
+            ]
         }
     },
 
@@ -55,8 +60,7 @@ require.config({
         keymaster:"libs/keymaster"
     }
 
-})
-;
+});
 
 // namespaces for Singleton views and routers
 App = {
@@ -78,7 +82,6 @@ require([
     'views/footer',
     'views/keyboard',
     'handlebars-helpers',
-    'async',
     'events',
     'config'
     // Some plugins have to be loaded in order due to their non AMD compliance

@@ -8,7 +8,8 @@ define([
     'text!templates/participants/list.html',
     'models/participant',
     'mixins/selectable',
-    'pubsub'
+    'pubsub',
+    'async'
 ], function ($, _, Backbone, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, Selectable, Pubsub) {
 
     /**

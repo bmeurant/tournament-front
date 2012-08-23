@@ -6,7 +6,8 @@ define([
     'text!templates/deletions/menu.html',
     'views/deletions/abstract',
     'models/participant',
-    'pubsub'
+    'pubsub',
+    'async'
 ], function ($, _, Backbone, Handlebars, deletionsMenuTemplate, AbstractView, Participant, Pubsub) {
 
     return AbstractView.extend({
