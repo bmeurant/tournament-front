@@ -33,8 +33,8 @@ require.config({
         'backbone.ext':'libs/extensions/backbone.ext',
         'backbone-validation':'resthub/backbone-validation.ext',
         'backbone-paginator':'libs/backbone.paginator',
-        'backbone-queryparams':'libs/backbone.queryparams',
         'bootstrap':'libs/bootstrap',
+        'backbone-queryparams':'libs/backbone.queryparams',
         use:"libs/use",
         async:"libs/async",
         pubsub:'resthub/pubsub',
@@ -60,18 +60,37 @@ App = {
 require([
 
     // Load our app module and pass it to our definition function
-    'app',
-    'backbone',
+    'jquery',
+    'backbone.ext',
     'handlebars',
+    'router',
+    'views/header',
+    'views/alerts',
+    'views/help/shortcuts',
+    'views/footer',
+    'views/keyboard',
     'handlebars-helpers',
     'async',
     'events',
     'config'
     // Some plugins have to be loaded in order due to their non AMD compliance
     // Because these scripts are not "modules" they do not pass any values to the definition function below
-], function (App) {
+], function ($, BackboneExtension, Handlebars, Router, HeaderView, AlertsView, ShortcutsView, FooterView, KeyboardView) {
 
-    // The "app" dependency is passed in as "App"
-    // Again, the other dependencies passed in are not "AMD" therefore don't pass a parameter to this function
-    App.initialize();
+    Handlebars.registerHelper('photo_link', function (pictureUrl) {
+        return App.Config.serverRootURL + pictureUrl;
+    });
+
+    // Define global singleton views
+    App.Views.HeaderView = new HeaderView();
+    $('.header').html(App.Views.HeaderView.render().el);
+    App.Views.AlertsView = new AlertsView();
+    $('.alerts').html(App.Views.AlertsView.render().el);
+    App.Views.FooterView = new FooterView();
+    $('footer').html(App.Views.FooterView.render().el);
+    App.Views.ShortcutsView = new ShortcutsView($('.shortcuts-container'));
+    App.Views.KeyboardView = new KeyboardView();
+
+    // Pass in our Router module and call it's initialize function
+    Router.initialize();
 });
