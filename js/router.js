@@ -95,5 +95,4 @@ define([
     return {
         initialize:initialize
     };
-})
-;
+});
