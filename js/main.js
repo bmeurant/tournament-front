@@ -47,7 +47,7 @@ require.config({
         i18n:"libs/i18n",
         templates:"/templates",
         handlebars:"libs/handlebars",
-        'handlebars.helpers':"libs/extensions/handlebars.helpers",
+        'handlebars-helpers':"libs/resthub/handlebars-helpers",
         keymaster:"libs/keymaster"
     }
 
@@ -67,6 +67,7 @@ require([
     'app',
     'backbone',
     'handlebars',
+    'handlebars-helpers',
     'async',
     'events',
     'config'

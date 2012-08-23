@@ -9,8 +9,7 @@ define([
     'views/help/shortcuts',
     'views/footer',
     'views/keyboard',
-    'handlebars',
-    'handlebars.helpers'
+    'handlebars'
 ], function ($, _, BackboneExtension, BackboneValidation, Router, HeaderView, AlertsView, ShortcutsView, FooterView, KeyboardView, Handlebars) {
         var initialize = function () {
 
