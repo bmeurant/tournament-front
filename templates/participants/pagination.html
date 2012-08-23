@@ -1,7 +1,7 @@
 <ul>
     <li class='{{unlessinline info.previous "disabled"}}'><a href='?page={{info.previous}}'>< Prev</a></li>
     {{#for info.firstPage info.totalPages}}
-        <li class="{{#ifequals this ../info.currentPage}}active{{/ifequals}}"><a href='?page={{this}}'>{{this}}</a></li>
+        <li class='{{ifequalsinline this ../info.currentPage "active"}}'><a href='?page={{this}}'>{{this}}</a></li>
     {{/for}}
     <li class='{{unlessinline info.next "disabled"}}'><a href='?page={{info.next}}'>Next ></a></li>
 </ul>
