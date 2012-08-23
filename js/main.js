@@ -31,7 +31,7 @@ require.config({
         'underscore.string':"libs/underscore.string",
         backbone:'libs/backbone',
         'backbone.ext':'libs/extensions/backbone.ext',
-        'backbone-validation':'libs/backbone-validation-amd',
+        'backbone-validation':'libs/backbone-validation',
         'backbone-validation.ext':'libs/extensions/backbone-validation.ext',
         'backbone-paginator':'libs/backbone.paginator',
         'backbone-queryparams':'libs/backbone.queryparams',

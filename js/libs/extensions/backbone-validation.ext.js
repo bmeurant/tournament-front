@@ -15,15 +15,15 @@
 
             // find matching form input and remove error class and text if any
             var attrSelector = '[' + selector + '~=' + attr + ']';
-            view.$(attrSelector).parent().parent().removeClass('error');
-            view.$(attrSelector + ' + span.help-inline').text('');
+            view.$(attrSelector).parent().parent().parent().removeClass('error');
+            view.$(attrSelector).parent().parent().find('span.help-inline').text('');
         },
         invalid:function (view, attr, error, selector) {
 
             // find matching form input and add error class and text error
             var attrSelector = '[' + selector + '~=' + attr + ']';
-            view.$(attrSelector).parent().parent().addClass('error');
-            view.$(attrSelector + ' + span.help-inline').text(error);
+            view.$(attrSelector).parent().parent().parent().addClass('error');
+            view.$(attrSelector).parent().parent().find('span.help-inline').text(error);
         }
     });
 
