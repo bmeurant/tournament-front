@@ -2,7 +2,7 @@ define([
     'jquery',
     'underscore',
     'backbone.ext',
-    'backbone-validation.ext',
+    'backbone-validation',
     'router',
     'views/header',
     'views/alerts',
