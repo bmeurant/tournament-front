@@ -1,4 +1,10 @@
-/*globals Backbone:true, _:true, jQuery:true*/
+(function (factory) {
+  if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'), require('underscore'), require('jquery'));
+  } else if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'underscore', 'jquery'], factory);
+  }
+}(function (Backbone, _) {
 Backbone.Paginator = (function ( Backbone, _, $ ) {
 	"use strict";
 
@@ -787,3 +793,6 @@ Backbone.Paginator = (function ( Backbone, _, $ ) {
 	return Paginator;
 
 }( Backbone, _, jQuery ));
+
+  return Backbone.Paginator;
+}));
