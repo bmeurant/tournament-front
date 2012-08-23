@@ -18,6 +18,7 @@ require.config({
         'backbone':{
             deps:[
                 'underscore',
+                'underscore.string',
                 'jquery'
             ],
             exports:'Backbone'
@@ -64,6 +65,8 @@ require([
 
     // Load our app module and pass it to our definition function
     'app',
+    'backbone',
+    'handlebars',
     'async',
     'events',
     'config'
