@@ -141,12 +141,8 @@ ul.thumbnails li.thumbnail a:focus {
 .element-separator {
 }
 
-.actions-menu {
-    width: 190px;
-}
-
-a.brand {
-    width: 175px;
+.navbar .brand {
+    width:95px;
 }
 
 body .navbar .nav > li > a {
@@ -307,14 +303,22 @@ body input, textarea, select, .uneditable-input {
     position: relative;
 }
 
-.navbar-search .search-query {
+li.thumbnail h6 {
+    line-height: 13px;
+    font-size: 12px;
+    margin: 5px 0;
+}
+
+body .navbar-inverse .navbar-search .search-query,
+body .navbar-inverse .navbar-search .search-query:focus,
+body .navbar-inverse .navbar-search .search-query.focused  {
     padding-left: 29px;
     margin-right: 5px;
 }
 
 .navbar-search .icon-search {
     position: absolute;
-    top: 14px;
+    top: 12px;
     left: 38px;
     background-image: url("/img/glyphicons-halflings-white.png");
 }
@@ -329,6 +333,10 @@ body input, textarea, select, .uneditable-input {
 
 .dropdown-menu label {
     display: inline;
+}
+
+.dropdown-menu {
+    z-index: 5000;
 }
 
 i.icon-checked, i.icon-unchecked {

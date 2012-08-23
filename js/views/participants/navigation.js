@@ -65,7 +65,7 @@ define([
 
             if (this.viewType != "add") {
                 this.$el.find("div.title").tooltip({title:"drag on delete drop-zone to remove", trigger:'hover'});
-                this.$el.find(".nav-pills > li:not(.active):first > a").tooltip({title:"press <code>&larr;</code> or <code>&rarr;</code> or click to navigate", trigger:'manual'});
+                this.$el.find(".nav-pills > li:not(.active):first > a").tooltip({title:"press <code>&larr;</code> or <code>&rarr;</code> or click to navigate", trigger:'manual', placement:"bottom"});
             }
         },
 

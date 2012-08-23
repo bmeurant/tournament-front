@@ -3,7 +3,7 @@ define([
     'underscore',
     'backbone',
     'handlebars',
-    'bootstrap-modal',
+    'bootstrap',
     'text!templates/help/shortcuts.html',
     'text!templates/help/shortcuts/global.html',
     'pubsub'
@@ -30,8 +30,8 @@ define([
 
         render:function () {
 
-            var elemTypeStr = _.capitalize(this.elemType);
-            var viewTypeStr = _.capitalize(this.viewType);
+            var elemTypeStr = _.str.capitalize(this.elemType);
+            var viewTypeStr = _.str.capitalize(this.viewType);
 
             this.$el.html(this.template({elemType:elemTypeStr, viewType:viewTypeStr}));
             this.$el.find('.global-shortcuts > .shortcuts').html(this.globalTemplate());

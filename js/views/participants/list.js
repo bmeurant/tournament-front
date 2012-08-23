@@ -12,7 +12,7 @@ define([
     'mixins/selectable',
     'mixins/paginable',
     'pubsub',
-    'bootstrap-tooltip'
+    'bootstrap'
 ], function ($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, participantListContainerTemplate, participantListTemplate, PaginationView, participantMiniatureTemplate, Selectable, Paginable, Pubsub) {
 
     return Backbone.View.extend(
@@ -194,16 +194,19 @@ define([
              */
             liTooltipPlacement:function (tip, target) {
 
-                $("li.thumbnail").tooltip('hide');
-                $("li.thumbnail a").tooltip('hide');
                 var $target = $(target);
 
                 // if target is a : found the real target (parent li) and force
                 // bootstrap-tooltip to consider this element instead of original 'a'
                 if (target.tagName == "A") {
+                    $("li.thumbnail").tooltip('hide');
                     $target = $target.parent();
                     this.$element = $target;
                 }
+                else {
+                    $("li.thumbnail a").tooltip('hide');
+                }
+
                 var index = $target.index();
                 var liWidth = $target.outerWidth(true);
                 var ulWidth = $target.parent().innerWidth(false);
@@ -211,7 +214,6 @@ define([
 
                 if (index < perLine) return "top";
                 return "bottom";
-
             },
 
             hideTooltips:function () {

@@ -3,7 +3,7 @@ define([
     'underscore',
     'backbone',
     'handlebars',
-    'bootstrap-dropdown',
+    'bootstrap',
     'text!templates/header.html',
     'views/deletions/menu',
     'views/search/menu',
@@ -32,7 +32,7 @@ define([
         },
 
         initialize:function () {
-            this.$el = $("<div>").addClass("navbar").addClass("navbar-fixed-top");
+            this.$el = $("<div>").addClass("navbar").addClass("navbar-inverse").addClass("navbar-fixed-top");
             this.el = this.$el.get(0);
 
             this.handlers.push(Pubsub.subscribe(App.Events.HOME_CALLED, this.backToGeneralHome.bind(this)));

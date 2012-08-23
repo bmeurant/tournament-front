@@ -5,7 +5,7 @@ define([
     'handlebars',
     'text!templates/alert.html',
     'pubsub',
-    'bootstrap-alert'
+    'bootstrap'
 ], function ($, _, Backbone, Handlebars, alertsTemplate, Pubsub) {
 
     return Backbone.View.extend({
