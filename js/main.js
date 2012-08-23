@@ -22,6 +22,14 @@ require.config({
                 'jquery'
             ],
             exports:'Backbone'
+        },
+        'backbone-paginator':{
+            deps:[
+                'backbone',
+                'underscore',
+                'jquery'
+            ],
+            exports:'Backbone.Paginator'
         }
     },
 
