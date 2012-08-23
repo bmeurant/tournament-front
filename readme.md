@@ -1216,37 +1216,6 @@ provide external links, we still have to use the `data-bypass` attribute:
 ```
 
 ---
-### libs extensions
-
-To avoid scattering libs extensions in our applicative code, extensions are isolated in a `js/libs/extensions` directory:
-
-    |-- js
-        |-- libs
-            |-- extensions
-                |-- backbone-validation.ext.js
-                |-- backbone.ext.js
-                |-- handlebars.helpers.ext.js
-
-Extensions are loaded at startup (`app.js`):
-
-```js
-define([
-    'jquery',
-    'underscore',
-    'backbone.ext',
-    'backbone-validation.ext',
-    'router',
-    'views/header',
-    'views/alerts',
-    'views/help/shortcuts',
-    'views/footer',
-    'views/keyboard',
-    'handlebars',
-    'handlebars.helpers'
-],
-```
-
----
 ### Handlebars Helpers
 
 If possible, Handlebars helpers are defined globally (in an extension) and statically loaded:
