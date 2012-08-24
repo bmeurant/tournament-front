@@ -2,7 +2,7 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'handlebars',
+    'resthub-handlebars',
     'models/participant',
     'text!templates/participants/navigation.html',
     'pubsub'

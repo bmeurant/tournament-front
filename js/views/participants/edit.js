@@ -2,10 +2,10 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'handlebars',
+    'resthub-handlebars',
     'models/participant',
     'text!templates/participants/edit.html',
-    'backbone-validation',
+    'resthub-backbone-validation',
     'mixins/validatable',
     'pubsub'
 ], function ($, _, Backbone, Handlebars, Participant, participantEditTemplate, BackboneValidation, Validatable, Pubsub) {

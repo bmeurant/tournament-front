@@ -2,7 +2,7 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'handlebars',
+    'resthub-handlebars',
     'text!templates/footer.html',
     'pubsub'
 ], function ($, _, Backbone, Handlebars, footerTemplate, Pubsub) {

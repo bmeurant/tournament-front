@@ -1,7 +1,7 @@
 define([
     'jquery',
     'underscore',
-    'handlebars',
+    'resthub-handlebars',
     'backbone',
     'models/participant',
     'text!templates/participants/details.html'

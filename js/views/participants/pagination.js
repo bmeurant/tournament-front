@@ -2,7 +2,7 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'handlebars',
+    'resthub-handlebars',
     'backbone-paginator',
     'collections/participants',
     'text!templates/participants/pagination.html',

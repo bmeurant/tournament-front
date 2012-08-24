@@ -2,7 +2,7 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'handlebars',
+    'resthub-handlebars',
     'text!templates/search/menu.html'
 ], function ($, _, Backbone, Handlebars, searchMenuTemplate) {
 

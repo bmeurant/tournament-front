@@ -2,7 +2,7 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'handlebars',
+    'resthub-handlebars',
     'text!templates/alert.html',
     'pubsub',
     'bootstrap'

@@ -2,7 +2,7 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'handlebars',
+    'resthub-handlebars',
     'text!templates/help/global.html',
     'text!templates/help/shortcuts/global.html'
 ], function ($, _, Backbone, Handlebars, helpTemplate, shortcutsTemplate) {

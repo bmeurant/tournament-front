@@ -1,7 +1,7 @@
 define([
     'underscore',
     'backbone',
-    'backbone-validation'
+    'resthub-backbone-validation'
 ], function (_, Backbone) {
 
     /**

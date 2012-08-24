@@ -44,7 +44,6 @@ require.config({
         'underscore.string':"libs/underscore.string",
         backbone:'libs/backbone',
         'backbone.ext':'libs/extensions/backbone.ext',
-        'backbone-validation':'resthub/backbone-validation.ext',
         'backbone-paginator':'libs/backbone.paginator',
         'bootstrap':'libs/bootstrap',
         'backbone-queryparams':'libs/backbone.queryparams',
@@ -55,8 +54,10 @@ require.config({
         text:"libs/text",
         i18n:"libs/i18n",
         templates:"/templates",
-        handlebars:"libs/handlebars",
-        'handlebars-helpers':"resthub/handlebars-helpers",
+        'backbone-validation':'libs/backbone-validation',
+        'resthub-backbone-validation':'resthub/backbone-validation.ext',
+        handlebars:'libs/handlebars',
+        'resthub-handlebars':'resthub/handlebars-helpers',
         keymaster:"libs/keymaster"
     }
 
@@ -74,14 +75,13 @@ require([
     // Load our app module and pass it to our definition function
     'jquery',
     'backbone.ext',
-    'handlebars',
+    'resthub-handlebars',
     'router',
     'views/header',
     'views/alerts',
     'views/help/shortcuts',
     'views/footer',
     'views/keyboard',
-    'handlebars-helpers',
     'events',
     'config'
     // Some plugins have to be loaded in order due to their non AMD compliance
