@@ -23,6 +23,12 @@ require.config({
             ],
             exports:'Backbone'
         },
+        'backbone-queryparams':{
+            deps:[
+                'backbone',
+                'underscore'
+            ]
+        },
         'backbone-paginator':{
             deps:[
                 'backbone',
