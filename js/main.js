@@ -9,13 +9,12 @@ require.config({
         'underscore.string':{
             deps:[
                 'underscore'
-            ],
-            exports:'_s'
+            ]
         },
         'handlebars':{
             exports:'Handlebars'
         },
-        'backbone':{
+        'backbone-orig':{
             deps:[
                 'underscore',
                 'underscore.string',
@@ -25,13 +24,13 @@ require.config({
         },
         'backbone-queryparams':{
             deps:[
-                'backbone',
+                'backbone-orig',
                 'underscore'
             ]
         },
         'backbone-paginator':{
             deps:[
-                'backbone',
+                'backbone-orig',
                 'underscore',
                 'jquery'
             ],
@@ -47,24 +46,24 @@ require.config({
     paths:{
         jquery:'libs/jquery',
         underscore:'libs/underscore',
-        'underscore.string':"libs/underscore.string",
-        backbone:'libs/backbone',
-        'backbone.ext':'libs/extensions/backbone.ext',
-        'backbone-paginator':'libs/backbone.paginator',
-        'bootstrap':'libs/bootstrap',
-        'backbone-queryparams':'libs/backbone.queryparams',
-        use:"libs/use",
-        async:"libs/async",
+        'underscore.string':'libs/underscore.string',
+        'backbone-orig':'libs/backbone',
+        backbone:'resthub/backbone.ext',
+        localstorage:'libs/localstorage',
+        text:'libs/text',
+        i18n:'libs/i18n',
         pubsub:'resthub/pubsub',
-        localstorage:"libs/localstorage",
-        text:"libs/text",
-        i18n:"libs/i18n",
-        templates:"/templates",
+        'bootstrap':'libs/bootstrap',
         'backbone-validation':'libs/backbone-validation',
         'resthub-backbone-validation':'resthub/backbone-validation.ext',
         handlebars:'libs/handlebars',
         'resthub-handlebars':'resthub/handlebars-helpers',
-        keymaster:"libs/keymaster"
+        'backbone-queryparams':'libs/backbone.queryparams',
+        'backbone-paginator':'libs/backbone.paginator',
+        async:'libs/async',
+        keymaster:'libs/keymaster',
+        hbs:'resthub/handlebars-require',
+        templates:"/templates"
     }
 
 });
@@ -80,7 +79,6 @@ require([
 
     // Load our app module and pass it to our definition function
     'jquery',
-    'backbone.ext',
     'resthub-handlebars',
     'router',
     'views/header',
@@ -92,7 +90,7 @@ require([
     'config'
     // Some plugins have to be loaded in order due to their non AMD compliance
     // Because these scripts are not "modules" they do not pass any values to the definition function below
-], function ($, BackboneExtension, Handlebars, Router, HeaderView, AlertsView, ShortcutsView, FooterView, KeyboardView) {
+], function ($, Handlebars, Router, HeaderView, AlertsView, ShortcutsView, FooterView, KeyboardView) {
 
     Handlebars.registerHelper('photo_link', function (pictureUrl) {
         return App.Config.serverRootURL + pictureUrl;

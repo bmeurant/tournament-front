@@ -26,7 +26,7 @@ These tools are mainly:
 - **Template engine: [Handlebars][handlebars]**
 - **Form Validation: [Backbone Validation][backbone-validation]**
 - **Parameters support on view routing: [Backbone Query Parameters][backbone-query-parameters]**
-- **Paginated lists: [Paginator Backbone][backbone-paginator]**
+- **Paginated lists: [Backbone Paginator][backbone-paginator]**
 - **Asynchronous calls: [Async][async]**
 - **Dispatching keyboard shortcuts: [Keymaster][Keymaster]**
 
@@ -1332,3 +1332,6 @@ TODO
 [async]: https://github.com/caolan/async/ "Async"
 [backbone-boilerplate]: https://github.com/tbranyen/backbone-boilerplate "Backbone boilerplate"
 [keymaster]: https://github.com/madrobby/keymaster "keymaster"
+
+
+discusion
