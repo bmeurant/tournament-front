@@ -22,8 +22,8 @@ define([
         initialize:function ($selector) {
             // in this specific case we can add container as el because we will never close or review this view
             this.$el = $selector;
-            Pubsub.on(App.Events.KEYBOARD_CALLED, this.render.bind(this), this);
-            Pubsub.on(App.Events.VIEW_CHANGED, this.viewChanged.bind(this), this);
+            Pubsub.on(App.Events.KEYBOARD_CALLED, this.render, this);
+            Pubsub.on(App.Events.VIEW_CHANGED, this.viewChanged, this);
         },
 
         render:function () {

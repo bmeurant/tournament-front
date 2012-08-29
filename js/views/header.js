@@ -33,12 +33,12 @@ define([
             this.$el = $("<div>").addClass("navbar").addClass("navbar-inverse").addClass("navbar-fixed-top");
             this.el = this.$el.get(0);
 
-            Pubsub.on(App.Events.HOME_CALLED, this.backToGeneralHome.bind(this), this);
-            Pubsub.on(App.Events.PARTICIPANTS_HOME_CALLED, this.moveToParticipantHome.bind(this), this);
-            Pubsub.on(App.Events.TEAMS_HOME_CALLED, this.moveToTeamsHome.bind(this), this);
-            Pubsub.on(App.Events.GT_HOME_CALLED, this.moveToGTHome.bind(this), this);
-            Pubsub.on(App.Events.FIND_CALLED, this.focusOnSearch.bind(this), this);
-            Pubsub.on(App.Events.VIEW_CHANGED, this.onViewChanged.bind(this), this);
+            Pubsub.on(App.Events.HOME_CALLED, this.backToGeneralHome, this);
+            Pubsub.on(App.Events.PARTICIPANTS_HOME_CALLED, this.moveToParticipantHome, this);
+            Pubsub.on(App.Events.TEAMS_HOME_CALLED, this.moveToTeamsHome, this);
+            Pubsub.on(App.Events.GT_HOME_CALLED, this.moveToGTHome, this);
+            Pubsub.on(App.Events.FIND_CALLED, this.focusOnSearch, this);
+            Pubsub.on(App.Events.VIEW_CHANGED, this.onViewChanged, this);
 
             this.deletionMenu = new DeletionsMenuView();
             this.searchMenu = new SearchMenuView();

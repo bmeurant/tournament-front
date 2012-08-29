@@ -37,16 +37,16 @@ define([
                 this.collection = new ParticipantsCollection;
                 this.paginationView = new PaginationView();
 
-                Pubsub.on(App.Events.ELEM_DELETED_FROM_BAR, this.participantDeleted.bind(this), this);
-                Pubsub.on(App.Events.DELETIONS_CANCELED, this.cancelDeletions.bind(this), this);
-                Pubsub.on(App.Events.NEXT_CALLED, this.selectNextElem.bind(this), this);
-                Pubsub.on(App.Events.PREVIOUS_CALLED, this.selectPreviousElem.bind(this), this);
-                Pubsub.on(App.Events.DELETE_ELEM, this.deleteParticipant.bind(this), this);
-                Pubsub.on(App.Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this), this);
-                Pubsub.on(App.Events.ENTER_CALLED, this.showSelected.bind(this), this);
-                Pubsub.on(App.Events.ELEM_DELETED_FROM_VIEW, this.participantDeleted.bind(this), this);
-                Pubsub.on(App.Events.NEW_PAGE, this.newPage.bind(this), this);
-                Pubsub.on(App.Events.DELETIONS_CONFIRMED, this.render.bind(this), this);
+                Pubsub.on(App.Events.ELEM_DELETED_FROM_BAR, this.participantDeleted, this);
+                Pubsub.on(App.Events.DELETIONS_CANCELED, this.cancelDeletions, this);
+                Pubsub.on(App.Events.NEXT_CALLED, this.selectNextElem, this);
+                Pubsub.on(App.Events.PREVIOUS_CALLED, this.selectPreviousElem, this);
+                Pubsub.on(App.Events.DELETE_ELEM, this.deleteParticipant, this);
+                Pubsub.on(App.Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant, this);
+                Pubsub.on(App.Events.ENTER_CALLED, this.showSelected, this);
+                Pubsub.on(App.Events.ELEM_DELETED_FROM_VIEW, this.participantDeleted, this);
+                Pubsub.on(App.Events.NEW_PAGE, this.newPage, this);
+                Pubsub.on(App.Events.DELETIONS_CONFIRMED, this.render, this);
 
                 this.initDeleted();
 

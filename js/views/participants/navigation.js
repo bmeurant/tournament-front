@@ -30,7 +30,7 @@ define([
         initialize:function (id, viewType) {
             this.id = id;
             this.viewType = viewType;
-            Pubsub.on(App.Events.VIEW_CHANGED, this.updatePills.bind(this), this);
+            Pubsub.on(App.Events.VIEW_CHANGED, this.updatePills, this);
         },
 
         /**

@@ -15,8 +15,8 @@ define([
 
         initialize:function () {
             this.$el.addClass("row");
-            Pubsub.on(App.Events.REMOVE_ALERT, this.hideAlerts.bind(this), this);
-            Pubsub.on(App.Events.ALERT_RAISED, this.showAlert.bind(this), this);
+            Pubsub.on(App.Events.REMOVE_ALERT, this.hideAlerts, this);
+            Pubsub.on(App.Events.ALERT_RAISED, this.showAlert, this);
         },
 
         render:function () {

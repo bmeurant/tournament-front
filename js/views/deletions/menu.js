@@ -39,16 +39,16 @@ define([
             this.el = this.$el.get(0);
 
             // Register Pubsub bindings
-            Pubsub.on(App.Events.DRAG_START, this.onDragStart.bind(this), this);
-            Pubsub.on(App.Events.DRAG_END, this.onDragEnd.bind(this), this);
-            Pubsub.on(App.Events.DELETIONS_POPULATED, this.renderDels.bind(this), this);
-            Pubsub.on(App.Events.DELETION_CANCELED, this.renderDels.bind(this), this);
-            Pubsub.on(App.Events.DELETION_CONFIRMED, this.renderDels.bind(this), this);
-            Pubsub.on(App.Events.VIEW_CHANGED, this.onViewChanged.bind(this), this);
-            Pubsub.on(App.Events.DELETIONS_CALLED, this.moveToDeletionsView.bind(this), this);
-            Pubsub.on(App.Events.CONFIRM_DELS_CALLED, this.confirmDeletions.bind(this), this);
-            Pubsub.on(App.Events.CANCEL_DELS_CALLED, this.cancelDeletions.bind(this), this);
-            Pubsub.on(App.Events.DELETE_ELEM_FROM_VIEW, this.deleteElem.bind(this), this);
+            Pubsub.on(App.Events.DRAG_START, this.onDragStart, this);
+            Pubsub.on(App.Events.DRAG_END, this.onDragEnd, this);
+            Pubsub.on(App.Events.DELETIONS_POPULATED, this.renderDels, this);
+            Pubsub.on(App.Events.DELETION_CANCELED, this.renderDels, this);
+            Pubsub.on(App.Events.DELETION_CONFIRMED, this.renderDels, this);
+            Pubsub.on(App.Events.VIEW_CHANGED, this.onViewChanged, this);
+            Pubsub.on(App.Events.DELETIONS_CALLED, this.moveToDeletionsView, this);
+            Pubsub.on(App.Events.CONFIRM_DELS_CALLED, this.confirmDeletions, this);
+            Pubsub.on(App.Events.CANCEL_DELS_CALLED, this.cancelDeletions, this);
+            Pubsub.on(App.Events.DELETE_ELEM_FROM_VIEW, this.deleteElem, this);
 
         },
 

@@ -66,13 +66,13 @@ define([
             // create sub navigation component
             this.navigationView = new NavigationView(this.model.id, this.viewType);
 
-            Pubsub.on(App.Events.DELETE_ELEM, this.deleteParticipant.bind(this), this);
-            Pubsub.on(App.Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this), this);
-            Pubsub.on(App.Events.ELEM_DELETED_FROM_BAR, this.onParticipantDeleted.bind(this), this);
-            Pubsub.on(App.Events.ELEM_DELETED_FROM_VIEW, this.onParticipantDeleted.bind(this), this);
-            Pubsub.on(App.Events.CHANGE_VIEW, this.changeParticipantView.bind(this), this);
-            Pubsub.on(App.Events.PREVIOUS_CALLED, this.precedentHandler.bind(this), this);
-            Pubsub.on(App.Events.NEXT_CALLED, this.nextHandler.bind(this), this);
+            Pubsub.on(App.Events.DELETE_ELEM, this.deleteParticipant, this);
+            Pubsub.on(App.Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant, this);
+            Pubsub.on(App.Events.ELEM_DELETED_FROM_BAR, this.onParticipantDeleted, this);
+            Pubsub.on(App.Events.ELEM_DELETED_FROM_VIEW, this.onParticipantDeleted, this);
+            Pubsub.on(App.Events.CHANGE_VIEW, this.changeParticipantView, this);
+            Pubsub.on(App.Events.PREVIOUS_CALLED, this.precedentHandler, this);
+            Pubsub.on(App.Events.NEXT_CALLED, this.nextHandler, this);
         },
 
         render:function () {

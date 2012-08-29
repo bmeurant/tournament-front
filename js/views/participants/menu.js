@@ -35,10 +35,10 @@ define([
             // default type
             this.viewType = "";
 
-            Pubsub.on(App.Events.VIEW_CHANGED, this.onViewChanged.bind(this), this);
-            Pubsub.on(App.Events.ADD_CALLED, this.addElement.bind(this), this);
-            Pubsub.on(App.Events.LIST_CALLED, this.backToListElement.bind(this), this);
-            Pubsub.on(App.Events.ECHAP_CALLED, this.backToElementHome.bind(this), this);
+            Pubsub.on(App.Events.VIEW_CHANGED, this.onViewChanged, this);
+            Pubsub.on(App.Events.ADD_CALLED, this.addElement, this);
+            Pubsub.on(App.Events.LIST_CALLED, this.backToListElement, this);
+            Pubsub.on(App.Events.ECHAP_CALLED, this.backToElementHome, this);
 
             Handlebars.registerHelper('hidden', function (viewType) {
                 return _.indexOf(this.actions[this.viewType], viewType) < 0 ? "hidden" : "";

@@ -48,12 +48,12 @@ define([
                 this.firingFunc = this.cancelElementDeletion.bind(this);
 
                 // init Pubsub bindings
-                Pubsub.on(App.Events.DELETIONS_CONFIRMED, this.render.bind(this), this);
-                Pubsub.on(App.Events.DELETIONS_CANCELED, this.render.bind(this), this);
-                Pubsub.on(App.Events.NEXT_CALLED, this.selectNext.bind(this), this);
-                Pubsub.on(App.Events.PREVIOUS_CALLED, this.selectPrevious.bind(this), this);
-                Pubsub.on(App.Events.DELETE_ELEM, this.confirmSelectedDeletion.bind(this), this);
-                Pubsub.on(App.Events.ENTER_CALLED, this.cancelSelectedDeletion.bind(this), this);
+                Pubsub.on(App.Events.DELETIONS_CONFIRMED, this.render, this);
+                Pubsub.on(App.Events.DELETIONS_CANCELED, this.render, this);
+                Pubsub.on(App.Events.NEXT_CALLED, this.selectNext, this);
+                Pubsub.on(App.Events.PREVIOUS_CALLED, this.selectPrevious, this);
+                Pubsub.on(App.Events.DELETE_ELEM, this.confirmSelectedDeletion, this);
+                Pubsub.on(App.Events.ENTER_CALLED, this.cancelSelectedDeletion, this);
 
                 this.emptyJSONCollection();
 
