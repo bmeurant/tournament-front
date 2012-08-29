@@ -13,15 +13,10 @@ define([
         // Cache the template function for a single item.
         template:Handlebars.compile(alertsTemplate),
 
-        events:{
-        },
-
-        handlers:[],
-
         initialize:function () {
             this.$el.addClass("row");
-            this.handlers.push(Pubsub.subscribe(App.Events.REMOVE_ALERT, this.hideAlerts.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.ALERT_RAISED, this.showAlert.bind(this)));
+            Pubsub.on(App.Events.REMOVE_ALERT, this.hideAlerts.bind(this), this);
+            Pubsub.on(App.Events.ALERT_RAISED, this.showAlert.bind(this), this);
         },
 
         render:function () {

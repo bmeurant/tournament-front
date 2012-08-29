@@ -13,11 +13,6 @@ define([
         template:Handlebars.compile(helpTemplate),
         shortcutsTemplate:Handlebars.compile(shortcutsTemplate),
 
-        events:{
-        },
-
-        handlers:[],
-
         initialize:function () {
             this.$el.addClass('row').attr('id', 'help');
         },

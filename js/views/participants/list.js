@@ -31,23 +31,22 @@ define([
                 "click li.thumbnail":"hideTooltips"
             },
 
-            handlers:[],
             askedPage:1,
 
             initialize:function (params) {
                 this.collection = new ParticipantsCollection;
                 this.paginationView = new PaginationView();
 
-                this.handlers.push(Pubsub.subscribe(App.Events.ELEM_DELETED_FROM_BAR, this.participantDeleted.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CANCELED, this.cancelDeletions.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.NEXT_CALLED, this.selectNextElem.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.PREVIOUS_CALLED, this.selectPreviousElem.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.ENTER_CALLED, this.showSelected.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.ELEM_DELETED_FROM_VIEW, this.participantDeleted.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.NEW_PAGE, this.newPage.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CONFIRMED, this.render.bind(this)));
+                Pubsub.on(App.Events.ELEM_DELETED_FROM_BAR, this.participantDeleted.bind(this), this);
+                Pubsub.on(App.Events.DELETIONS_CANCELED, this.cancelDeletions.bind(this), this);
+                Pubsub.on(App.Events.NEXT_CALLED, this.selectNextElem.bind(this), this);
+                Pubsub.on(App.Events.PREVIOUS_CALLED, this.selectPreviousElem.bind(this), this);
+                Pubsub.on(App.Events.DELETE_ELEM, this.deleteParticipant.bind(this), this);
+                Pubsub.on(App.Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this), this);
+                Pubsub.on(App.Events.ENTER_CALLED, this.showSelected.bind(this), this);
+                Pubsub.on(App.Events.ELEM_DELETED_FROM_VIEW, this.participantDeleted.bind(this), this);
+                Pubsub.on(App.Events.NEW_PAGE, this.newPage.bind(this), this);
+                Pubsub.on(App.Events.DELETIONS_CONFIRMED, this.render.bind(this), this);
 
                 this.initDeleted();
 
@@ -93,7 +92,7 @@ define([
                             }
                         }.bind(this),
                         error:function () {
-                            Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
+                            Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to fetch participants', 'alert-error');
                         }
                     });
                 return this;
@@ -124,11 +123,11 @@ define([
                 dragIcon.html(this.miniatureTemplate({participant:participant.toJSON()}));
                 event.originalEvent.dataTransfer.setDragImage(dragIcon.get(0), 25, 25);
 
-                Pubsub.publish(App.Events.DRAG_START);
+                Pubsub.trigger(App.Events.DRAG_START);
             },
 
             dragEndHandler:function (event) {
-                Pubsub.publish(App.Events.DRAG_END);
+                Pubsub.trigger(App.Events.DRAG_END);
             },
 
             /**
@@ -176,7 +175,7 @@ define([
 
                 window.history.pushState(null, "Tournament", "/participants" + ((this.collection.info().currentPage != 1) ? "?page=" + this.collection.info().currentPage : ""));
 
-                Pubsub.publish(App.Events.VIEW_CHANGED, [this.elemType, 'list']);
+                Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, 'list');
             },
 
             initTooltips:function () {
@@ -272,7 +271,7 @@ define([
 
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
                 if ($selected && $selected.length > 0) {
-                    Pubsub.publish(App.Events.DELETE_ELEM_FROM_VIEW, ['participant', $selected.get(0).id]);
+                    Pubsub.trigger(App.Events.DELETE_ELEM_FROM_VIEW, 'participant', $selected.get(0).id);
                 }
             },
 

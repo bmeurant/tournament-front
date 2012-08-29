@@ -36,7 +36,6 @@ define([
         // determines if the next view has to be re-rendered before switch
         renderNext:false,
 
-        handlers:[],
         inTransition:false,
 
         /**
@@ -67,19 +66,19 @@ define([
             // create sub navigation component
             this.navigationView = new NavigationView(this.model.id, this.viewType);
 
-            this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM, this.deleteParticipant.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.ELEM_DELETED_FROM_BAR, this.onParticipantDeleted.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.ELEM_DELETED_FROM_VIEW, this.onParticipantDeleted.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.CHANGE_VIEW, this.changeParticipantView.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.PREVIOUS_CALLED, this.precedentHandler.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.NEXT_CALLED, this.nextHandler.bind(this)));
+            Pubsub.on(App.Events.DELETE_ELEM, this.deleteParticipant.bind(this), this);
+            Pubsub.on(App.Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant.bind(this), this);
+            Pubsub.on(App.Events.ELEM_DELETED_FROM_BAR, this.onParticipantDeleted.bind(this), this);
+            Pubsub.on(App.Events.ELEM_DELETED_FROM_VIEW, this.onParticipantDeleted.bind(this), this);
+            Pubsub.on(App.Events.CHANGE_VIEW, this.changeParticipantView.bind(this), this);
+            Pubsub.on(App.Events.PREVIOUS_CALLED, this.precedentHandler.bind(this), this);
+            Pubsub.on(App.Events.NEXT_CALLED, this.nextHandler.bind(this), this);
         },
 
         render:function () {
 
             if (this.model.id && this.deleted.indexOf(this.model.id) >= 0) {
-                Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'This participant is currently being deleted', 'alert-error']);
+                Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'This participant is currently being deleted', 'alert-error');
 
                 setTimeout(function () {
                     Backbone.history.navigate("/participants", true);
@@ -95,7 +94,7 @@ define([
                         this.showTemplate();
                     }.bind(this),
                     error:function () {
-                        Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to get participant', 'alert-error']);
+                        Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to get participant', 'alert-error');
                     }
                 });
             }
@@ -130,7 +129,7 @@ define([
             dragIcon.html(this.miniatureTemplate({participant:this.model.toJSON()}));
             event.originalEvent.dataTransfer.setDragImage(dragIcon.get(0), 50, 50);
 
-            Pubsub.publish(App.Events.DRAG_START);
+            Pubsub.trigger(App.Events.DRAG_START);
         },
 
         /**
@@ -161,7 +160,7 @@ define([
 
             this.renderViews();
 
-            Pubsub.publish(App.Events.VIEW_CHANGED, [this.elemType, this.viewType]);
+            Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
         },
 
         /**
@@ -312,7 +311,7 @@ define([
                     callbackSuccess();
                 })
                 .fail(function () {
-                    Pubsub.publish(App.Events.ALERT_RAISED, ['Warning!', 'Error occurred while deleting ' + id + 'photo', 'alert-warning']);
+                    Pubsub.trigger(App.Events.ALERT_RAISED, 'Warning!', 'Error occurred while deleting ' + id + 'photo', 'alert-warning');
                 });
         },
 
@@ -321,7 +320,7 @@ define([
          */
         deleteParticipant:function () {
             this.navigationView.hideTooltips();
-            Pubsub.publish(App.Events.DELETE_ELEM_FROM_VIEW, ['participant', this.model.id]);
+            Pubsub.trigger(App.Events.DELETE_ELEM_FROM_VIEW, 'participant', this.model.id);
         },
 
         /**
@@ -372,7 +371,7 @@ define([
             // register callbacks executed after css transition
             this.addTransitionCallbacks(this.$el.find('#view'), this.$el.find('.view-elem#' + oldType));
 
-            Pubsub.publish(App.Events.VIEW_CHANGED, [this.elemType, this.viewType]);
+            Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
 
             // perform transition
             this.$el.find('#view').addClass('slide').css('margin-left', -(mainIndex * (940 + 20 + 50)) + "px");
@@ -451,7 +450,7 @@ define([
         },
 
         dragEndHandler:function (event) {
-            Pubsub.publish(App.Events.DRAG_END);
+            Pubsub.trigger(App.Events.DRAG_END);
         }
 
     });

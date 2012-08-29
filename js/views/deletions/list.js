@@ -21,7 +21,6 @@ define([
             template:Handlebars.compile(deletionsTemplate),
             participantsTemplate:Handlebars.compile(participantTemplate),
 
-            handlers:[],
             elemType:'deletions',
             viewType:'list',
 
@@ -48,13 +47,13 @@ define([
                 // set defaut handler for click in order to handle both simple and dble click
                 this.firingFunc = this.cancelElementDeletion.bind(this);
 
-                // init PubSub bindings
-                this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CONFIRMED, this.render.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CANCELED, this.render.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.NEXT_CALLED, this.selectNext.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.PREVIOUS_CALLED, this.selectPrevious.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM, this.confirmSelectedDeletion.bind(this)));
-                this.handlers.push(Pubsub.subscribe(App.Events.ENTER_CALLED, this.cancelSelectedDeletion.bind(this)));
+                // init Pubsub bindings
+                Pubsub.on(App.Events.DELETIONS_CONFIRMED, this.render.bind(this), this);
+                Pubsub.on(App.Events.DELETIONS_CANCELED, this.render.bind(this), this);
+                Pubsub.on(App.Events.NEXT_CALLED, this.selectNext.bind(this), this);
+                Pubsub.on(App.Events.PREVIOUS_CALLED, this.selectPrevious.bind(this), this);
+                Pubsub.on(App.Events.DELETE_ELEM, this.confirmSelectedDeletion.bind(this), this);
+                Pubsub.on(App.Events.ENTER_CALLED, this.cancelSelectedDeletion.bind(this), this);
 
                 this.emptyJSONCollection();
 
@@ -136,17 +135,17 @@ define([
 
                 // if the number of errors is strictly equal to the number of elements to fetch
                 if (successes.length == 0) {
-                    Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
+                    Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to fetch participants', 'alert-error');
                 }
                 // there is at least on error
                 else if (successes.length < this.countElements(this.collection)) {
-                    Pubsub.publish(App.Events.ALERT_RAISED, ['Warning!', 'Some participants could not be retrieved', 'alert-warning']);
+                    Pubsub.trigger(App.Events.ALERT_RAISED, 'Warning!', 'Some participants could not be retrieved', 'alert-warning');
                 }
 
                 this.storeInLocalStorage();
                 this.showTemplate();
 
-                Pubsub.publish(App.Events.DELETIONS_POPULATED);
+                Pubsub.trigger(App.Events.DELETIONS_POPULATED);
             },
 
             render:function () {
@@ -155,7 +154,7 @@ define([
                 this.emptyJSONCollection();
                 this.populateCollection();
 
-                Pubsub.publish(App.Events.VIEW_CHANGED, [this.elemType, this.viewType]);
+                Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
                 $(".delete-menu.drop-zone").addClass("hidden");
                 return this;
             },
@@ -267,14 +266,14 @@ define([
 
             onElementDeleted:function (err, result) {
                 if (result.elem == null) {
-                    Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'Cannot remove selected element', 'alert-error']);
+                    Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'Cannot remove selected element', 'alert-error');
                     return;
                 }
 
                 this.removeAndSave(result.elem);
 
-                Pubsub.publish(App.Events.DELETION_CONFIRMED);
-                Pubsub.publish(App.Events.ALERT_RAISED, ['Success!', 'Element deletion confirmed', 'alert-success'])
+                Pubsub.trigger(App.Events.DELETION_CONFIRMED);
+                Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Element deletion confirmed', 'alert-success');
             },
 
             /**
@@ -288,8 +287,8 @@ define([
                 var elem = this.findElement(elemType, idElem);
                 this.removeAndSave(elem);
 
-                Pubsub.publish(App.Events.DELETION_CANCELED);
-                Pubsub.publish(App.Events.ALERT_RAISED, ['Success!', 'Element deletion canceled', 'alert-success'])
+                Pubsub.trigger(App.Events.DELETION_CANCELED);
+                Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Element deletion canceled', 'alert-success');
             },
 
             findElement:function (elemType, idElem) {

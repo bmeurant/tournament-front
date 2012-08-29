@@ -13,8 +13,6 @@ define([
 
         template:Handlebars.compile(paginationTemplate),
 
-        handlers:[],
-
         events:{
             "click a":"changePage"
         },
@@ -23,8 +21,8 @@ define([
 
         initialize:function () {
 
-            this.handlers.push(Pubsub.subscribe(App.Events.PAGE_UP_CALLED, this.previousPage.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.PAGE_DOWN_CALLED, this.nextPage.bind(this)));
+            Pubsub.on(App.Events.PAGE_UP_CALLED, this.previousPage.bind(this), this);
+            Pubsub.on(App.Events.PAGE_DOWN_CALLED, this.nextPage.bind(this), this);
 
         },
 
@@ -52,7 +50,7 @@ define([
                 pageId = pageId.substring(0, pageId.indexOf("&"));
             }
 
-            Pubsub.publish(App.Events.NEW_PAGE, [pageId]);
+            Pubsub.trigger(App.Events.NEW_PAGE, pageId);
 
         },
 
@@ -70,7 +68,7 @@ define([
             }
 
             if (this.collection.info().previous) {
-                Pubsub.publish(App.Events.NEW_PAGE, [this.collection.info().previous, selectLast]);
+                Pubsub.trigger(App.Events.NEW_PAGE, this.collection.info().previous, selectLast);
             }
         },
 
@@ -82,7 +80,7 @@ define([
             }
 
             if (this.collection.info().next) {
-                Pubsub.publish(App.Events.NEW_PAGE, [this.collection.info().next]);
+                Pubsub.trigger(App.Events.NEW_PAGE, this.collection.info().next);
             }
         }
 

@@ -10,8 +10,6 @@ define([
 
         menuTemplate:Handlebars.compile(searchMenuTemplate),
 
-        handlers:[],
-
         events:{
             "keydown #searchText":"onKeyDown"
         },

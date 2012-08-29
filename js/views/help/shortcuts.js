@@ -19,13 +19,11 @@ define([
             "keydown":"modalKeydown"
         },
 
-        handlers:[],
-
         initialize:function ($selector) {
             // in this specific case we can add container as el because we will never close or review this view
             this.$el = $selector;
-            this.handlers.push(Pubsub.subscribe(App.Events.KEYBOARD_CALLED, this.render.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.VIEW_CHANGED, this.viewChanged.bind(this)));
+            Pubsub.on(App.Events.KEYBOARD_CALLED, this.render.bind(this), this);
+            Pubsub.on(App.Events.VIEW_CHANGED, this.viewChanged.bind(this), this);
         },
 
         render:function () {

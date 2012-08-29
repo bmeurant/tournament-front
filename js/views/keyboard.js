@@ -44,7 +44,7 @@ define([
 
         pushEvent:function (appEvent, event) {
 
-            Pubsub.publish(appEvent, [event]);
+            Pubsub.trigger(appEvent, event);
         },
 
         isModalActive:function () {

@@ -21,8 +21,6 @@ define([
 
         types:['details', 'edit', 'teams'],
 
-        handlers:[],
-
         /**
          * Initialize view
          *
@@ -32,7 +30,7 @@ define([
         initialize:function (id, viewType) {
             this.id = id;
             this.viewType = viewType;
-            this.handlers.push(Pubsub.subscribe(App.Events.VIEW_CHANGED, this.updatePills.bind(this)));
+            Pubsub.on(App.Events.VIEW_CHANGED, this.updatePills.bind(this), this);
         },
 
         /**
@@ -49,8 +47,8 @@ define([
 
             if (this.viewType != viewType) {
                 this.viewType = viewType;
-                Pubsub.publish(App.Events.CHANGE_VIEW, [viewType]);
-                Pubsub.publish(App.Events.REMOVE_ALERT);
+                Pubsub.trigger(App.Events.CHANGE_VIEW, viewType);
+                Pubsub.trigger(App.Events.REMOVE_ALERT);
             }
         },
 

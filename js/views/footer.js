@@ -16,8 +16,6 @@ define([
             "click p.shortcuts-menu a":"showShortcuts"
         },
 
-        handlers:[],
-
         initialize:function () {
         },
 
@@ -29,7 +27,7 @@ define([
         showShortcuts:function (event) {
             event.stopPropagation();
             event.preventDefault();
-            Pubsub.publish(App.Events.KEYBOARD_CALLED);
+            Pubsub.trigger(App.Events.KEYBOARD_CALLED);
         }
 
     });

@@ -17,7 +17,6 @@ define([
             viewType:'edit',
 
             template:Handlebars.compile(participantEditTemplate),
-            handlers:[],
 
             events:{
                 "drop .well":"dropHandler",
@@ -44,17 +43,17 @@ define([
                 // allow backbone-validation view callbacks (for error display)
                 Backbone.Validation.bind(this);
 
-                this.handlers.push(Pubsub.subscribe(App.Events.SAVE_ELEM, this.submitForm.bind(this)));
+                Pubsub.on(App.Events.SAVE_ELEM, this.submitForm.bind(this), this);
             },
 
             /**
-             * Remove all view bindings (events and PubSub). Listeners will not be called anymore
+             * Remove all view bindings (events and Pubsub). Listeners will not be called anymore
              */
             removeBindings:function () {
                 this.unbind();
                 if (this.handlers) {
                     $.each(this.handlers, function (index, value) {
-                        Pubsub.unsubscribe(value);
+                        Pubsub.off(value);
                     });
                 }
             },
@@ -135,7 +134,7 @@ define([
                     });
                 }
                 else {
-                    Pubsub.publish(App.Events.ALERT_RAISED, ['Warning!', 'Fix validation errors and try again', 'alert-warning']);
+                    Pubsub.trigger(App.Events.ALERT_RAISED, 'Warning!', 'Fix validation errors and try again', 'alert-warning');
                 }
             },
 
@@ -148,7 +147,7 @@ define([
             onSaveError:function (model, resp) {
                 // error is an http (server) one
                 if (resp.hasOwnProperty("status")) {
-                    Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to update this item', 'alert-error']);
+                    Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to update this item', 'alert-error');
                 }
             },
 
@@ -178,7 +177,7 @@ define([
                 // store the fact that the model has been updated
                 this.updated = true;
 
-                Pubsub.publish(App.Events.ALERT_RAISED, ['Success!', 'Participant saved successfully', 'alert-success']);
+                Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Participant saved successfully', 'alert-success');
 
                 // restore the focus on the last acceded field before saving
                 if (this.focusedField) {
@@ -245,7 +244,7 @@ define([
                         callbackSuccess();
                     })
                     .fail(function () {
-                        Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while uploading ' + file.name, 'alert-error']);
+                        Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while uploading ' + file.name, 'alert-error');
                     });
             },
 

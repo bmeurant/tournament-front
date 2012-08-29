@@ -15,8 +15,6 @@ define([
         menuTemplate:Handlebars.compile(deletionsMenuTemplate),
         nbDelsSelector:".nb-dels",
 
-        handlers:[],
-
         // For these main view types, the deletion menu will be completely rendered
         acceptedTypes:['details', 'edit', 'list'],
         ignoreElemTypes:['deletions'],
@@ -40,17 +38,17 @@ define([
             this.$el = $("<ul>").addClass("nav");
             this.el = this.$el.get(0);
 
-            // Register PubSub bindings
-            this.handlers.push(Pubsub.subscribe(App.Events.DRAG_START, this.onDragStart.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.DRAG_END, this.onDragEnd.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_POPULATED, this.renderDels.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.DELETION_CANCELED, this.renderDels.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.DELETION_CONFIRMED, this.renderDels.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.VIEW_CHANGED, this.onViewChanged.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.DELETIONS_CALLED, this.moveToDeletionsView.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.CONFIRM_DELS_CALLED, this.confirmDeletions.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.CANCEL_DELS_CALLED, this.cancelDeletions.bind(this)));
-            this.handlers.push(Pubsub.subscribe(App.Events.DELETE_ELEM_FROM_VIEW, this.deleteElem.bind(this)));
+            // Register Pubsub bindings
+            Pubsub.on(App.Events.DRAG_START, this.onDragStart.bind(this), this);
+            Pubsub.on(App.Events.DRAG_END, this.onDragEnd.bind(this), this);
+            Pubsub.on(App.Events.DELETIONS_POPULATED, this.renderDels.bind(this), this);
+            Pubsub.on(App.Events.DELETION_CANCELED, this.renderDels.bind(this), this);
+            Pubsub.on(App.Events.DELETION_CONFIRMED, this.renderDels.bind(this), this);
+            Pubsub.on(App.Events.VIEW_CHANGED, this.onViewChanged.bind(this), this);
+            Pubsub.on(App.Events.DELETIONS_CALLED, this.moveToDeletionsView.bind(this), this);
+            Pubsub.on(App.Events.CONFIRM_DELS_CALLED, this.confirmDeletions.bind(this), this);
+            Pubsub.on(App.Events.CANCEL_DELS_CALLED, this.cancelDeletions.bind(this), this);
+            Pubsub.on(App.Events.DELETE_ELEM_FROM_VIEW, this.deleteElem.bind(this), this);
 
         },
 
@@ -87,7 +85,7 @@ define([
             this.storeInLocalStorage();
             this.renderDels();
 
-            Pubsub.publish(App.Events.ELEM_DELETED_FROM_BAR, [id]);
+            Pubsub.trigger(App.Events.ELEM_DELETED_FROM_BAR, id);
         },
 
         /**
@@ -112,7 +110,7 @@ define([
             // handles element deletion or ignore any other dropped element
             if ((id != null) && (id != "")) {
                 this.deleteElement(elemType, id);
-                Pubsub.publish(App.Events.REMOVE_ALERT);
+                Pubsub.trigger(App.Events.REMOVE_ALERT);
             }
 
             this.onDragEnd(elemType, id);
@@ -141,7 +139,7 @@ define([
             if (elemType && id) {
                 this.clearDropZone();
                 this.renderDels();
-                Pubsub.publish(App.Events.ELEM_DELETED_FROM_BAR, [id, elemType]);
+                Pubsub.trigger(App.Events.ELEM_DELETED_FROM_BAR, id, elemType);
             }
         },
 
@@ -251,13 +249,13 @@ define([
             var finalCollectionLength = this.countElements(this.collection);
 
             if (finalCollectionLength == 0) {
-                Pubsub.publish(App.Events.ALERT_RAISED, ['Success!', 'Elements successfully deleted', 'alert-success']);
+                Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Elements successfully deleted', 'alert-success');
             }
             else if (finalCollectionLength == initialCollectionLength) {
-                Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'Error occurred while deleting these elements', 'alert-error']);
+                Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'Error occurred while deleting these elements', 'alert-error');
             }
             else {
-                Pubsub.publish(App.Events.ALERT_RAISED, ['Warning!', 'Error occurred while deleting some elements', 'alert-warning']);
+                Pubsub.trigger(App.Events.ALERT_RAISED, 'Warning!', 'Error occurred while deleting some elements', 'alert-warning');
             }
 
             // save collection
@@ -265,7 +263,7 @@ define([
 
             this.render();
 
-            Pubsub.publish(App.Events.DELETIONS_CONFIRMED);
+            Pubsub.trigger(App.Events.DELETIONS_CONFIRMED);
 
         },
 
@@ -285,8 +283,8 @@ define([
 
             this.render();
 
-            Pubsub.publish(App.Events.ALERT_RAISED, ['Success!', 'Deletion canceled', 'alert-success']);
-            Pubsub.publish(App.Events.DELETIONS_CANCELED);
+            Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Deletion canceled', 'alert-success');
+            Pubsub.trigger(App.Events.DELETIONS_CANCELED);
         },
 
         /**
@@ -296,7 +294,7 @@ define([
         removeElement:function (event) {
             event.stopPropagation();
             event.preventDefault();
-            Pubsub.publish(App.Events.DELETE_ELEM_FROM_BAR);
+            Pubsub.trigger(App.Events.DELETE_ELEM_FROM_BAR);
         },
 
         /**

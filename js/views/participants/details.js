@@ -11,12 +11,6 @@ define([
 
         template:Handlebars.compile(detailsTemplate),
 
-        handlers:[],
-
-        events:{
-
-        },
-
         elemType: 'participant',
         viewType:'details',
 
