@@ -24,67 +24,39 @@ define([
         },
 
         listParticipants:function (params) {
-            this.showView($('#content'), ParticipantListView, [params]);
+            var view = new ParticipantListView (params);
+            $('#content').html(view.render().el);
         },
 
         showParticipant:function (id) {
-            this.showView($('#content'), ParticipantView, [id, 'details']);
+            var view = new ParticipantView (id, 'details');
+            $('#content').html(view.render().el);
         },
 
         editParticipant:function (id) {
-            this.showView($('#content'), ParticipantView, [id, 'edit']);
+            var view = new ParticipantView (id, 'edit');
+            $('#content').html(view.render().el);
         },
 
         addParticipant:function () {
-            this.showView($('#content'), ParticipantView, [null, 'add']);
+            var view = new ParticipantView (null, 'add');
+            $('#content').html(view.render().el);
         },
 
         showDeletions:function () {
-            this.showView($('#content'), DeletionsView, []);
+            var view = new DeletionsView ();
+            $('#content').html(view.render().el);
         },
 
         showHelp:function () {
-            this.showView($('#content'), HelpView, []);
+            var view = new HelpView ();
+            $('#content').html(view.render().el);
         },
 
         defaultAction:function () {
             this.navigate("participants", true);
-        },
-
-        /**
-         * This methods wrap initialization and rendering of main view in order to guarantee
-         * that any previous main view is properly closed and unbind.
-         *
-         * Otherwise events and listeners are raise twice or more and the application becomes unstable
-         *
-         * @param $selector jquery selector in which the view has to be rendered
-         * @param View View to create
-         * @param args optional view constructor arguments
-         * @return {Object} created View
-         */
-        showView:function ($selector, View, args) {
-            // initialize args if null
-            args = args || [];
-
-            // clean previous view
-            if (App.Views.currentView) {
-                App.Views.currentView.close();
-            }
-
-            // insertion of this in arguments in order to perform dynamic constructor call
-            args.splice(0, 0, this);
-
-            // call constructor and initialize view
-            var view = new (Function.prototype.bind.apply(View, args));
-
-            // render view
-            $selector.html(view.render().el);
-
-            // replace global accessor of current view
-            App.Views.currentView = view;
-
-            return view;
         }
+
     });
 
     var initialize = function () {
