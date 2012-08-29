@@ -133,24 +133,6 @@ define([
         },
 
         /**
-         * Close the current view and any of its embedded components in order
-         * to unbind events and handlers that should not be triggered anymore
-         */
-        close:function () {
-
-            this.navigationView.close();
-
-            // if no linkedViews
-            if (this.mainView && (!this.linkedViewsInstances || this.linkedViewsInstances.length == 0 )) {
-                this.mainView.close();
-            }
-
-            this.closeLinkedViews();
-
-            Backbone.View.prototype.close.apply(this, arguments);
-        },
-
-        /**
          * Render all views
          */
         showTemplate:function () {
@@ -219,11 +201,6 @@ define([
 
         initializeMainView:function () {
 
-            // it a previous main view exists, close (and unbind) it
-            if (this.mainView) {
-                this.mainView.close();
-            }
-
             // instantiates view depending on its type
             switch (this.viewType) {
                 case 'details':
@@ -240,9 +217,6 @@ define([
         },
 
         initializeLinkedViews:function () {
-
-            // close any other existing view
-            this.closeLinkedViews();
 
             // initialize instances container and add main view instance on its index
             this.linkedViewsInstances = [];
@@ -265,14 +239,6 @@ define([
                 this.recordLinkedView(i);
             }
 
-        },
-
-        closeLinkedViews:function () {
-            if (this.linkedViewsInstances) {
-                $.each(this.linkedViewsInstances, function (index, value) {
-                    value.close();
-                });
-            }
         },
 
         /**

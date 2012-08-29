@@ -60,15 +60,11 @@ define([
         },
 
         setMenu:function (MenuView) {
-            if (this.menuView)
-                this.menuView.close();
             this.menuView = new MenuView();
             $('.actions-menu').html(this.menuView.el);
         },
 
         clearMenu:function () {
-            if (this.menuView)
-                this.menuView.close();
             $('.actions-menu').html("&nbsp;");
         },
 

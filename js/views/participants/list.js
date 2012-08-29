@@ -321,16 +321,6 @@ define([
                 }
             },
 
-            /**
-             * Close the current view and any of its embedded components in order
-             * to unbind events and handlers that should not be triggered anymore
-             */
-            close:function () {
-
-                this.paginationView.close();
-                Backbone.View.prototype.close.apply(this, arguments);
-            },
-
             newPage:function (id, selectLast) {
                 this.askedPage = id;
 
@@ -346,7 +336,7 @@ define([
                 }
             },
 
-            beforeClose:function () {
+            onDispose:function () {
                 this.hideTooltips();
             }
 

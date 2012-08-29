@@ -100,7 +100,7 @@ define([
             this.$el.find("div.title").tooltip('hide');
         },
 
-        beforeClose:function () {
+        onDispose:function () {
             this.hideTooltips();
         }
 

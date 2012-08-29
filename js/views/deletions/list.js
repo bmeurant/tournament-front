@@ -393,7 +393,7 @@ define([
                 this.$el.find("li.thumbnail a").tooltip('hide');
             },
 
-            beforeClose:function () {
+            onDispose:function () {
                 this.hideTooltips();
             },
 
