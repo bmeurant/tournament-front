@@ -9,8 +9,9 @@ define([
 
     return Backbone.View.extend({
 
-        initialize: function() {
-            this.$el.addClass('row').attr('id', 'help');
+        attributes: {
+            id: 'help',
+            class: 'row'
         },
 
         render: function() {

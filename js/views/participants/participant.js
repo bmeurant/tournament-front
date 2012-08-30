@@ -21,7 +21,7 @@ define([
         elemType: 'participant',
 
         events: {
-            'dragend': 'dragEndHandler'
+            dragend: 'dragEndHandler'
         },
 
         attributes: {
