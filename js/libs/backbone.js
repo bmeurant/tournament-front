@@ -181,7 +181,7 @@
   var Model = Backbone.Model = function(attributes, options) {
     var defaults;
     attributes || (attributes = {});
-    if (options && options.collection) this.collection = options.collection;
+    if (options && options.elemCollection) this.collection = options.elemCollection;
     if (options && options.parse) attributes = this.parse(attributes);
     if (defaults = getValue(this, 'defaults')) {
       attributes = _.extend({}, defaults, attributes);
@@ -409,7 +409,7 @@
       var success = options.success;
 
       var destroy = function() {
-        model.trigger('destroy', model, model.collection, options);
+        model.trigger('destroy', model, model.elemCollection, options);
       };
 
       options.success = function(resp) {
@@ -433,7 +433,7 @@
     // using Backbone's restful methods, override this to change the endpoint
     // that will be called.
     url: function() {
-      var base = getValue(this, 'urlRoot') || getValue(this.collection, 'url') || urlError();
+      var base = getValue(this, 'urlRoot') || getValue(this.elemCollection, 'url') || urlError();
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) === '/' ? '' : '/') + encodeURIComponent(this.id);
     },
@@ -834,7 +834,7 @@
     // Prepare a model or hash of attributes to be added to this collection.
     _prepareModel: function(attrs, options) {
       if (attrs instanceof Model) {
-        if (!attrs.collection) attrs.collection = this;
+        if (!attrs.elemCollection) attrs.collection = this;
         return attrs;
       }
       options || (options = {});
@@ -846,7 +846,7 @@
 
     // Internal method to remove a model's ties to a collection.
     _removeReference: function(model) {
-      if (this === model.collection) delete model.collection;
+      if (this === model.elemCollection) delete model.elemCollection;
       model.off('all', this._onModelEvent, this);
     },
 
@@ -1180,7 +1180,7 @@
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
   // List of view options to be merged as properties.
-  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName'];
+  var viewOptions = ['model', 'elemCollection', 'el', 'id', 'attributes', 'className', 'tagName'];
 
   // Set up all inheritable **Backbone.View** properties and methods.
   _.extend(View.prototype, Events, {
@@ -1210,7 +1210,7 @@
     dispose: function() {
       this.undelegateEvents();
       if (this.model) this.model.off(null, null, this);
-      if (this.collection) this.collection.off(null, null, this);
+      if (this.elemCollection) this.elemCollection.off(null, null, this);
       return this;
     },
 

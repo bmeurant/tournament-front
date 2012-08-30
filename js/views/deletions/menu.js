@@ -192,7 +192,7 @@ define([
          */
         renderDels:function () {
             this.getFromLocalStorage();
-            var nbDels = this.countElements(this.collection);
+            var nbDels = this.countElements(this.elemCollection);
             $(this.nbDelsSelector).text(nbDels);
             nbDels > 0 ? $(".delete-actions").removeClass("hidden") : $(".delete-actions").addClass("hidden");
         },
@@ -220,7 +220,7 @@ define([
 
             var elements = [];
 
-            $.each(this.collection, function (type, idArray) {
+            $.each(this.elemCollection, function (type, idArray) {
                 $.each(idArray, function (index, currentId) {
                     elements.push({type:type, id:currentId, index:index});
                 }.bind(this));
@@ -237,7 +237,7 @@ define([
          */
         afterRemove:function (err, results) {
 
-            var initialCollectionLength = this.countElements(this.collection);
+            var initialCollectionLength = this.countElements(this.elemCollection);
             this.emptyCollection();
 
             $.each(results, function (index, result) {
@@ -248,7 +248,7 @@ define([
 
             }.bind(this));
 
-            var finalCollectionLength = this.countElements(this.collection);
+            var finalCollectionLength = this.countElements(this.elemCollection);
 
             if (finalCollectionLength == 0) {
                 Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Elements successfully deleted', 'alert-success');

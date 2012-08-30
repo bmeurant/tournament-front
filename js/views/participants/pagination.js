@@ -31,7 +31,7 @@ define([
         render:function (collection) {
             this.collection = collection;
 
-            this.$el.html(paginationTemplate({info:this.collection.info(), firstPage:this.collection.paginator_ui.firstPage}));
+            this.$el.html(paginationTemplate({info:this.elemCollection.info(), firstPage:this.elemCollection.paginator_ui.firstPage}));
 
             return this;
         },
@@ -65,8 +65,8 @@ define([
                 event.preventDefault();
             }
 
-            if (this.collection.info().previous) {
-                Pubsub.trigger(App.Events.NEW_PAGE, this.collection.info().previous, selectLast);
+            if (this.elemCollection.info().previous) {
+                Pubsub.trigger(App.Events.NEW_PAGE, this.elemCollection.info().previous, selectLast);
             }
         },
 
@@ -77,8 +77,8 @@ define([
                 event.preventDefault();
             }
 
-            if (this.collection.info().next) {
-                Pubsub.trigger(App.Events.NEW_PAGE, this.collection.info().next);
+            if (this.elemCollection.info().next) {
+                Pubsub.trigger(App.Events.NEW_PAGE, this.elemCollection.info().next);
             }
         }
 

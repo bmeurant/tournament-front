@@ -81,12 +81,12 @@ define([
             populateCollection:function () {
 
                 // if collection is empty, don't do anything but rendering view
-                if (this.countElements(this.collection) == 0) {
+                if (this.countElements(this.elemCollection) == 0) {
                     this.showTemplate();
                 }
                 else {
                     var elements = [];
-                    $.each(this.collection, function (elemType, idArray) {
+                    $.each(this.elemCollection, function (elemType, idArray) {
                         $.each(idArray, function (index, id) {
                             elements.push({type:elemType, id:id, index:index});
 
@@ -107,7 +107,7 @@ define([
                     .fail(function (jqXHR) {
                     if (jqXHR.status == 404) {
                         // element obviously already deleted from server. Ignore it and remove from local collection
-                        this.collection[elem.type].splice(elem.index, 1);
+                        this.elemCollection[elem.type].splice(elem.index, 1);
                     }
 
                     // callback is called with null error parameter because otherwise it breaks the
@@ -135,7 +135,7 @@ define([
                     Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to fetch participants', 'alert-error');
                 }
                 // there is at least on error
-                else if (successes.length < this.countElements(this.collection)) {
+                else if (successes.length < this.countElements(this.elemCollection)) {
                     Pubsub.trigger(App.Events.ALERT_RAISED, 'Warning!', 'Some participants could not be retrieved', 'alert-warning');
                 }
 
@@ -295,7 +295,7 @@ define([
                 var elem = {};
 
                 // find and remove the element from the deletions collection
-                $.each(this.collection[elemType], function (index, id) {
+                $.each(this.elemCollection[elemType], function (index, id) {
                     if (id == idElem) {
                         elem.id = id;
                         elem.index = index;
@@ -311,7 +311,7 @@ define([
 
                 this.hideTooltips();
 
-                this.collection[elem.type].splice(elem.index, 1);
+                this.elemCollection[elem.type].splice(elem.index, 1);
                 // remove element from the current view
                 $("#" + elem.id).remove();
 

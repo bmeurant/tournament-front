@@ -20,7 +20,7 @@ define([
          */
         initCollection:function () {
             this.getFromLocalStorage();
-            if (!this.collection || Object.keys(this.collection).length == 0) {
+            if (!this.elemCollection || Object.keys(this.elemCollection).length == 0) {
                 this.emptyCollection();
             }
             this.storeInLocalStorage();
@@ -30,22 +30,22 @@ define([
          * Creates an empty collection with the correct format
          */
         emptyCollection:function () {
-            this.collection = {};
-            this.collection.participant = [];
+            this.elemCollection = {};
+            this.elemCollection.participant = [];
         },
 
         /**
          * Retrieve collection from local storage
          */
         getFromLocalStorage:function () {
-            this.collection = JSON.parse(localStorage.getItem('deletedElements'));
+            this.elemCollection = JSON.parse(localStorage.getItem('deletedElements'));
         },
 
         /**
          * Save current collection state in local storage
          */
         storeInLocalStorage:function () {
-            localStorage.setItem('deletedElements', JSON.stringify(this.collection));
+            localStorage.setItem('deletedElements', JSON.stringify(this.elemCollection));
         },
 
         /**
@@ -57,13 +57,13 @@ define([
         addToCollection:function (elemType, id) {
 
             // initialize collection elemType hash key if not exists
-            if (!this.collection[elemType]) {
-                this.collection[elemType] = [];
+            if (!this.elemCollection[elemType]) {
+                this.elemCollection[elemType] = [];
             }
 
             // if the collection does not already contains the element, add it.
-            if (this.collection[elemType].indexOf(id) < 0) {
-                this.collection[elemType].push(id);
+            if (this.elemCollection[elemType].indexOf(id) < 0) {
+                this.elemCollection[elemType].push(id);
             }
         },
 
@@ -90,7 +90,7 @@ define([
                 .fail(function (jqXHR) {
                 if (jqXHR.status == 404) {
                     // element obviously already deleted from server. Ignore it and remove from local collection
-                    this.collection[elem.type].splice(elem.index, 1);
+                    this.elemCollection[elem.type].splice(elem.index, 1);
                 }
 
                 // callback is called with null error parameter because otherwise it breaks the
