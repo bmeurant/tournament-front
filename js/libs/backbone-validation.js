@@ -234,7 +234,7 @@ Backbone.Validation = (function(_){
       // or collection
       bind: function(view, options) {
         var model = view.model,
-            collection = view.elemCollection;
+            collection = view.collection;
         options = _.extend({}, defaultOptions, defaultCallbacks, options);
 
         if(typeof model === 'undefined' && typeof collection === 'undefined'){
@@ -258,7 +258,7 @@ Backbone.Validation = (function(_){
       // or collection
       unbind: function(view) {
         var model = view.model,
-            collection = view.elemCollection;
+            collection = view.collection;
 
         if(model) {
           unbindModel(view.model);
