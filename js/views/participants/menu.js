@@ -5,29 +5,31 @@ define([
     'resthub-handlebars',
     'hbs!templates/participants/menu.html',
     'pubsub'
-], function ($, _, Backbone, Handlebars, menuTemplate, Pubsub) {
+], function($, _, Backbone, Handlebars, menuTemplate, Pubsub) {
 
     return Backbone.View.extend({
 
-        elemType:'participant',
+        elemType: 'participant',
 
-        events:{
-            "click .save":"saveElement"
+        events: {
+            "click .save": "saveElement"
+        },
+
+        tagName: "ul",
+        attributes: {
+            class: "nav"
         },
 
         // displayable actions on menu depending of the current view type
-        actions:{
-            'list':['add'],
-            'details':['list', 'add'],
-            'edit':['save', 'list', 'add'],
-            'add':['save', 'list'],
-            'no':[]
+        actions: {
+            list: ['add'],
+            details: ['list', 'add'],
+            edit: ['save', 'list', 'add'],
+            add: ['save', 'list'],
+            no: []
         },
 
-        initialize:function () {
-
-            this.$el = $("<ul>").addClass("nav");
-            this.el = this.$el.get(0);
+        initialize: function() {
 
             // default type
             this.viewType = "";
@@ -37,7 +39,7 @@ define([
             Pubsub.on(App.Events.LIST_CALLED, this.backToListElement, this);
             Pubsub.on(App.Events.ECHAP_CALLED, this.backToElementHome, this);
 
-            Handlebars.registerHelper('hidden', function (viewType) {
+            Handlebars.registerHelper('hidden', function(viewType) {
                 return _.indexOf(this.actions[this.viewType], viewType) < 0 ? "hidden" : "";
             }.bind(this));
         },
@@ -48,7 +50,7 @@ define([
          * @param elemType type of the element managed by the main view
          * @param viewType main view type
          */
-        onViewChanged:function (elemType, viewType) {
+        onViewChanged: function(elemType, viewType) {
             if (elemType == this.elemType) {
                 this.viewType = viewType;
                 this.render();
@@ -60,26 +62,26 @@ define([
          *
          * @param event event raised
          */
-        saveElement:function (event) {
+        saveElement: function(event) {
             event.stopPropagation();
             event.preventDefault();
             Pubsub.trigger(App.Events.SAVE_ELEM);
         },
 
-        render:function () {
+        render: function() {
             this.$el.html(menuTemplate());
             return this;
         },
 
-        backToElementHome:function () {
+        backToElementHome: function() {
             Backbone.history.navigate("/participants", true);
         },
 
-        backToListElement:function () {
+        backToListElement: function() {
             Backbone.history.navigate("/participants", true);
         },
 
-        addElement:function () {
+        addElement: function() {
             Backbone.history.navigate("/participant/add", true);
         }
 

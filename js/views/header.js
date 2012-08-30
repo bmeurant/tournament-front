@@ -9,27 +9,28 @@ define([
     'views/search/menu',
     'views/participants/menu',
     'pubsub'
-], function ($, _, Backbone, Handlebars, bdd, headerTemplate, DeletionsMenuView, SearchMenuView, ParticipantsMenuView, Pubsub) {
+], function($, _, Backbone, Handlebars, bdd, headerTemplate, DeletionsMenuView, SearchMenuView, ParticipantsMenuView, Pubsub) {
 
     return Backbone.View.extend({
 
-        menuElemType:"no",
+        menuElemType: "no",
 
-        events:{
-            "click div":"menuClicked",
-            "click .navbar-search .dropdown-menu li a":"toggleSearchOption"
+        events: {
+            "click div": "menuClicked",
+            "click .navbar-search .dropdown-menu li a": "toggleSearchOption"
         },
 
-        searchOptions:{
-            participants:true,
-            teams:true,
-            tournaments:true
+        searchOptions: {
+            participants: true,
+            teams: true,
+            tournaments: true
         },
 
-        initialize:function () {
-            this.$el = $("<div>").addClass("navbar").addClass("navbar-inverse").addClass("navbar-fixed-top");
-            this.el = this.$el.get(0);
+        attributes: {
+            class: "navbar navbar-inverse navbar-fixed-top"
+        },
 
+        initialize: function() {
             Pubsub.on(App.Events.HOME_CALLED, this.backToGeneralHome, this);
             Pubsub.on(App.Events.PARTICIPANTS_HOME_CALLED, this.moveToParticipantHome, this);
             Pubsub.on(App.Events.TEAMS_HOME_CALLED, this.moveToTeamsHome, this);
@@ -42,34 +43,34 @@ define([
 
         },
 
-        render:function () {
+        render: function() {
             this.$el.html(headerTemplate());
             this.deletionMenu.render().$el.appendTo(this.$el.find('.element-menu.delete-menu'));
             this.searchMenu.render().$el.appendTo(this.$el.find('.search-menu'));
             return this;
         },
 
-        selectMenuItem:function (menuItem) {
+        selectMenuItem: function(menuItem) {
             this.$el.find('.nav li').removeClass('active');
             if (menuItem) {
                 this.$el.find('.' + menuItem).addClass('active');
             }
         },
 
-        setMenu:function (MenuView) {
+        setMenu: function(MenuView) {
             this.menuView = new MenuView();
             $('.actions-menu').html(this.menuView.el);
         },
 
-        clearMenu:function () {
+        clearMenu: function() {
             $('.actions-menu').html("&nbsp;");
         },
 
-        menuClicked:function () {
+        menuClicked: function() {
             Pubsub.trigger(App.Events.REMOVE_ALERT);
         },
 
-        toggleSearchOption:function (event) {
+        toggleSearchOption: function(event) {
             event.stopPropagation();
             event.preventDefault();
             var $target = $(event.currentTarget);
@@ -78,28 +79,28 @@ define([
             this.searchOptions[$target.attr('id')] = !this.searchOptions[$target.attr('id')];
         },
 
-        toggleCheckBox:function ($checkbox) {
+        toggleCheckBox: function($checkbox) {
             $checkbox.toggleClass("icon-checked");
             $checkbox.toggleClass("icon-unchecked");
         },
 
-        backToGeneralHome:function () {
+        backToGeneralHome: function() {
             Backbone.history.navigate("/", true);
         },
 
-        moveToParticipantHome:function () {
+        moveToParticipantHome: function() {
             Backbone.history.navigate("/participants", true);
         },
 
-        moveToTeamsHome:function () {
+        moveToTeamsHome: function() {
             Backbone.history.navigate("/teams", true);
         },
 
-        moveToGTHome:function () {
+        moveToGTHome: function() {
             Backbone.history.navigate("/games", true);
         },
 
-        focusOnSearch:function (event) {
+        focusOnSearch: function(event) {
             event.stopPropagation();
             event.preventDefault();
             $('#searchText').focus();
@@ -111,7 +112,7 @@ define([
          * @param elemType type of the element managed by the main view
          * @param viewType main view type
          */
-        onViewChanged:function (elemType, viewType) {
+        onViewChanged: function(elemType, viewType) {
 
             if (this.menuElemType != elemType) {
                 this.menuElemType = elemType;

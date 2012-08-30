@@ -28,6 +28,10 @@ define([
                 "focusout ul.thumbnails li.thumbnail a":"elemFocused"
             },
 
+            attributes : {
+              id: "deletions-container"
+            },
+
             JSONCollection:{},
 
             initialize:function () {
@@ -36,10 +40,6 @@ define([
                 AbstractView.prototype.initialize.apply(this, arguments);
                 this.events = _.extend({}, AbstractView.prototype.events, this.events);
                 this.handlers = _.extend([], AbstractView.prototype.handlers, this.handlers);
-
-                // override this.el because of abstract inheritance
-                this.$el = $("<div>").attr("id", "deletions-container");
-                this.el = this.$el.get(0);
 
                 // set defaut handler for click in order to handle both simple and dble click
                 this.firingFunc = this.cancelElementDeletion.bind(this);

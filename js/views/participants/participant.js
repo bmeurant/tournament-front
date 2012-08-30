@@ -11,30 +11,34 @@ define([
     'views/participants/edit',
     'views/participants/add',
     'pubsub'
-], function ($, _, Backbone, Handlebars, Participant, participantTemplate, NavigationView, miniatureTemplate, DetailsView, EditView, AddView, Pubsub) {
+], function($, _, Backbone, Handlebars, Participant, participantTemplate, NavigationView, miniatureTemplate, DetailsView, EditView, AddView, Pubsub) {
 
     /**
      * Manage global view surrounding all unitary participants views
      */
     return Backbone.View.extend({
 
-        elemType:'participant',
+        elemType: 'participant',
 
-        events:{
-            "dragend":"dragEndHandler"
+        events: {
+            "dragend": "dragEndHandler"
+        },
+
+        attributes: {
+            class: "row"
         },
 
         // management of linked views : i.e. views that could be switched with transition and without a
         // global re-redering
-        linkedViewsTypes:['details', 'edit'],
-        linkedViewsURLFragment:['', '/edit'],
-        linkedViewsClasses:[DetailsView, EditView],
-        linkedViewsInstances:[],
+        linkedViewsTypes: ['details', 'edit'],
+        linkedViewsURLFragment: ['', '/edit'],
+        linkedViewsClasses: [DetailsView, EditView],
+        linkedViewsInstances: [],
 
         // determines if the next view has to be re-rendered before switch
-        renderNext:false,
+        renderNext: false,
 
-        inTransition:false,
+        inTransition: false,
 
         /**
          * Initialize view
@@ -42,12 +46,9 @@ define([
          * @param id id of the participant
          * @param viewType main view type
          */
-        initialize:function (id, viewType) {
+        initialize: function(id, viewType) {
 
-            this.$el = $("<div>").addClass("row");
-            this.el = this.$el.get(0);
-
-            // manually bind this event because Backbone does not trigger events directly bind on el !
+            // manually bind this event because Backbone does not trigger events directly bound on el !
             this.$el.on("dragstart", this.dragStartHandler.bind(this));
 
             this.viewType = viewType;
@@ -73,12 +74,12 @@ define([
             Pubsub.on(App.Events.NEXT_CALLED, this.nextHandler, this);
         },
 
-        render:function () {
+        render: function() {
 
             if (this.model.id && this.deleted.indexOf(this.model.id) >= 0) {
                 Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'This participant is currently being deleted', 'alert-error');
 
-                setTimeout(function () {
+                setTimeout(function() {
                     Backbone.history.navigate("/participants", true);
                 }.bind(this), 100);
 
@@ -88,10 +89,10 @@ define([
             // retrieve model from server and render view
             if (this.model.id) {
                 this.model.fetch({
-                    success:function () {
+                    success: function() {
                         this.showTemplate();
                     }.bind(this),
-                    error:function () {
+                    error: function() {
                         Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to get participant', 'alert-error');
                     }
                 });
@@ -109,7 +110,7 @@ define([
          *
          * @param event event raised
          */
-        dragStartHandler:function (event) {
+        dragStartHandler: function(event) {
 
             this.navigationView.hideTooltips();
 
@@ -124,7 +125,7 @@ define([
             // To embed remote image, this should be cacheable and the remote server should implement the
             // corresponding cache politic
             var dragIcon = $("#dragIcon");
-            dragIcon.html(miniatureTemplate({participant:this.model.toJSON()}));
+            dragIcon.html(miniatureTemplate({participant: this.model.toJSON()}));
             event.originalEvent.dataTransfer.setDragImage(dragIcon.get(0), 50, 50);
 
             Pubsub.trigger(App.Events.DRAG_START);
@@ -133,7 +134,7 @@ define([
         /**
          * Render all views
          */
-        showTemplate:function () {
+        showTemplate: function() {
 
             this.$el.html(participantTemplate());
             this.navigationView.render().$el.appendTo(this.$el.find('#navigation'));
@@ -146,7 +147,7 @@ define([
         /**
          * Render main and linked views
          */
-        renderViews:function () {
+        renderViews: function() {
 
             this.initializeMainView();
 
@@ -162,7 +163,7 @@ define([
             }
 
             // give focus after a mini timeout because some browsers (FFX) need it to give focus
-            setTimeout(function () {
+            setTimeout(function() {
                 this.$el.find("form input:not(:disabled)").first().focus();
             }.bind(this), 1);
         },
@@ -170,16 +171,16 @@ define([
         /**
          * @return {Boolean} true if current main view is linked to others views
          */
-        mainIsLinkedView:function () {
+        mainIsLinkedView: function() {
             return this.linkedViewsTypes.indexOf(this.viewType) >= 0;
         },
 
-        renderMainView:function () {
+        renderMainView: function() {
             var $mainView = this.mainView.render().$el;
             this.$el.find('#view #edit').html($mainView).removeClass("hidden");
         },
 
-        renderLinkedViews:function () {
+        renderLinkedViews: function() {
             // get index of current main view
             var mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
 
@@ -197,7 +198,7 @@ define([
             }
         },
 
-        initializeMainView:function () {
+        initializeMainView: function() {
 
             // instantiates view depending on its type
             switch (this.viewType) {
@@ -214,7 +215,7 @@ define([
 
         },
 
-        initializeLinkedViews:function () {
+        initializeLinkedViews: function() {
 
             // initialize instances container and add main view instance on its index
             this.linkedViewsInstances = [];
@@ -244,7 +245,7 @@ define([
          *
          * @param i index of the view to record
          */
-        recordLinkedView:function (i) {
+        recordLinkedView: function(i) {
 
             // get the corresponding class and instantiate it, keeping it deactivated (argument 'false')
             var LinkedView = this.linkedViewsClasses[i];
@@ -265,16 +266,16 @@ define([
          * @param id id of the participant to delete
          * @param callbackSuccess callback to call if deletion is successful
          */
-        deleteFile:function (id, callbackSuccess) {
+        deleteFile: function(id, callbackSuccess) {
             $.ajax({
-                url:App.Config.serverRootURL + '/participant/' + id + '/photo',
-                type:'DELETE'
+                url: App.Config.serverRootURL + '/participant/' + id + '/photo',
+                type: 'DELETE'
             })
-                .done(function () {
+                .done(function() {
                     console.log("photo deleted successfully for id");
                     callbackSuccess();
                 })
-                .fail(function () {
+                .fail(function() {
                     Pubsub.trigger(App.Events.ALERT_RAISED, 'Warning!', 'Error occurred while deleting ' + id + 'photo', 'alert-warning');
                 });
         },
@@ -282,7 +283,7 @@ define([
         /**
          * Asks for current participant deletion
          */
-        deleteParticipant:function () {
+        deleteParticipant: function() {
             this.navigationView.hideTooltips();
             Pubsub.trigger(App.Events.DELETE_ELEM_FROM_VIEW, 'participant', this.model.id);
         },
@@ -290,7 +291,7 @@ define([
         /**
          * Handles effective current participant deletion
          */
-        onParticipantDeleted:function () {
+        onParticipantDeleted: function() {
             Backbone.history.navigate('/participants', true);
         },
 
@@ -299,7 +300,7 @@ define([
          *
          * @param viewType main view type to render
          */
-        changeParticipantView:function (viewType) {
+        changeParticipantView: function(viewType) {
 
             var oldType = this.viewType;
             this.viewType = viewType;
@@ -347,11 +348,11 @@ define([
          * @param $el jquery element on which register event
          * @param $oldView jquery element of the old view
          */
-        addTransitionCallbacks:function ($el, $oldView) {
-            $el.on('webkitTransitionEnd', {oldView:$oldView}, this.onTransitionEnd.bind(this));
-            $el.on('transitionend', {oldView:$oldView}, this.onTransitionEnd.bind(this));
-            $el.on('MSTransitionEnd', {oldView:$oldView}, this.onTransitionEnd.bind(this));
-            $el.on('oTransitionEnd', {oldView:$oldView}, this.onTransitionEnd.bind(this));
+        addTransitionCallbacks: function($el, $oldView) {
+            $el.on('webkitTransitionEnd', {oldView: $oldView}, this.onTransitionEnd.bind(this));
+            $el.on('transitionend', {oldView: $oldView}, this.onTransitionEnd.bind(this));
+            $el.on('MSTransitionEnd', {oldView: $oldView}, this.onTransitionEnd.bind(this));
+            $el.on('oTransitionEnd', {oldView: $oldView}, this.onTransitionEnd.bind(this));
         },
 
         /**
@@ -359,7 +360,7 @@ define([
          *
          * @param event raised event
          */
-        onTransitionEnd:function (event) {
+        onTransitionEnd: function(event) {
 
             // hide old view
             event.data.oldView.addClass("hidden");
@@ -384,7 +385,7 @@ define([
         /**
          *  Show the precedent linked view
          */
-        precedentHandler:function () {
+        precedentHandler: function() {
             if (!this.inTransition) {
                 if (this.mainIsLinkedView()) {
                     var mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
@@ -400,7 +401,7 @@ define([
         /**
          *  Show the next linked view
          */
-        nextHandler:function () {
+        nextHandler: function() {
             if (!this.inTransition) {
                 if (this.mainIsLinkedView()) {
                     var mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
@@ -413,7 +414,7 @@ define([
             }
         },
 
-        dragEndHandler:function (event) {
+        dragEndHandler: function(event) {
             Pubsub.trigger(App.Events.DRAG_END);
         }
 

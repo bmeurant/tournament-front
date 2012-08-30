@@ -8,13 +8,13 @@ define([
 
     return Backbone.View.extend({
 
-        events:{
-            "keydown #searchText":"onKeyDown"
+        tagName: "form",
+        attributes: {
+          class: "nav navbar-search pull-right dropdown"
         },
 
-        initialize:function () {
-            this.$el = $("<form>").addClass("nav").addClass("navbar-search").addClass("pull-right").addClass("dropdown");
-            this.el = this.$el.get(0);
+        events:{
+            "keydown #searchText":"onKeyDown"
         },
 
         render:function () {

@@ -19,6 +19,11 @@ define([
         acceptedTypes:['details', 'edit', 'list'],
         ignoreElemTypes:['deletions'],
 
+        tagName: "ul",
+        attributes: {
+            class: "nav"
+        },
+
         events:{
             "drop #deleteDropZone":"onDrop",
             "dragover #deleteDropZone":"onDragOver",
@@ -34,9 +39,6 @@ define([
             AbstractView.prototype.initialize.apply(this, arguments);
             this.events = _.extend({}, AbstractView.prototype.events, this.events);
             this.handlers = _.extend([], AbstractView.prototype.handlers, this.handlers);
-
-            this.$el = $("<ul>").addClass("nav");
-            this.el = this.$el.get(0);
 
             // Register Pubsub bindings
             Pubsub.on(App.Events.DRAG_START, this.onDragStart, this);
