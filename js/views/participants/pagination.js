@@ -17,21 +17,24 @@ define([
 
         viewType: 'pagination',
 
-        initialize: function() {
+        initialize: function(collection) {
+            this.collection = collection;
 
             Pubsub.on(App.Events.PAGE_UP_CALLED, this.previousPage, this);
             Pubsub.on(App.Events.PAGE_DOWN_CALLED, this.nextPage, this);
 
+            this.collection.on('reset', this.render.bind(this));
         },
 
-        initBindings: function() {
-
-        },
-
-        render: function(collection) {
-            this.collection = collection;
-
-            this.$el.html(paginationTemplate({info: this.collection.info(), firstPage: this.collection.paginator_ui.firstPage}));
+        render: function() {
+            this.$el.html(paginationTemplate(
+                {
+                    info: this.collection.info(),
+                    firstPage: this.collection.paginator_ui.firstPage,
+                    previous : this.collection.previous,
+                    next: this.collection.next
+                }
+            ));
 
             return this;
         },
@@ -52,13 +55,7 @@ define([
 
         },
 
-        /**
-         * switch to previous page
-         *
-         * @param event
-         * @param selectLast boolean - true if the last element of the previous page should be selected
-         */
-        previousPage: function(event, selectLast) {
+        previousPage: function(event) {
 
             if (event) {
                 event.stopPropagation();
@@ -66,7 +63,7 @@ define([
             }
 
             if (this.collection.previous) {
-                Pubsub.trigger(App.Events.NEW_PAGE, this.collection.previous, selectLast);
+                Pubsub.trigger(App.Events.NEW_PAGE, this.collection.previous);
             }
         },
 

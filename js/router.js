@@ -3,7 +3,7 @@ define([
     'underscore',
     'backbone',
     'backbone-queryparams',
-    'views/participants/listItems',
+    'views/participants/paginatedList',
     'views/participants/participant',
     'views/deletions/list',
     'views/help/help'
@@ -25,7 +25,7 @@ define([
 
         listParticipants: function(params) {
             var view = new ParticipantListView(params);
-            $('#content').html(view.render().el);
+            $('#content').html(view.el);
         },
 
         showParticipant: function(id) {

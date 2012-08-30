@@ -3,22 +3,24 @@ define([
     'underscore',
     'backbone',
     'resthub-handlebars',
-    'backbone-paginator',
     'collections/participants',
     'hbs!templates/participants/list.html',
-    'hbs!templates/participants/listItems.html',
-    'views/participants/pagination',
     'hbs!templates/participants/miniature.html',
     'mixins/selectable',
     'mixins/paginable',
     'pubsub',
     'bootstrap'
-], function($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, listTemplate, listItemsTemplate, PaginationView, participantMiniatureTemplate, Selectable, Paginable, Pubsub) {
+], function($, _, Backbone, Handlebars, ParticipantsCollection, listTemplate, participantMiniatureTemplate, Selectable, Paginable, Pubsub) {
 
     return Backbone.View.extend(
         _.extend({}, Selectable, Paginable, {
 
             elemType: 'participant',
+
+            tagName: 'ul',
+            attributes: {
+                class: 'thumbnails'
+            },
 
             events: {
                 "dragstart li.thumbnail[draggable='true']": 'dragStartHandler',
@@ -28,11 +30,9 @@ define([
                 'click li.thumbnail': 'hideTooltips'
             },
 
-            askedPage: 1,
-
-            initialize: function(params) {
-                this.collection = new ParticipantsCollection;
-                this.paginationView = new PaginationView();
+            initialize: function(params, collection) {
+                this.collection = collection ? collection : new ParticipantsCollection();
+                this.collection.on('reset', this.render.bind(this));
 
                 Pubsub.on(App.Events.ELEM_DELETED_FROM_BAR, this.participantDeleted, this);
                 Pubsub.on(App.Events.DELETIONS_CANCELED, this.cancelDeletions, this);
@@ -60,38 +60,34 @@ define([
                     return (this.deleted.indexOf(id) >= 0) ? 'disabled' : '';
                 }.bind(this));
 
+                var askedPage = 1;
                 if (params) {
-                    if (params.page && this.isValidPageNumber(params.page)) this.askedPage = parseInt(params.page);
+                    if (params.page && this.isValidPageNumber(params.page)) askedPage = parseInt(params.page);
                 }
+
+                this.newPage(askedPage);
             },
 
-            /**
-             * Render this view
-             *
-             * @param partials optional object containing partial views elements to render. if null, render all
-             * @param selectLast optional boolean. if true select the last element after rendering
-             * @return {*} the current view
-             */
-            render: function(partials, selectLast) {
+            render: function() {
 
-                this.initDeleted();
+                this.hideTooltips();
 
-                // reinitialize collection to force refresh
-                this.collection = new ParticipantsCollection();
+                this.$el.html(listTemplate({participants: this.collection.toJSON(), 'id_selected': this.idSelected}));
 
-                // get the participants collection from server
-                this.collection.goTo(this.askedPage,
-                    {
-                        success: function() {
-                            this.showTemplate(partials);
-                            if (selectLast) {
-                                this.selectLast(this.$el, 'li.thumbnail');
-                            }
-                        }.bind(this),
-                        error: function() {
-                            Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to fetch participants', 'alert-error');
-                        }
-                    });
+                this.initTooltips();
+
+                if (this.previousPage && (this.previousPage > this.collection.currentPage )) {
+                    this.selectLast(this.$el, 'li.thumbnail');
+                }
+
+                // if no element is currently select, select the first one
+                var $selected = this.findSelected(this.$el, 'li.thumbnail');
+                if (!$selected || $selected.length == 0) {
+                    this.selectFirst(this.$el, 'li.thumbnail');
+                }
+
+                window.history.pushState(null, 'Tournament', '/participants' + ((this.collection.info().currentPage != 1) ? '?page=' + this.collection.info().currentPage : ''));
+
                 return this;
             },
 
@@ -277,7 +273,9 @@ define([
                 var $newSelected = this.selectElement(this.$el, 'li.thumbnail', 'next');
 
                 if ($selected.attr('id') == $newSelected.attr('id')) {
-                    this.paginationView.nextPage();
+                    if (this.collection.next) {
+                        this.newPage(this.collection.next);
+                    }
                 }
 
             },
@@ -287,7 +285,9 @@ define([
                 var $newSelected = this.selectElement(this.$el, 'li.thumbnail', 'previous');
 
                 if ($selected.attr('id') == $newSelected.attr('id')) {
-                    this.paginationView.previousPage(event, true);
+                    if (this.collection.previous) {
+                        this.newPage(this.collection.previous);
+                    }
                 }
             },
 
@@ -318,10 +318,16 @@ define([
                 }
             },
 
-            newPage: function(id, selectLast) {
-                this.askedPage = id;
+            newPage: function(id) {
+                this.previousPage = this.collection.currentPage;
 
-                this.render({participants: true}, selectLast);
+                // get the participants collection from server
+                this.collection.goTo(id,
+                    {
+                        error: function() {
+                            Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to fetch participants', 'alert-error');
+                        }
+                    });
             },
 
             initDeleted: function() {

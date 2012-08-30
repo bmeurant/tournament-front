@@ -5,7 +5,7 @@ define([
     'resthub-handlebars',
     'hbs!templates/deletions/list.html',
     'views/deletions/abstract',
-    'hbs!templates/participants/listItems.html',
+    'hbs!templates/participants/list.html',
     'models/participant',
     'mixins/selectable',
     'pubsub',
