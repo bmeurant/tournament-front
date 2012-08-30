@@ -1,13 +1,11 @@
 define([
-    'jquery',
     'underscore',
     'backbone',
-    'resthub-handlebars',
-    'bootstrap',
     'hbs!templates/help/shortcuts.html',
     'hbs!templates/help/shortcuts/global.html',
-    'pubsub'
-], function($, _, Backbone, Handlebars, BootstrapModal, shortcutsTemplate, globalTemplate, Pubsub) {
+    'pubsub',
+    'bootstrap'
+], function(_, Backbone, shortcutsTemplate, globalTemplate, Pubsub) {
 
     return Backbone.View.extend({
 

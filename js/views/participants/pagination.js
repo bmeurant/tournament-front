@@ -1,13 +1,9 @@
 define([
     'jquery',
-    'underscore',
     'backbone',
-    'resthub-handlebars',
-    'backbone-paginator',
-    'collections/participants',
     'hbs!templates/participants/pagination.html',
     'pubsub'
-], function($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, paginationTemplate, Pubsub) {
+], function($, Backbone, paginationTemplate, Pubsub) {
 
     return Backbone.View.extend({
 

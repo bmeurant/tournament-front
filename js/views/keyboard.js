@@ -71,7 +71,7 @@ define([
             key('pagedown', function(event) {
                 this.pushEvent(App.Events.PAGE_DOWN_CALLED, event)
             }.bind(this));
-            key('?', function(event) {
+            key('shift+?', function(event) {
                 this.pushEvent(App.Events.HELP_CALLED, event)
             }.bind(this));
             key('k', function(event) {

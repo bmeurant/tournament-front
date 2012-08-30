@@ -1,11 +1,10 @@
 define([
-    'jquery',
     'underscore',
     'backbone',
     'resthub-handlebars',
     'hbs!templates/participants/menu.html',
     'pubsub'
-], function($, _, Backbone, Handlebars, menuTemplate, Pubsub) {
+], function(_, Backbone, Handlebars, menuTemplate, Pubsub) {
 
     return Backbone.View.extend({
 

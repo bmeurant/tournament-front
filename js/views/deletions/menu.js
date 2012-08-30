@@ -5,14 +5,12 @@ define([
     'resthub-handlebars',
     'hbs!templates/deletions/menu.html',
     'views/deletions/abstract',
-    'models/participant',
     'pubsub',
     'async'
-], function($, _, Backbone, Handlebars, deletionsMenuTemplate, AbstractView, Participant, Pubsub) {
+], function($, _, Backbone, Handlebars, deletionsMenuTemplate, AbstractView, Pubsub) {
 
     return AbstractView.extend({
 
-        menuTemplate: Handlebars.compile(deletionsMenuTemplate),
         nbDelsSelector: '.nb-dels',
 
         // For these main view types, the deletion menu will be completely rendered
@@ -36,9 +34,9 @@ define([
         initialize: function() {
 
             // call inherited constructor
-            AbstractView.prototype.initialize.apply(this, arguments);
             this.events = _.extend({}, AbstractView.prototype.events, this.events);
             this.handlers = _.extend([], AbstractView.prototype.handlers, this.handlers);
+            AbstractView.prototype.initialize.apply(this, arguments);
 
             // Register Pubsub bindings
             Pubsub.on(App.Events.DRAG_START, this.onDragStart, this);

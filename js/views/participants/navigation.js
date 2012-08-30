@@ -1,12 +1,8 @@
 define([
-    'jquery',
-    'underscore',
     'backbone',
-    'resthub-handlebars',
-    'models/participant',
     'hbs!templates/participants/navigation.html',
     'pubsub'
-], function($, _, Backbone, Handlebars, Participant, navigationTemplate, Pubsub) {
+], function(Backbone, navigationTemplate, Pubsub) {
 
     /**
      * Manage sub view to navigate between participants details and edit views

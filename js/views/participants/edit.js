@@ -2,13 +2,11 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'resthub-handlebars',
-    'models/participant',
     'hbs!templates/participants/edit.html',
-    'resthub-backbone-validation',
     'mixins/validatable',
-    'pubsub'
-], function($, _, Backbone, Handlebars, Participant, participantEditTemplate, BackboneValidation, Validatable, Pubsub) {
+    'pubsub',
+    'resthub-backbone-validation'
+], function($, _, Backbone, participantEditTemplate, Validatable, Pubsub) {
 
     return Backbone.View.extend(
         _.extend({}, Validatable, {

@@ -1,10 +1,8 @@
 define([
     'jquery',
-    'underscore',
     'backbone',
-    'resthub-handlebars',
     'hbs!templates/search/menu.html'
-], function($, _, Backbone, Handlebars, searchMenuTemplate) {
+], function($, Backbone, searchMenuTemplate) {
 
     return Backbone.View.extend({
 

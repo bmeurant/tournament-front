@@ -1,11 +1,8 @@
 define([
-    'jquery',
-    'underscore',
     'backbone',
-    'resthub-handlebars',
     'hbs!templates/footer.html',
     'pubsub'
-], function($, _, Backbone, Handlebars, footerTemplate, Pubsub) {
+], function(Backbone, footerTemplate, Pubsub) {
 
     return Backbone.View.extend({
 
@@ -14,6 +11,7 @@ define([
         },
 
         initialize: function() {
+            Pubsub.on(App.Events.HELP_CALLED, this.showHelp, this);
         },
 
         render: function() {
@@ -25,6 +23,10 @@ define([
             event.stopPropagation();
             event.preventDefault();
             Pubsub.trigger(App.Events.KEYBOARD_CALLED);
+        },
+
+        showHelp: function() {
+            Backbone.history.navigate('/help', true);
         }
 
     });

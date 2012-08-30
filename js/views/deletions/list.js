@@ -1,7 +1,6 @@
 define([
     'jquery',
     'underscore',
-    'backbone',
     'resthub-handlebars',
     'hbs!templates/deletions/list.html',
     'views/deletions/abstract',
@@ -10,7 +9,7 @@ define([
     'mixins/selectable',
     'pubsub',
     'async'
-], function($, _, Backbone, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, Selectable, Pubsub) {
+], function($, _, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, Selectable, Pubsub) {
 
     /**
      * Main view for displaying deletions

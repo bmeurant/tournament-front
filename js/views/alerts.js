@@ -1,12 +1,10 @@
 define([
     'jquery',
-    'underscore',
     'backbone',
-    'resthub-handlebars',
     'hbs!templates/alert.html',
     'pubsub',
     'bootstrap'
-], function($, _, Backbone, Handlebars, alertsTemplate, Pubsub) {
+], function($, Backbone, alertsTemplate, Pubsub) {
 
     return Backbone.View.extend({
 

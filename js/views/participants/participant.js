@@ -2,7 +2,6 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'resthub-handlebars',
     'models/participant',
     'hbs!templates/participants/participant.html',
     'views/participants/navigation',
@@ -11,7 +10,7 @@ define([
     'views/participants/edit',
     'views/participants/add',
     'pubsub'
-], function($, _, Backbone, Handlebars, Participant, participantTemplate, NavigationView, miniatureTemplate, DetailsView, EditView, AddView, Pubsub) {
+], function($, _, Backbone, Participant, participantTemplate, NavigationView, miniatureTemplate, DetailsView, EditView, AddView, Pubsub) {
 
     /**
      * Manage global view surrounding all unitary participants views

@@ -1,8 +1,7 @@
 define([
     'jquery',
-    'underscore',
     'backbone'
-], function($, _, Backbone) {
+], function($, Backbone) {
 
     /**
      * 'Abstract' view defining global controls, events, handlers and methods for 'concrete'

@@ -1,15 +1,12 @@
 define([
     'jquery',
-    'underscore',
     'backbone',
-    'resthub-handlebars',
-    'bootstrap',
     'hbs!templates/header.html',
     'views/deletions/menu',
     'views/search/menu',
     'views/participants/menu',
     'pubsub'
-], function($, _, Backbone, Handlebars, bdd, headerTemplate, DeletionsMenuView, SearchMenuView, ParticipantsMenuView, Pubsub) {
+], function($, Backbone, headerTemplate, DeletionsMenuView, SearchMenuView, ParticipantsMenuView, Pubsub) {
 
     return Backbone.View.extend({
 

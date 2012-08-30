@@ -5,7 +5,7 @@ define([
     'views/participants/pagination',
     'collections/participants',
     'pubsub'
-], function(Backbone, paginatedListTemplate, ListItemsView, PaginationView, ParticipantsCollection, Pubsub) {
+], function(Backbone, paginatedListTemplate, ListView, PaginationView, ParticipantsCollection, Pubsub) {
 
     return Backbone.View.extend({
 
@@ -13,7 +13,7 @@ define([
 
         initialize: function() {
             this.collection = new ParticipantsCollection();
-            this.listView = new ListItemsView({params: this.options.params, collection: this.collection});
+            this.listView = new ListView({params: this.options.params, collection: this.collection});
             this.paginationView = new PaginationView({collection: this.collection});
             this.render();
         },

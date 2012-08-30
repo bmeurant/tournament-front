@@ -3,14 +3,13 @@ define([
     'underscore',
     'backbone',
     'resthub-handlebars',
-    'collections/participants',
     'hbs!templates/participants/list.html',
     'hbs!templates/participants/miniature.html',
     'mixins/selectable',
     'mixins/paginable',
     'pubsub',
     'bootstrap'
-], function($, _, Backbone, Handlebars, ParticipantsCollection, listTemplate, participantMiniatureTemplate, Selectable, Paginable, Pubsub) {
+], function($, _, Backbone, Handlebars, listTemplate, participantMiniatureTemplate, Selectable, Paginable, Pubsub) {
 
     return Backbone.View.extend(
         _.extend(Selectable, Paginable, {

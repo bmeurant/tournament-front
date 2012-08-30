@@ -1,12 +1,7 @@
 define([
-    'jquery',
-    'underscore',
-    'resthub-handlebars',
     'backbone',
-    'models/participant',
-    'hbs!templates/participants/details.html',
-    'pubsub'
-], function($, _, Handlebars, Backbone, Participant, detailsTemplate, Pubsub) {
+    'hbs!templates/participants/details.html'
+], function(Backbone, detailsTemplate) {
 
     return Backbone.View.extend({
 
