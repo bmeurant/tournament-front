@@ -11,7 +11,7 @@ define([
     return Backbone.View.extend({
 
         initialize: function() {
-            this.$el.addClass("row");
+            this.$el.addClass('row');
             Pubsub.on(App.Events.REMOVE_ALERT, this.hideAlerts, this);
             Pubsub.on(App.Events.ALERT_RAISED, this.showAlert, this);
         },
@@ -22,22 +22,22 @@ define([
         },
 
         hideAlerts: function() {
-            $(".alert").fadeOut('fast');
-            $(".alert").alert('close');
+            $('.alert').fadeOut('fast');
+            $('.alert').alert('close');
         },
 
         showAlert: function(title, text, klass) {
-            $(".alert").fadeOut('fast');
-            $(".alert").alert('close');
+            $('.alert').fadeOut('fast');
+            $('.alert').alert('close');
 
             this.render();
             $('.alert').addClass(klass);
             $('.alert > .message').html('<strong>' + title + '</strong> ' + text);
-            $(".alert").fadeIn('fast');
+            $('.alert').fadeIn('fast');
 
             clearTimeout(this.timeout);
             this.timeout = setTimeout(function() {
-                $(".alert").alert('close');
+                $('.alert').alert('close');
             }.bind(this), 5000);
         }
 

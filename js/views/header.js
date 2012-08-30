@@ -13,11 +13,11 @@ define([
 
     return Backbone.View.extend({
 
-        menuElemType: "no",
+        menuElemType: 'no',
 
         events: {
-            "click div": "menuClicked",
-            "click .navbar-search .dropdown-menu li a": "toggleSearchOption"
+            'click div': 'menuClicked',
+            'click .navbar-search .dropdown-menu li a': 'toggleSearchOption'
         },
 
         searchOptions: {
@@ -27,7 +27,7 @@ define([
         },
 
         attributes: {
-            class: "navbar navbar-inverse navbar-fixed-top"
+            class: 'navbar navbar-inverse navbar-fixed-top'
         },
 
         initialize: function() {
@@ -63,7 +63,7 @@ define([
         },
 
         clearMenu: function() {
-            $('.actions-menu').html("&nbsp;");
+            $('.actions-menu').html('&nbsp;');
         },
 
         menuClicked: function() {
@@ -74,30 +74,30 @@ define([
             event.stopPropagation();
             event.preventDefault();
             var $target = $(event.currentTarget);
-            var $checkbox = $target.find(".search-include");
+            var $checkbox = $target.find('.search-include');
             this.toggleCheckBox($checkbox);
             this.searchOptions[$target.attr('id')] = !this.searchOptions[$target.attr('id')];
         },
 
         toggleCheckBox: function($checkbox) {
-            $checkbox.toggleClass("icon-checked");
-            $checkbox.toggleClass("icon-unchecked");
+            $checkbox.toggleClass('icon-checked');
+            $checkbox.toggleClass('icon-unchecked');
         },
 
         backToGeneralHome: function() {
-            Backbone.history.navigate("/", true);
+            Backbone.history.navigate('/', true);
         },
 
         moveToParticipantHome: function() {
-            Backbone.history.navigate("/participants", true);
+            Backbone.history.navigate('/participants', true);
         },
 
         moveToTeamsHome: function() {
-            Backbone.history.navigate("/teams", true);
+            Backbone.history.navigate('/teams', true);
         },
 
         moveToGTHome: function() {
-            Backbone.history.navigate("/games", true);
+            Backbone.history.navigate('/games', true);
         },
 
         focusOnSearch: function(event) {

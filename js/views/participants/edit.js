@@ -17,11 +17,11 @@ define([
             viewType: 'edit',
 
             events: {
-                "drop .well": "dropHandler",
-                "dragover .well": "dragOverHandler",
-                "input form input": "onInput",
-                "submit form": "onSubmitForm",
-                "keydown form input": "onKeyDown"
+                'drop .well': 'dropHandler',
+                'dragover .well': 'dragOverHandler',
+                'input form input': 'onInput',
+                'submit form': 'onSubmitForm',
+                'keydown form input': 'onKeyDown'
             },
 
             initialize: function(model, active) {
@@ -75,15 +75,15 @@ define([
                 // get input and parents in order to refresh error displaying components
                 var target = event.currentTarget;
                 var $parent = $(target.parentNode);
-                var $help = $parent.find(".help-inline");
+                var $help = $parent.find('.help-inline');
                 var $controlGroup = $parent.parent();
                 $help.text(target.validationMessage);
 
                 if (target.validity.valid) {
-                    $controlGroup.removeClass("error");
+                    $controlGroup.removeClass('error');
                 }
                 else {
-                    $controlGroup.addClass("error");
+                    $controlGroup.addClass('error');
                 }
 
                 // store the current field having focus to be restored later
@@ -144,7 +144,7 @@ define([
              */
             onSaveError: function(model, resp) {
                 // error is an http (server) one
-                if (resp.hasOwnProperty("status")) {
+                if (resp.hasOwnProperty('status')) {
                     Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to update this item', 'alert-error');
                 }
             },
@@ -266,7 +266,7 @@ define([
             },
 
             blurInput: function() {
-                this.$el.find("form input:focus").blur();
+                this.$el.find('form input:focus').blur();
             }
 
         }));

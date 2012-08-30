@@ -86,7 +86,7 @@ define([
         },
 
         isModalActive: function() {
-            return $(".modal").is(":visible");
+            return $('.modal').is(':visible');
         },
 
         filter: function(event) {

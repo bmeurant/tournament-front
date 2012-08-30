@@ -63,7 +63,7 @@ require.config({
         async: 'libs/async',
         keymaster: 'libs/keymaster',
         hbs: 'resthub/handlebars-require',
-        templates: "/templates"
+        templates: '/templates'
     }
 
 });
@@ -89,7 +89,7 @@ require([
     'events',
     'config'
     // Some plugins have to be loaded in order due to their non AMD compliance
-    // Because these scripts are not "modules" they do not pass any values to the definition function below
+    // Because these scripts are not 'modules' they do not pass any values to the definition function below
 ], function($, Handlebars, Router, HeaderView, AlertsView, ShortcutsView, FooterView, KeyboardView) {
 
     Handlebars.registerHelper('photo_link', function(pictureUrl) {

@@ -13,24 +13,24 @@ define([
     return AbstractView.extend({
 
         menuTemplate: Handlebars.compile(deletionsMenuTemplate),
-        nbDelsSelector: ".nb-dels",
+        nbDelsSelector: '.nb-dels',
 
         // For these main view types, the deletion menu will be completely rendered
         acceptedTypes: ['details', 'edit', 'list'],
         ignoreElemTypes: ['deletions'],
 
-        tagName: "ul",
+        tagName: 'ul',
         attributes: {
-            class: "nav"
+            class: 'nav'
         },
 
         events: {
-            "drop #deleteDropZone": "onDrop",
-            "dragover #deleteDropZone": "onDragOver",
-            "dragleave #deleteDropZone": "onDragLeave",
-            "click .delete-actions.cancel": "cancelDeletions",
-            "click .delete-actions.confirm": "confirmDeletions",
-            "click .delete": "removeElement"
+            'drop #deleteDropZone': 'onDrop',
+            'dragover #deleteDropZone': 'onDragOver',
+            'dragleave #deleteDropZone': 'onDragLeave',
+            'click .delete-actions.cancel': 'cancelDeletions',
+            'click .delete-actions.confirm': 'confirmDeletions',
+            'click .delete': 'removeElement'
         },
 
         initialize: function() {
@@ -64,7 +64,7 @@ define([
 
             // if the new type is not managed by the view, hide it
             if (this.ignoreElemTypes.indexOf(elemType) >= 0 || this.acceptedTypes.indexOf(viewType) < 0) {
-                this.$el.find(".delete-menu.drop-zone").addClass("hidden");
+                this.$el.find('.delete-menu.drop-zone').addClass('hidden');
             }
         },
 
@@ -110,7 +110,7 @@ define([
             var elemType = event.originalEvent.dataTransfer.getData('elemType');
 
             // handles element deletion or ignore any other dropped element
-            if ((id != null) && (id != "")) {
+            if ((id != null) && (id != '')) {
                 this.deleteElement(elemType, id);
                 Pubsub.trigger(App.Events.REMOVE_ALERT);
             }
@@ -175,16 +175,16 @@ define([
          * Strong emphasize of drop zone (example: on drag over)
          */
         emphasizeDropZone: function() {
-            $('.drop-zone').addClass("droppable");
-            $('.drop-zone a').addClass("droppable");
+            $('.drop-zone').addClass('droppable');
+            $('.drop-zone a').addClass('droppable');
         },
 
         /**
          * Remove strong emphasize of drop zone (exemple: on drag leave)
          */
         clearDropZone: function() {
-            $('.drop-zone').removeClass("droppable");
-            $('.drop-zone a').removeClass("droppable");
+            $('.drop-zone').removeClass('droppable');
+            $('.drop-zone a').removeClass('droppable');
         },
 
         /**
@@ -194,7 +194,7 @@ define([
             this.getFromLocalStorage();
             var nbDels = this.countElements(this.elemCollection);
             $(this.nbDelsSelector).text(nbDels);
-            nbDels > 0 ? $(".delete-actions").removeClass("hidden") : $(".delete-actions").addClass("hidden");
+            nbDels > 0 ? $('.delete-actions').removeClass('hidden') : $('.delete-actions').addClass('hidden');
         },
 
         /**
@@ -242,7 +242,7 @@ define([
 
             $.each(results, function(index, result) {
 
-                if (result.type == "error") {
+                if (result.type == 'error') {
                     this.addToCollection(result.elem.type, result.elem.id);
                 }
 
@@ -303,7 +303,7 @@ define([
          * Handles call to deletion view (example: from Keyboard shortcut)
          */
         moveToDeletionsView: function() {
-            Backbone.history.navigate("/deletions", true);
+            Backbone.history.navigate('/deletions', true);
         }
 
     });

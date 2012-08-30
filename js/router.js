@@ -12,13 +12,13 @@ define([
     var AppRouter = Backbone.Router.extend({
         routes: {
             // Define some URL routes
-            //":route/:action":"loadView",
-            "participant/add": "addParticipant",
-            "participant/:id": "showParticipant",
-            "participant/:id/edit": "editParticipant",
-            "participants": "listParticipants",
-            "deletions": "showDeletions",
-            "help": "showHelp",
+            //':route/:action':'loadView',
+            'participant/add': 'addParticipant',
+            'participant/:id': 'showParticipant',
+            'participant/:id/edit': 'editParticipant',
+            'participants': 'listParticipants',
+            'deletions': 'showDeletions',
+            'help': 'showHelp',
             // Default
             '*path': 'defaultAction'
         },
@@ -54,14 +54,14 @@ define([
         },
 
         defaultAction: function() {
-            this.navigate("participants", true);
+            this.navigate('participants', true);
         }
 
     });
 
     var initialize = function() {
         App.Routers.AppRouter = new AppRouter;
-        Backbone.history.start({pushState: true, root: "/"});
+        Backbone.history.start({pushState: true, root: '/'});
 
     };
     return {

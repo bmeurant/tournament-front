@@ -21,11 +21,11 @@ define([
         elemType: 'participant',
 
         events: {
-            "dragend": "dragEndHandler"
+            'dragend': 'dragEndHandler'
         },
 
         attributes: {
-            class: "row"
+            class: 'row'
         },
 
         // management of linked views : i.e. views that could be switched with transition and without a
@@ -49,7 +49,7 @@ define([
         initialize: function(id, viewType) {
 
             // manually bind this event because Backbone does not trigger events directly bound on el !
-            this.$el.on("dragstart", this.dragStartHandler.bind(this));
+            this.$el.on('dragstart', this.dragStartHandler.bind(this));
 
             this.viewType = viewType;
             this.model = new Participant();
@@ -80,7 +80,7 @@ define([
                 Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'This participant is currently being deleted', 'alert-error');
 
                 setTimeout(function() {
-                    Backbone.history.navigate("/participants", true);
+                    Backbone.history.navigate('/participants', true);
                 }.bind(this), 100);
 
                 return this;
@@ -124,7 +124,7 @@ define([
             // out of visible page
             // To embed remote image, this should be cacheable and the remote server should implement the
             // corresponding cache politic
-            var dragIcon = $("#dragIcon");
+            var dragIcon = $('#dragIcon');
             dragIcon.html(miniatureTemplate({participant: this.model.toJSON()}));
             event.originalEvent.dataTransfer.setDragImage(dragIcon.get(0), 50, 50);
 
@@ -156,7 +156,7 @@ define([
                 this.initializeLinkedViews();
                 this.renderLinkedViews();
                 // allow css transitions between linked views
-                this.$el.find('#view').addClass('linked-views').css('margin-left', -(this.linkedViewsTypes.indexOf(this.viewType) * (940 + 20 + 50)) + "px");
+                this.$el.find('#view').addClass('linked-views').css('margin-left', -(this.linkedViewsTypes.indexOf(this.viewType) * (940 + 20 + 50)) + 'px');
             }
             else {
                 this.renderMainView();
@@ -164,7 +164,7 @@ define([
 
             // give focus after a mini timeout because some browsers (FFX) need it to give focus
             setTimeout(function() {
-                this.$el.find("form input:not(:disabled)").first().focus();
+                this.$el.find('form input:not(:disabled)').first().focus();
             }.bind(this), 1);
         },
 
@@ -177,7 +177,7 @@ define([
 
         renderMainView: function() {
             var $mainView = this.mainView.render().$el;
-            this.$el.find('#view #edit').html($mainView).removeClass("hidden");
+            this.$el.find('#view #edit').html($mainView).removeClass('hidden');
         },
 
         renderLinkedViews: function() {
@@ -192,7 +192,7 @@ define([
 
                     // it its main view, show it. Otherwise it kept hidden
                     if (i == mainIndex) {
-                        this.$el.find('div#' + this.linkedViewsInstances[i].viewType).removeClass("hidden");
+                        this.$el.find('div#' + this.linkedViewsInstances[i].viewType).removeClass('hidden');
                     }
                 }
             }
@@ -272,7 +272,7 @@ define([
                 type: 'DELETE'
             })
                 .done(function() {
-                    console.log("photo deleted successfully for id");
+                    console.log('photo deleted successfully for id');
                     callbackSuccess();
                 })
                 .fail(function() {
@@ -327,10 +327,10 @@ define([
             }
 
             // display new view
-            this.$el.find('.view-elem#' + this.viewType).removeClass("hidden");
+            this.$el.find('.view-elem#' + this.viewType).removeClass('hidden');
 
             // hide navigation bar and deactivate controls during transition because of some potential bugs
-            this.$el.find('#navigation .nav-pills').addClass("hidden");
+            this.$el.find('#navigation .nav-pills').addClass('hidden');
             this.inTransition = true;
 
             // register callbacks executed after css transition
@@ -339,7 +339,7 @@ define([
             Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
 
             // perform transition
-            this.$el.find('#view').addClass('slide').css('margin-left', -(mainIndex * (940 + 20 + 50)) + "px");
+            this.$el.find('#view').addClass('slide').css('margin-left', -(mainIndex * (940 + 20 + 50)) + 'px');
         },
 
         /**
@@ -363,17 +363,17 @@ define([
         onTransitionEnd: function(event) {
 
             // hide old view
-            event.data.oldView.addClass("hidden");
+            event.data.oldView.addClass('hidden');
 
             // reactivate nav bar and controls
-            this.$el.find('#navigation .nav-pills').removeClass("hidden");
+            this.$el.find('#navigation .nav-pills').removeClass('hidden');
             this.inTransition = false;
 
             // change url
-            window.history.pushState(null, "Tournament", "/participant/" + this.model.id + this.linkedViewsURLFragment[this.linkedViewsTypes.indexOf(this.viewType)]);
+            window.history.pushState(null, 'Tournament', '/participant/' + this.model.id + this.linkedViewsURLFragment[this.linkedViewsTypes.indexOf(this.viewType)]);
 
             // give focus to first input if exists
-            this.$el.find("form input:not(:disabled)").first().focus();
+            this.$el.find('form input:not(:disabled)').first().focus();
 
             // unbind events
             this.$el.find('#view').off('webkitTransitionEnd');

@@ -8,7 +8,7 @@ define([
      * Definition of a Participant model object
      */
     return Backbone.Model.extend({
-        urlRoot: App.Config.serverRootURL + "/participant",
+        urlRoot: App.Config.serverRootURL + '/participant',
         defaults: {
 
         },

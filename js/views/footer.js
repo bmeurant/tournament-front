@@ -10,7 +10,7 @@ define([
     return Backbone.View.extend({
 
         events: {
-            "click p.shortcuts-menu a": "showShortcuts"
+            'click p.shortcuts-menu a': 'showShortcuts'
         },
 
         initialize: function() {

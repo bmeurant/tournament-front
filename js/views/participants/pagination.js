@@ -12,7 +12,7 @@ define([
     return Backbone.View.extend({
 
         events: {
-            "click a": "changePage"
+            'click a': 'changePage'
         },
 
         viewType: 'pagination',
@@ -41,11 +41,11 @@ define([
             event.preventDefault();
 
             var target = event.currentTarget;
-            var pattern = "page=";
-            var href = $(target).attr("href");
+            var pattern = 'page=';
+            var href = $(target).attr('href');
             var pageId = href.substring(href.indexOf(pattern) + pattern.length);
-            if (pageId.indexOf("&") >= 0) {
-                pageId = pageId.substring(0, pageId.indexOf("&"));
+            if (pageId.indexOf('&') >= 0) {
+                pageId = pageId.substring(0, pageId.indexOf('&'));
             }
 
             Pubsub.trigger(App.Events.NEW_PAGE, pageId);

@@ -22,14 +22,14 @@ define([
             viewType: 'list',
 
             events: {
-                "click #deletions-container li.thumbnail": "elemClicked",
-                "dblclick #deletions-container li.thumbnail": "elemDblClicked",
-                "focusin ul.thumbnails li.thumbnail a": "elemFocused",
-                "focusout ul.thumbnails li.thumbnail a": "elemFocused"
+                'click #deletions-container li.thumbnail': 'elemClicked',
+                'dblclick #deletions-container li.thumbnail': 'elemDblClicked',
+                'focusin ul.thumbnails li.thumbnail a': 'elemFocused',
+                'focusout ul.thumbnails li.thumbnail a': 'elemFocused'
             },
 
             attributes: {
-                id: "deletions-container"
+                id: 'deletions-container'
             },
 
             JSONCollection: {},
@@ -63,7 +63,7 @@ define([
                 });
 
                 Handlebars.registerHelper('selected', function(id) {
-                    return (this.idSelected && this.idSelected == id) ? "selected" : "";
+                    return (this.idSelected && this.idSelected == id) ? 'selected' : '';
                 }.bind(this));
 
             },
@@ -152,7 +152,7 @@ define([
                 this.populateCollection();
 
                 Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
-                $(".delete-menu.drop-zone").addClass("hidden");
+                $('.delete-menu.drop-zone').addClass('hidden');
                 return this;
             },
 
@@ -163,9 +163,9 @@ define([
                 this.initTooltips();
 
                 // if no element is currently select, select the first one
-                var $selected = this.findSelected(this.$el, "li.thumbnail");
+                var $selected = this.findSelected(this.$el, 'li.thumbnail');
                 if (!$selected || $selected.length == 0) {
-                    this.selectFirst(this.$el, "li.thumbnail");
+                    this.selectFirst(this.$el, 'li.thumbnail');
                 }
 
             },
@@ -211,7 +211,7 @@ define([
                     event.preventDefault();
                 }
 
-                var idElem = event.currentTarget.getAttribute("id");
+                var idElem = event.currentTarget.getAttribute('id');
 
                 this.cancelDeletion(this.getElementType(idElem), idElem);
             },
@@ -221,9 +221,9 @@ define([
              */
             cancelSelectedDeletion: function() {
 
-                var $selected = this.findSelected(this.$el, "li.thumbnail");
+                var $selected = this.findSelected(this.$el, 'li.thumbnail');
                 if ($selected && $selected.length > 0) {
-                    var idElem = $selected.attr("id");
+                    var idElem = $selected.attr('id');
                     this.cancelDeletion(this.getElementType(idElem), idElem);
                 }
             },
@@ -233,9 +233,9 @@ define([
              */
             confirmSelectedDeletion: function() {
 
-                var $selected = this.findSelected(this.$el, "li.thumbnail");
+                var $selected = this.findSelected(this.$el, 'li.thumbnail');
                 if ($selected && $selected.length > 0) {
-                    var idElem = $selected.attr("id");
+                    var idElem = $selected.attr('id');
                     this.confirmDeletion(this.getElementType(idElem), idElem);
                 }
             },
@@ -245,7 +245,7 @@ define([
                     event.stopPropagation();
                     event.preventDefault();
                 }
-                var idElem = event.currentTarget.getAttribute("id");
+                var idElem = event.currentTarget.getAttribute('id');
 
                 this.confirmDeletion(this.getElementType(idElem), idElem);
             },
@@ -313,25 +313,25 @@ define([
 
                 this.elemCollection[elem.type].splice(elem.index, 1);
                 // remove element from the current view
-                $("#" + elem.id).remove();
+                $('#' + elem.id).remove();
 
                 // retrieve and save the currently selected element, if any
-                var $selected = this.findSelected(this.$el, "li.thumbnail");
+                var $selected = this.findSelected(this.$el, 'li.thumbnail');
 
                 this.selectNext();
 
-                if (!$selected || $selected.length == 0) this.selectFirst(this.$el, "li.thumbnail");
+                if (!$selected || $selected.length == 0) this.selectFirst(this.$el, 'li.thumbnail');
 
                 // save changes in local storage
                 this.storeInLocalStorage();
             },
 
             selectNext: function() {
-                this.selectElement(this.$el, "li.thumbnail", "next");
+                this.selectElement(this.$el, 'li.thumbnail', 'next');
             },
 
             selectPrevious: function() {
-                this.selectElement(this.$el, "li.thumbnail", "previous");
+                this.selectElement(this.$el, 'li.thumbnail', 'previous');
             },
 
             /**
@@ -342,19 +342,19 @@ define([
              */
             elemFocused: function(event) {
                 if (event && event.currentTarget) {
-                    var $selected = this.findSelected(this.$el, "li.thumbnail");
+                    var $selected = this.findSelected(this.$el, 'li.thumbnail');
                     if ($selected && $selected.length != 0) {
                         $selected.removeClass('selected');
                     }
-                    $(event.currentTarget).parent().addClass("selected");
+                    $(event.currentTarget).parent().addClass('selected');
                 }
             },
 
             initTooltips: function() {
                 // initialize tooltips
-                this.$el.find("li.thumbnail").tooltip({title: "double click to remove, simple click to cancel", trigger: 'hover', placement: this.liTooltipPlacement});
+                this.$el.find('li.thumbnail').tooltip({title: 'double click to remove, simple click to cancel', trigger: 'hover', placement: this.liTooltipPlacement});
                 // cannot define a tooltip on a same selector twice : define one on 'a' to link with focus event
-                this.$el.find("li.thumbnail > a").tooltip({title: "press <code>Del</code> to remove<br/>press <code>Enter</code> to cancel", trigger: 'focus', placement: this.liTooltipPlacement});
+                this.$el.find('li.thumbnail > a').tooltip({title: 'press <code>Del</code> to remove<br/>press <code>Enter</code> to cancel', trigger: 'focus', placement: this.liTooltipPlacement});
             },
 
             /**
@@ -365,13 +365,13 @@ define([
              */
             liTooltipPlacement: function(tip, target) {
 
-                $("li.thumbnail").tooltip('hide');
-                $("li.thumbnail a").tooltip('hide');
+                $('li.thumbnail').tooltip('hide');
+                $('li.thumbnail a').tooltip('hide');
                 var $target = $(target);
 
                 // if target is a : found the real target (parent li) and force
                 // bootstrap-tooltip to consider this element instead of original 'a'
-                if (target.tagName == "A") {
+                if (target.tagName == 'A') {
                     $target = $target.parent();
                     this.$element = $target;
                 }
@@ -380,14 +380,14 @@ define([
                 var ulWidth = $target.parent().innerWidth(false);
                 var perLine = Math.floor(ulWidth / liWidth);
 
-                if (index < perLine) return "top";
-                return "bottom";
+                if (index < perLine) return 'top';
+                return 'bottom';
 
             },
 
             hideTooltips: function() {
-                this.$el.find("li.thumbnail").tooltip('hide');
-                this.$el.find("li.thumbnail a").tooltip('hide');
+                this.$el.find('li.thumbnail').tooltip('hide');
+                this.$el.find('li.thumbnail a').tooltip('hide');
             },
 
             onDispose: function() {
@@ -399,7 +399,7 @@ define([
              * @param liElemId
              */
             getElementType: function(liElemId) {
-                if ($('#' + liElemId).hasClass("participant")) return "participant";
+                if ($('#' + liElemId).hasClass('participant')) return 'participant';
             }
 
         }));

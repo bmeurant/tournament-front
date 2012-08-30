@@ -23,7 +23,7 @@ define([
             EditView.prototype.afterSave.apply(this, arguments);
 
             // specific redirect
-            Backbone.history.navigate('/participant/' + this.model.id + "/edit", true);
+            Backbone.history.navigate('/participant/' + this.model.id + '/edit', true);
         }
     });
 });

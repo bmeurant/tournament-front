@@ -21,11 +21,11 @@ define([
             elemType: 'participant',
 
             events: {
-                "dragstart li.thumbnail[draggable=\"true\"]": "dragStartHandler",
-                "dragend li.thumbnail[draggable=\"true\"]": "dragEndHandler",
-                "focusin ul.thumbnails li.thumbnail a": "elemFocused",
-                "focusout ul.thumbnails li.thumbnail a": "elemFocused",
-                "click li.thumbnail": "hideTooltips"
+                "dragstart li.thumbnail[draggable='true']": 'dragStartHandler',
+                "dragend li.thumbnail[draggable='true']": 'dragEndHandler',
+                'focusin ul.thumbnails li.thumbnail a': 'elemFocused',
+                'focusout ul.thumbnails li.thumbnail a': 'elemFocused',
+                'click li.thumbnail': 'hideTooltips'
             },
 
             askedPage: 1,
@@ -85,7 +85,7 @@ define([
                         success: function() {
                             this.showTemplate(partials);
                             if (selectLast) {
-                                this.selectLast(this.$el, "li.thumbnail");
+                                this.selectLast(this.$el, 'li.thumbnail');
                             }
                         }.bind(this),
                         error: function() {
@@ -116,7 +116,7 @@ define([
                 // out of visible page
                 // To embed remote image, this should be cacheable and the remote server should implement the
                 // corresponding cache politic
-                var dragIcon = $("#dragIcon");
+                var dragIcon = $('#dragIcon');
                 dragIcon.html(participantMiniatureTemplate({participant: participant.toJSON()}));
                 event.originalEvent.dataTransfer.setDragImage(dragIcon.get(0), 25, 25);
 
@@ -153,10 +153,10 @@ define([
                 }
 
                 if (!partials || partials.participants) {
-                    this.$el.find(".elements").html(participantListTemplate({participants: this.collection.toJSON(), 'id_selected': this.idSelected}));
+                    this.$el.find('.elements').html(participantListTemplate({participants: this.collection.toJSON(), 'id_selected': this.idSelected}));
                 }
                 if (!partials || partials.pagination) {
-                    this.$el.find(".pagination").html(this.paginationView.render(this.collection).$el);
+                    this.$el.find('.pagination').html(this.paginationView.render(this.collection).$el);
                 }
                 else {
                     this.paginationView.render(this.collection);
@@ -165,21 +165,21 @@ define([
                 this.initTooltips();
 
                 // if no element is currently select, select the first one
-                var $selected = this.findSelected(this.$el, "li.thumbnail");
+                var $selected = this.findSelected(this.$el, 'li.thumbnail');
                 if (!$selected || $selected.length == 0) {
-                    this.selectFirst(this.$el, "li.thumbnail");
+                    this.selectFirst(this.$el, 'li.thumbnail');
                 }
 
-                window.history.pushState(null, "Tournament", "/participants" + ((this.collection.info().currentPage != 1) ? "?page=" + this.collection.info().currentPage : ""));
+                window.history.pushState(null, 'Tournament', '/participants' + ((this.collection.info().currentPage != 1) ? '?page=' + this.collection.info().currentPage : ''));
 
                 Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, 'list');
             },
 
             initTooltips: function() {
                 // initialize tooltips
-                this.$el.find("li.thumbnail").tooltip({title: "drag on delete drop-zone to remove<br/>click to view details", trigger: 'hover', placement: this.liTooltipPlacement});
+                this.$el.find('li.thumbnail').tooltip({title: 'drag on delete drop-zone to remove<br/>click to view details', trigger: 'hover', placement: this.liTooltipPlacement});
                 // cannot define a tooltip on a same selector twice : define one on 'a' to link with focus event
-                this.$el.find("li.thumbnail > a").tooltip({title: "press <code>Del</code> to remove<br/>press <code>Enter</code> to view details", trigger: 'focus', placement: this.liTooltipPlacement});
+                this.$el.find('li.thumbnail > a').tooltip({title: 'press <code>Del</code> to remove<br/>press <code>Enter</code> to view details', trigger: 'focus', placement: this.liTooltipPlacement});
             },
 
             /**
@@ -194,13 +194,13 @@ define([
 
                 // if target is a : found the real target (parent li) and force
                 // bootstrap-tooltip to consider this element instead of original 'a'
-                if (target.tagName == "A") {
-                    $("li.thumbnail").tooltip('hide');
+                if (target.tagName == 'A') {
+                    $('li.thumbnail').tooltip('hide');
                     $target = $target.parent();
                     this.$element = $target;
                 }
                 else {
-                    $("li.thumbnail a").tooltip('hide');
+                    $('li.thumbnail a').tooltip('hide');
                 }
 
                 var index = $target.index();
@@ -208,13 +208,13 @@ define([
                 var ulWidth = $target.parent().innerWidth(false);
                 var perLine = Math.floor(ulWidth / liWidth);
 
-                if (index < perLine) return "top";
-                return "bottom";
+                if (index < perLine) return 'top';
+                return 'bottom';
             },
 
             hideTooltips: function() {
-                this.$el.find("li.thumbnail").tooltip('hide');
-                this.$el.find("li.thumbnail a").tooltip('hide');
+                this.$el.find('li.thumbnail').tooltip('hide');
+                this.$el.find('li.thumbnail a').tooltip('hide');
             },
 
             /**
@@ -224,10 +224,10 @@ define([
             cancelDeletions: function() {
 
                 // retrieve and save the currently selected element, if any
-                var $selected = this.findSelected(this.$el, "li.thumbnail");
+                var $selected = this.findSelected(this.$el, 'li.thumbnail');
 
                 if ($selected && $selected.length > 0) {
-                    this.idSelected = this.findSelected(this.$el, "li.thumbnail").get(0).id;
+                    this.idSelected = this.findSelected(this.$el, 'li.thumbnail').get(0).id;
                 }
 
                 this.initDeleted();
@@ -245,18 +245,18 @@ define([
                 var $element = $('#' + id);
 
                 // remove deleted element
-                $element.addClass("disabled");
-                $("<div>").addClass("foreground").appendTo($element);
+                $element.addClass('disabled');
+                $('<div>').addClass('foreground').appendTo($element);
 
                 // if the deleted element is selected, select previous
-                if ($element.hasClass("selected")) {
-                    this.selectNext(this.$el, "li.thumbnail");
+                if ($element.hasClass('selected')) {
+                    this.selectNext(this.$el, 'li.thumbnail');
                 }
 
                 // if no element is currently select, select the first one
-                var $selected = this.findSelected(this.$el, "li.thumbnail");
+                var $selected = this.findSelected(this.$el, 'li.thumbnail');
                 if (!$selected || $selected.length == 0) {
-                    this.selectFirst(this.$el, "li.thumbnail");
+                    this.selectFirst(this.$el, 'li.thumbnail');
                 }
 
             },
@@ -266,15 +266,15 @@ define([
              */
             deleteParticipant: function() {
 
-                var $selected = this.findSelected(this.$el, "li.thumbnail");
+                var $selected = this.findSelected(this.$el, 'li.thumbnail');
                 if ($selected && $selected.length > 0) {
                     Pubsub.trigger(App.Events.DELETE_ELEM_FROM_VIEW, 'participant', $selected.get(0).id);
                 }
             },
 
             selectNextElem: function(event) {
-                var $selected = this.findSelected(this.$el, "li.thumbnail");
-                var $newSelected = this.selectElement(this.$el, "li.thumbnail", "next");
+                var $selected = this.findSelected(this.$el, 'li.thumbnail');
+                var $newSelected = this.selectElement(this.$el, 'li.thumbnail', 'next');
 
                 if ($selected.attr('id') == $newSelected.attr('id')) {
                     this.paginationView.nextPage();
@@ -283,8 +283,8 @@ define([
             },
 
             selectPreviousElem: function(event) {
-                var $selected = this.findSelected(this.$el, "li.thumbnail");
-                var $newSelected = this.selectElement(this.$el, "li.thumbnail", "previous");
+                var $selected = this.findSelected(this.$el, 'li.thumbnail');
+                var $newSelected = this.selectElement(this.$el, 'li.thumbnail', 'previous');
 
                 if ($selected.attr('id') == $newSelected.attr('id')) {
                     this.paginationView.previousPage(event, true);
@@ -295,7 +295,7 @@ define([
              * Navigates to the details view of the currently selected element
              */
             showSelected: function() {
-                var $selected = this.findSelected(this.$el, "li.thumbnail");
+                var $selected = this.findSelected(this.$el, 'li.thumbnail');
                 this.hideTooltips();
                 if ($selected && $selected.length > 0) {
                     Backbone.history.navigate('/participant/' + $selected.get(0).id, true);
@@ -310,11 +310,11 @@ define([
              */
             elemFocused: function(event) {
                 if (event && event.currentTarget) {
-                    var $selected = this.findSelected(this.$el, "li.thumbnail");
+                    var $selected = this.findSelected(this.$el, 'li.thumbnail');
                     if ($selected && $selected.length != 0) {
                         $selected.removeClass('selected');
                     }
-                    $(event.currentTarget).parent().addClass("selected");
+                    $(event.currentTarget).parent().addClass('selected');
                 }
             },
 

@@ -12,7 +12,7 @@ define([
     return Backbone.View.extend({
 
         events: {
-            "keydown": "modalKeydown"
+            'keydown': 'modalKeydown'
         },
 
         initialize: function($selector) {
@@ -33,7 +33,7 @@ define([
             require(['hbs!templates/help/shortcuts/' + this.elemType + '/' + this.viewType + '.html'],
                 function(specificTemplate) {
                     specificTemplate = specificTemplate({elemType: elemTypeStr, viewType: viewTypeStr});
-                    if (specificTemplate.indexOf("404") == -1) {
+                    if (specificTemplate.indexOf('404') == -1) {
                         this.$el.find('.specific-shortcuts > .shortcuts').html(specificTemplate);
                     }
                 }.bind(this));

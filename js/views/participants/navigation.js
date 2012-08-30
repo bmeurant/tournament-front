@@ -14,7 +14,7 @@ define([
     return Backbone.View.extend({
 
         events: {
-            "click .nav-pills": "navClicked"
+            'click .nav-pills': 'navClicked'
         },
 
         types: ['details', 'edit', 'teams'],
@@ -59,9 +59,9 @@ define([
 
         initTooltips: function() {
 
-            if (this.viewType != "add") {
-                this.$el.find("div.title").tooltip({title: "drag on delete drop-zone to remove", trigger: 'hover'});
-                this.$el.find(".nav-pills > li:not(.active):first > a").tooltip({title: "press <code>&larr;</code> or <code>&rarr;</code> or click to navigate", trigger: 'manual', placement: "bottom"});
+            if (this.viewType != 'add') {
+                this.$el.find('div.title').tooltip({title: 'drag on delete drop-zone to remove', trigger: 'hover'});
+                this.$el.find('.nav-pills > li:not(.active):first > a').tooltip({title: 'press <code>&larr;</code> or <code>&rarr;</code> or click to navigate', trigger: 'manual', placement: 'bottom'});
             }
         },
 
@@ -74,7 +74,7 @@ define([
         updatePills: function(elemType, viewType) {
 
             // preventive hide if any tooltip displayed
-            this.$el.find(".nav-pills > li:not(.active):first > a").tooltip('hide');
+            this.$el.find('.nav-pills > li:not(.active):first > a').tooltip('hide');
 
             // clear pills
             this.$el.find('ul.nav-pills li').removeClass('active');
@@ -84,9 +84,9 @@ define([
 
             // could occur only on the first load
             if (this.viewType == viewType) {
-                this.$el.find(".nav-pills > li:not(.active):first > a").tooltip('show');
+                this.$el.find('.nav-pills > li:not(.active):first > a').tooltip('show');
                 this.timeout = setTimeout(function() {
-                    this.$el.find(".nav-pills > li:not(.active):first > a").tooltip('hide');
+                    this.$el.find('.nav-pills > li:not(.active):first > a').tooltip('hide');
                 }.bind(this), 5000);
             }
 
@@ -94,8 +94,8 @@ define([
         },
 
         hideTooltips: function() {
-            this.$el.find(".nav-pills > li > a").tooltip('hide');
-            this.$el.find("div.title").tooltip('hide');
+            this.$el.find('.nav-pills > li > a').tooltip('hide');
+            this.$el.find('div.title').tooltip('hide');
         },
 
         onDispose: function() {

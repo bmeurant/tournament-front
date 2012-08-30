@@ -85,7 +85,7 @@ define([
                 type: 'DELETE'
             })
                 .done(function() {
-                    deleteCallback(null, {type: "success", elem: elem});
+                    deleteCallback(null, {type: 'success', elem: elem});
                 })
                 .fail(function(jqXHR) {
                 if (jqXHR.status == 404) {
@@ -95,7 +95,7 @@ define([
 
                 // callback is called with null error parameter because otherwise it breaks the
                 // loop and stop on first error :-(
-                deleteCallback(null, {type: "error", elem: elem});
+                deleteCallback(null, {type: 'error', elem: elem});
             }.bind(this));
         }
 

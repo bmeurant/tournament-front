@@ -8,13 +8,13 @@ define([
 
     return Backbone.View.extend({
 
-        tagName: "form",
+        tagName: 'form',
         attributes: {
-            class: "nav navbar-search pull-right dropdown"
+            class: 'nav navbar-search pull-right dropdown'
         },
 
         events: {
-            "keydown #searchText": "onKeyDown"
+            'keydown #searchText': 'onKeyDown'
         },
 
         render: function() {
