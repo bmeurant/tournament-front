@@ -3,14 +3,11 @@ define([
     'underscore',
     'backbone',
     'resthub-handlebars',
-    'text!templates/footer.html',
+    'hbs!templates/footer.html',
     'pubsub'
 ], function ($, _, Backbone, Handlebars, footerTemplate, Pubsub) {
 
     return Backbone.View.extend({
-
-        // Cache the template function for a single item.
-        template:Handlebars.compile(footerTemplate),
 
         events:{
             "click p.shortcuts-menu a":"showShortcuts"
@@ -20,7 +17,7 @@ define([
         },
 
         render:function () {
-            this.$el.html(this.template());
+            this.$el.html(footerTemplate());
             return this;
         },
 

@@ -3,15 +3,12 @@ define([
     'underscore',
     'backbone',
     'resthub-handlebars',
-    'text!templates/alert.html',
+    'hbs!templates/alert.html',
     'pubsub',
     'bootstrap'
 ], function ($, _, Backbone, Handlebars, alertsTemplate, Pubsub) {
 
     return Backbone.View.extend({
-
-        // Cache the template function for a single item.
-        template:Handlebars.compile(alertsTemplate),
 
         initialize:function () {
             this.$el.addClass("row");
@@ -20,7 +17,7 @@ define([
         },
 
         render:function () {
-            this.$el.html(this.template());
+            this.$el.html(alertsTemplate());
             return this;
         },
 

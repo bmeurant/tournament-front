@@ -3,7 +3,7 @@ define([
     'underscore',
     'backbone',
     'resthub-handlebars',
-    'text!templates/deletions/menu.html',
+    'hbs!templates/deletions/menu.html',
     'views/deletions/abstract',
     'models/participant',
     'pubsub',
@@ -67,7 +67,7 @@ define([
         },
 
         render:function () {
-            this.$el.html(this.menuTemplate());
+            this.$el.html(deletionsMenuTemplate());
             this.initCollection();
             this.renderDels();
             return this;

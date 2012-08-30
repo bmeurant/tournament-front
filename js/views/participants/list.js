@@ -5,10 +5,10 @@ define([
     'resthub-handlebars',
     'backbone-paginator',
     'collections/participants',
-    'text!templates/participants/list-container.html',
-    'text!templates/participants/list.html',
+    'hbs!templates/participants/list-container.html',
+    'hbs!templates/participants/list.html',
     'views/participants/pagination',
-    'text!templates/participants/miniature.html',
+    'hbs!templates/participants/miniature.html',
     'mixins/selectable',
     'mixins/paginable',
     'pubsub',
@@ -19,9 +19,6 @@ define([
         _.extend({}, Selectable, Paginable, {
 
             elemType:'participant',
-            template:Handlebars.compile(participantListTemplate),
-            containerTemplate:Handlebars.compile(participantListContainerTemplate),
-            miniatureTemplate:Handlebars.compile(participantMiniatureTemplate),
 
             events:{
                 "dragstart li.thumbnail[draggable=\"true\"]":"dragStartHandler",
@@ -120,7 +117,7 @@ define([
                 // To embed remote image, this should be cacheable and the remote server should implement the
                 // corresponding cache politic
                 var dragIcon = $("#dragIcon");
-                dragIcon.html(this.miniatureTemplate({participant:participant.toJSON()}));
+                dragIcon.html(participantMiniatureTemplate({participant:participant.toJSON()}));
                 event.originalEvent.dataTransfer.setDragImage(dragIcon.get(0), 25, 25);
 
                 Pubsub.trigger(App.Events.DRAG_START);
@@ -152,11 +149,11 @@ define([
                 this.hideTooltips();
 
                 if (!partials || (partials.participants && partials.pagination)) {
-                    this.$el.html(this.containerTemplate());
+                    this.$el.html(participantListContainerTemplate());
                 }
 
                 if (!partials || partials.participants) {
-                    this.$el.find(".elements").html(this.template({participants:this.collection.toJSON(), 'id_selected':this.idSelected}));
+                    this.$el.find(".elements").html(participantListTemplate({participants:this.collection.toJSON(), 'id_selected':this.idSelected}));
                 }
                 if (!partials || partials.pagination) {
                     this.$el.find(".pagination").html(this.paginationView.render(this.collection).$el);

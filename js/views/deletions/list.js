@@ -3,9 +3,9 @@ define([
     'underscore',
     'backbone',
     'resthub-handlebars',
-    'text!templates/deletions/list.html',
+    'hbs!templates/deletions/list.html',
     'views/deletions/abstract',
-    'text!templates/participants/list.html',
+    'hbs!templates/participants/list.html',
     'models/participant',
     'mixins/selectable',
     'pubsub',
@@ -17,9 +17,6 @@ define([
      */
     return AbstractView.extend(
         _.extend({}, Selectable, {
-
-            template:Handlebars.compile(deletionsTemplate),
-            participantsTemplate:Handlebars.compile(participantTemplate),
 
             elemType:'deletions',
             viewType:'list',
@@ -160,8 +157,8 @@ define([
             },
 
             showTemplate:function () {
-                var participants_template = this.participantsTemplate({'participants':this.JSONCollection['participant']});
-                this.$el.html(this.template({'participants':this.JSONCollection['participant'], 'participants_template':new Handlebars.SafeString(participants_template)}));
+                var participants_template = participantTemplate({'participants':this.JSONCollection['participant']});
+                this.$el.html(deletionsTemplate({'participants':this.JSONCollection['participant'], 'participants_template':new Handlebars.SafeString(participants_template)}));
 
                 this.initTooltips();
 

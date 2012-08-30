@@ -4,12 +4,10 @@ define([
     'resthub-handlebars',
     'backbone',
     'models/participant',
-    'text!templates/participants/details.html'
+    'hbs!templates/participants/details.html'
 ], function ($, _, Handlebars, Backbone, Participant, detailsTemplate) {
 
     return Backbone.View.extend({
-
-        template:Handlebars.compile(detailsTemplate),
 
         elemType: 'participant',
         viewType:'details',
@@ -23,7 +21,7 @@ define([
         },
 
         render:function () {
-            this.$el.html(this.template({participant:this.model.toJSON()}));
+            this.$el.html(detailsTemplate({participant:this.model.toJSON()}));
 
             return this;
         }

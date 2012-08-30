@@ -4,7 +4,7 @@ define([
     'backbone',
     'resthub-handlebars',
     'bootstrap',
-    'text!templates/header.html',
+    'hbs!templates/header.html',
     'views/deletions/menu',
     'views/search/menu',
     'views/participants/menu',
@@ -14,9 +14,6 @@ define([
     return Backbone.View.extend({
 
         menuElemType:"no",
-
-        // Cache the template function for a single item.
-        template:Handlebars.compile(headerTemplate),
 
         events:{
             "click div":"menuClicked",
@@ -46,7 +43,7 @@ define([
         },
 
         render:function () {
-            this.$el.html(this.template());
+            this.$el.html(headerTemplate());
             this.deletionMenu.render().$el.appendTo(this.$el.find('.element-menu.delete-menu'));
             this.searchMenu.render().$el.appendTo(this.$el.find('.search-menu'));
             return this;

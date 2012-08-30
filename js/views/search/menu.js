@@ -3,12 +3,10 @@ define([
     'underscore',
     'backbone',
     'resthub-handlebars',
-    'text!templates/search/menu.html'
+    'hbs!templates/search/menu.html'
 ], function ($, _, Backbone, Handlebars, searchMenuTemplate) {
 
     return Backbone.View.extend({
-
-        menuTemplate:Handlebars.compile(searchMenuTemplate),
 
         events:{
             "keydown #searchText":"onKeyDown"
@@ -20,7 +18,7 @@ define([
         },
 
         render:function () {
-            this.$el.html(this.menuTemplate());
+            this.$el.html(searchMenuTemplate());
             return this;
         },
 

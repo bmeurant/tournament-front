@@ -3,16 +3,13 @@ define([
     'underscore',
     'backbone',
     'resthub-handlebars',
-    'text!templates/participants/menu.html',
+    'hbs!templates/participants/menu.html',
     'pubsub'
 ], function ($, _, Backbone, Handlebars, menuTemplate, Pubsub) {
 
     return Backbone.View.extend({
 
         elemType:'participant',
-
-        // Cache the template function for a single item.
-        template:Handlebars.compile(menuTemplate),
 
         events:{
             "click .save":"saveElement"
@@ -70,7 +67,7 @@ define([
         },
 
         render:function () {
-            this.$el.html(this.template());
+            this.$el.html(menuTemplate());
             return this;
         },
 

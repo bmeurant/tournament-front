@@ -4,9 +4,9 @@ define([
     'backbone',
     'resthub-handlebars',
     'models/participant',
-    'text!templates/participants/participant.html',
+    'hbs!templates/participants/participant.html',
     'views/participants/navigation',
-    'text!templates/participants/miniature.html',
+    'hbs!templates/participants/miniature.html',
     'views/participants/details',
     'views/participants/edit',
     'views/participants/add',
@@ -19,8 +19,6 @@ define([
     return Backbone.View.extend({
 
         elemType:'participant',
-        template:Handlebars.compile(participantTemplate),
-        miniatureTemplate:Handlebars.compile(miniatureTemplate),
 
         events:{
             "dragend":"dragEndHandler"
@@ -126,7 +124,7 @@ define([
             // To embed remote image, this should be cacheable and the remote server should implement the
             // corresponding cache politic
             var dragIcon = $("#dragIcon");
-            dragIcon.html(this.miniatureTemplate({participant:this.model.toJSON()}));
+            dragIcon.html(miniatureTemplate({participant:this.model.toJSON()}));
             event.originalEvent.dataTransfer.setDragImage(dragIcon.get(0), 50, 50);
 
             Pubsub.trigger(App.Events.DRAG_START);
@@ -137,7 +135,7 @@ define([
          */
         showTemplate:function () {
 
-            this.$el.html(this.template());
+            this.$el.html(participantTemplate());
             this.navigationView.render().$el.appendTo(this.$el.find('#navigation'));
 
             this.renderViews();

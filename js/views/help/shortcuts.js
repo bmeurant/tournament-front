@@ -4,16 +4,12 @@ define([
     'backbone',
     'resthub-handlebars',
     'bootstrap',
-    'text!templates/help/shortcuts.html',
-    'text!templates/help/shortcuts/global.html',
+    'hbs!templates/help/shortcuts.html',
+    'hbs!templates/help/shortcuts/global.html',
     'pubsub'
 ], function ($, _, Backbone, Handlebars, BootstrapModal, shortcutsTemplate, globalTemplate, Pubsub) {
 
     return Backbone.View.extend({
-
-        // Cache the template function for a single item.
-        template:Handlebars.compile(shortcutsTemplate),
-        globalTemplate:Handlebars.compile(globalTemplate),
 
         events:{
             "keydown":"modalKeydown"
@@ -31,15 +27,14 @@ define([
             var elemTypeStr = _.str.capitalize(this.elemType);
             var viewTypeStr = _.str.capitalize(this.viewType);
 
-            this.$el.html(this.template({elemType:elemTypeStr, viewType:viewTypeStr}));
-            this.$el.find('.global-shortcuts > .shortcuts').html(this.globalTemplate());
+            this.$el.html(shortcutsTemplate({elemType:elemTypeStr, viewType:viewTypeStr}));
+            this.$el.find('.global-shortcuts > .shortcuts').html(globalTemplate());
 
-            require(['text!templates/help/shortcuts/' + this.elemType + '/' + this.viewType + '.html'],
+            require(['hbs!templates/help/shortcuts/' + this.elemType + '/' + this.viewType + '.html'],
                 function (specificTemplate) {
-                    var tpl = Handlebars.compile(specificTemplate);
-                    tpl = tpl({elemType:elemTypeStr, viewType:viewTypeStr});
-                    if (tpl.indexOf("404") == -1) {
-                        this.$el.find('.specific-shortcuts > .shortcuts').html(tpl);
+                    specificTemplate = specificTemplate({elemType:elemTypeStr, viewType:viewTypeStr});
+                    if (specificTemplate.indexOf("404") == -1) {
+                        this.$el.find('.specific-shortcuts > .shortcuts').html(specificTemplate);
                     }
                 }.bind(this));
 

@@ -4,7 +4,7 @@ define([
     'backbone',
     'resthub-handlebars',
     'models/participant',
-    'text!templates/participants/navigation.html',
+    'hbs!templates/participants/navigation.html',
     'pubsub'
 ], function ($, _, Backbone, Handlebars, Participant, navigationTemplate, Pubsub) {
 
@@ -12,8 +12,6 @@ define([
      * Manage sub view to navigate between participants details and edit views
      */
     return Backbone.View.extend({
-
-        template:Handlebars.compile(navigationTemplate),
 
         events:{
             "click .nav-pills":"navClicked"
@@ -54,7 +52,7 @@ define([
 
         render:function () {
             var navigable = ((this.viewType == 'details') || (this.viewType == 'edit'));
-            this.$el.html(this.template({id:this.id, navigable:navigable, type:this.viewType}));
+            this.$el.html(navigationTemplate({id:this.id, navigable:navigable, type:this.viewType}));
             this.initTooltips();
             return this;
         },

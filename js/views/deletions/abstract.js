@@ -11,11 +11,6 @@ define([
      */
     return Backbone.View.extend({
 
-        events:{
-        },
-
-        handlers:[],
-
         initialize:function () {
             this.initCollection();
         },

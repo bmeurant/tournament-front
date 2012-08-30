@@ -4,7 +4,7 @@ define([
     'backbone',
     'resthub-handlebars',
     'models/participant',
-    'text!templates/participants/edit.html',
+    'hbs!templates/participants/edit.html',
     'resthub-backbone-validation',
     'mixins/validatable',
     'pubsub'
@@ -15,8 +15,6 @@ define([
 
             elemType:'participant',
             viewType:'edit',
-
-            template:Handlebars.compile(participantEditTemplate),
 
             events:{
                 "drop .well":"dropHandler",
@@ -59,7 +57,7 @@ define([
             },
 
             render:function () {
-                this.$el.html(this.template({participant:this.model.toJSON()}));
+                this.$el.html(participantEditTemplate({participant:this.model.toJSON()}));
                 return this;
             },
 

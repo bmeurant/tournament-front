@@ -5,13 +5,11 @@ define([
     'resthub-handlebars',
     'backbone-paginator',
     'collections/participants',
-    'text!templates/participants/pagination.html',
+    'hbs!templates/participants/pagination.html',
     'pubsub'
 ], function ($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, paginationTemplate, Pubsub) {
 
     return Backbone.View.extend({
-
-        template:Handlebars.compile(paginationTemplate),
 
         events:{
             "click a":"changePage"
@@ -33,7 +31,7 @@ define([
         render:function (collection) {
             this.collection = collection;
 
-            this.$el.html(this.template({info:this.collection.info(), firstPage:this.collection.paginator_ui.firstPage}));
+            this.$el.html(paginationTemplate({info:this.collection.info(), firstPage:this.collection.paginator_ui.firstPage}));
 
             return this;
         },
