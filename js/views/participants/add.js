@@ -3,12 +3,12 @@ define([
     'underscore',
     'backbone',
     'views/participants/edit'
-], function ($, _, Backbone, EditView) {
+], function($, _, Backbone, EditView) {
 
     return EditView.extend({
-        viewType:'add',
+        viewType: 'add',
 
-        initialize:function () {
+        initialize: function() {
 
             // call inherited constructor
             EditView.prototype.initialize.apply(this, arguments);
@@ -17,7 +17,7 @@ define([
 
         },
 
-        afterSave:function () {
+        afterSave: function() {
 
             // call inherited view behaviour
             EditView.prototype.afterSave.apply(this, arguments);

@@ -1,9 +1,9 @@
 define([
     'jquery'
-], function ($) {
+], function($) {
 
     return {
-        clearValidationErrors:function () {
+        clearValidationErrors: function() {
             $('.control-group').removeClass("error");
             $('.help-inline').empty();
         }

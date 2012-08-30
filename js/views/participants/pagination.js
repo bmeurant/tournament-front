@@ -7,36 +7,36 @@ define([
     'collections/participants',
     'hbs!templates/participants/pagination.html',
     'pubsub'
-], function ($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, paginationTemplate, Pubsub) {
+], function($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, paginationTemplate, Pubsub) {
 
     return Backbone.View.extend({
 
-        events:{
-            "click a":"changePage"
+        events: {
+            "click a": "changePage"
         },
 
-        viewType:'pagination',
+        viewType: 'pagination',
 
-        initialize:function () {
+        initialize: function() {
 
             Pubsub.on(App.Events.PAGE_UP_CALLED, this.previousPage, this);
             Pubsub.on(App.Events.PAGE_DOWN_CALLED, this.nextPage, this);
 
         },
 
-        initBindings:function () {
+        initBindings: function() {
 
         },
 
-        render:function (collection) {
+        render: function(collection) {
             this.collection = collection;
 
-            this.$el.html(paginationTemplate({info:this.elemCollection.info(), firstPage:this.elemCollection.paginator_ui.firstPage}));
+            this.$el.html(paginationTemplate({info: this.elemCollection.info(), firstPage: this.elemCollection.paginator_ui.firstPage}));
 
             return this;
         },
 
-        changePage:function (event) {
+        changePage: function(event) {
             event.stopPropagation();
             event.preventDefault();
 
@@ -58,7 +58,7 @@ define([
          * @param event
          * @param selectLast boolean - true if the last element of the previous page should be selected
          */
-        previousPage:function (event, selectLast) {
+        previousPage: function(event, selectLast) {
 
             if (event) {
                 event.stopPropagation();
@@ -70,7 +70,7 @@ define([
             }
         },
 
-        nextPage:function (event) {
+        nextPage: function(event) {
 
             if (event) {
                 event.stopPropagation();

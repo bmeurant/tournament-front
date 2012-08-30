@@ -5,23 +5,23 @@ define([
     'resthub-handlebars',
     'hbs!templates/footer.html',
     'pubsub'
-], function ($, _, Backbone, Handlebars, footerTemplate, Pubsub) {
+], function($, _, Backbone, Handlebars, footerTemplate, Pubsub) {
 
     return Backbone.View.extend({
 
-        events:{
-            "click p.shortcuts-menu a":"showShortcuts"
+        events: {
+            "click p.shortcuts-menu a": "showShortcuts"
         },
 
-        initialize:function () {
+        initialize: function() {
         },
 
-        render:function () {
+        render: function() {
             this.$el.html(footerTemplate());
             return this;
         },
 
-        showShortcuts:function (event) {
+        showShortcuts: function(event) {
             event.stopPropagation();
             event.preventDefault();
             Pubsub.trigger(App.Events.KEYBOARD_CALLED);

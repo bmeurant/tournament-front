@@ -2,7 +2,7 @@ define([
     'jquery',
     'underscore',
     'backbone'
-], function ($, _, Backbone) {
+], function($, _, Backbone) {
 
     /**
      * 'Abstract' view defining global controls, events, handlers and methods for 'concrete'
@@ -11,14 +11,14 @@ define([
      */
     return Backbone.View.extend({
 
-        initialize:function () {
+        initialize: function() {
             this.initCollection();
         },
 
         /**
          * Initializes collection from local storage state or creates an empty one
          */
-        initCollection:function () {
+        initCollection: function() {
             this.getFromLocalStorage();
             if (!this.elemCollection || Object.keys(this.elemCollection).length == 0) {
                 this.emptyCollection();
@@ -29,7 +29,7 @@ define([
         /**
          * Creates an empty collection with the correct format
          */
-        emptyCollection:function () {
+        emptyCollection: function() {
             this.elemCollection = {};
             this.elemCollection.participant = [];
         },
@@ -37,14 +37,14 @@ define([
         /**
          * Retrieve collection from local storage
          */
-        getFromLocalStorage:function () {
+        getFromLocalStorage: function() {
             this.elemCollection = JSON.parse(localStorage.getItem('deletedElements'));
         },
 
         /**
          * Save current collection state in local storage
          */
-        storeInLocalStorage:function () {
+        storeInLocalStorage: function() {
             localStorage.setItem('deletedElements', JSON.stringify(this.elemCollection));
         },
 
@@ -54,7 +54,7 @@ define([
          * @param elemType type of the element to add
          * @param id id of the element to add
          */
-        addToCollection:function (elemType, id) {
+        addToCollection: function(elemType, id) {
 
             // initialize collection elemType hash key if not exists
             if (!this.elemCollection[elemType]) {
@@ -71,23 +71,23 @@ define([
          * @param collection
          * @return {Number} the number of elements of the given collection
          */
-        countElements:function (collection) {
+        countElements: function(collection) {
             var elements = 0;
-            $.each(collection, function (index, value) {
+            $.each(collection, function(index, value) {
                 elements += value.length;
             });
             return elements;
         },
 
-        deleteFromServer:function (elem, deleteCallback) {
+        deleteFromServer: function(elem, deleteCallback) {
             $.ajax({
-                url:App.Config.serverRootURL +'/' + elem.type + '/' + elem.id,
-                type:'DELETE'
+                url: App.Config.serverRootURL + '/' + elem.type + '/' + elem.id,
+                type: 'DELETE'
             })
-                .done(function () {
-                    deleteCallback(null, {type:"success", elem:elem});
+                .done(function() {
+                    deleteCallback(null, {type: "success", elem: elem});
                 })
-                .fail(function (jqXHR) {
+                .fail(function(jqXHR) {
                 if (jqXHR.status == 404) {
                     // element obviously already deleted from server. Ignore it and remove from local collection
                     this.elemCollection[elem.type].splice(elem.index, 1);
@@ -95,7 +95,7 @@ define([
 
                 // callback is called with null error parameter because otherwise it breaks the
                 // loop and stop on first error :-(
-                deleteCallback(null, {type:"error", elem:elem});
+                deleteCallback(null, {type: "error", elem: elem});
             }.bind(this));
         }
 

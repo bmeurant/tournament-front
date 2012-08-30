@@ -8,23 +8,23 @@ define([
     'resthub-backbone-validation',
     'mixins/validatable',
     'pubsub'
-], function ($, _, Backbone, Handlebars, Participant, participantEditTemplate, BackboneValidation, Validatable, Pubsub) {
+], function($, _, Backbone, Handlebars, Participant, participantEditTemplate, BackboneValidation, Validatable, Pubsub) {
 
     return Backbone.View.extend(
         _.extend({}, Validatable, {
 
-            elemType:'participant',
-            viewType:'edit',
+            elemType: 'participant',
+            viewType: 'edit',
 
-            events:{
-                "drop .well":"dropHandler",
-                "dragover .well":"dragOverHandler",
-                "input form input":"onInput",
-                "submit form":"onSubmitForm",
-                "keydown form input":"onKeyDown"
+            events: {
+                "drop .well": "dropHandler",
+                "dragover .well": "dragOverHandler",
+                "input form input": "onInput",
+                "submit form": "onSubmitForm",
+                "keydown form input": "onKeyDown"
             },
 
-            initialize:function (model, active) {
+            initialize: function(model, active) {
                 this.model = model;
 
                 // init view bindings if only the view should be activated
@@ -36,7 +36,7 @@ define([
             /**
              * Initialize all view bindings
              */
-            initBindings:function () {
+            initBindings: function() {
 
                 // allow backbone-validation view callbacks (for error display)
                 Backbone.Validation.bind(this);
@@ -47,17 +47,17 @@ define([
             /**
              * Remove all view bindings (events and Pubsub). Listeners will not be called anymore
              */
-            removeBindings:function () {
+            removeBindings: function() {
                 this.unbind();
                 if (this.handlers) {
-                    $.each(this.handlers, function (index, value) {
+                    $.each(this.handlers, function(index, value) {
                         Pubsub.off(value);
                     });
                 }
             },
 
-            render:function () {
-                this.$el.html(participantEditTemplate({participant:this.model.toJSON()}));
+            render: function() {
+                this.$el.html(participantEditTemplate({participant: this.model.toJSON()}));
                 return this;
             },
 
@@ -66,7 +66,7 @@ define([
              *
              * @param event raised event
              */
-            onInput:function (event) {
+            onInput: function(event) {
                 if (event != null) {
                     event.stopPropagation();
                     event.preventDefault();
@@ -94,7 +94,7 @@ define([
              * Simulates a form submission : this is necessary to perform correctly
              * html5 validation. form.submit() does not work properly
              */
-            submitForm:function () {
+            submitForm: function() {
                 this.$el.find("form input[type='submit']").click();
             },
 
@@ -103,7 +103,7 @@ define([
              *
              * @param event raised event
              */
-            onSubmitForm:function (event) {
+            onSubmitForm: function(event) {
                 if (event != null) {
                     event.stopPropagation();
                     event.preventDefault();
@@ -115,11 +115,11 @@ define([
             /**
              * Save the current participant (update or create depending of the existence of a valid model.id)
              */
-            saveParticipant:function () {
+            saveParticipant: function() {
 
                 // build array of form attributes to refresh model
                 var attributes = {};
-                this.$el.find("form input[type!='submit']").each(function (index, value) {
+                this.$el.find("form input[type!='submit']").each(function(index, value) {
                     attributes[value.name] = value.value;
                     this.model.set(value.name, value.value);
                 }.bind(this));
@@ -127,8 +127,8 @@ define([
                 // save model if its valid, display alert otherwise
                 if (this.model.isValid()) {
                     this.model.save(null, {
-                        success:this.onSaveSuccess.bind(this),
-                        error:this.onSaveError.bind(this)
+                        success: this.onSaveSuccess.bind(this),
+                        error: this.onSaveError.bind(this)
                     });
                 }
                 else {
@@ -142,7 +142,7 @@ define([
              * @param model model to save
              * @param resp error response
              */
-            onSaveError:function (model, resp) {
+            onSaveError: function(model, resp) {
                 // error is an http (server) one
                 if (resp.hasOwnProperty("status")) {
                     Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to update this item', 'alert-error');
@@ -154,7 +154,7 @@ define([
              *
              * @param model model to save
              */
-            onSaveSuccess:function (model) {
+            onSaveSuccess: function(model) {
 
                 this.model = model;
 
@@ -171,7 +171,7 @@ define([
             /**
              * Callback called after a successful save operation
              */
-            afterSave:function () {
+            afterSave: function() {
                 // store the fact that the model has been updated
                 this.updated = true;
 
@@ -189,7 +189,7 @@ define([
              *
              * @return {Boolean} false to prevent default browser behaviour
              */
-            dragOverHandler:function (event) {
+            dragOverHandler: function(event) {
                 event.preventDefault(); // allows us to drop
                 event.originalEvent.dataTransfer.dropEffect = 'copy';
                 return false;
@@ -200,7 +200,7 @@ define([
              *
              * @param event event raised
              */
-            dropHandler:function (event) {
+            dropHandler: function(event) {
                 event.stopPropagation();
                 event.preventDefault();
 
@@ -211,7 +211,7 @@ define([
 
                 // Read the image file from the local file system and display it in the img tag
                 var reader = new FileReader();
-                reader.onloadend = function () {
+                reader.onloadend = function() {
                     $('.photo').attr('src', reader.result);
                 };
                 reader.readAsDataURL(this.pictureFile);
@@ -224,24 +224,24 @@ define([
              * @param id id of the edited participant
              * @param callbackSuccess function to call in case of success
              */
-            uploadFile:function (file, id, callbackSuccess) {
+            uploadFile: function(file, id, callbackSuccess) {
                 // get the file
                 var data = new FormData();
                 data.append('file', file);
 
                 // upload on server
                 $.ajax({
-                    url:App.Config.serverRootURL + '/participant/' + id + '/photo',
-                    type:'POST',
-                    data:data,
-                    processData:false,
-                    cache:false,
-                    contentType:false
+                    url: App.Config.serverRootURL + '/participant/' + id + '/photo',
+                    type: 'POST',
+                    data: data,
+                    processData: false,
+                    cache: false,
+                    contentType: false
                 })
-                    .done(function () {
+                    .done(function() {
                         callbackSuccess();
                     })
-                    .fail(function () {
+                    .fail(function() {
                         Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while uploading ' + file.name, 'alert-error');
                     });
             },
@@ -251,7 +251,7 @@ define([
              *
              * @param event event raised
              */
-            onKeyDown:function (event) {
+            onKeyDown: function(event) {
 
                 // if ECHAP is pressed
                 if (event && event.which == 27) {
@@ -265,7 +265,7 @@ define([
                 }
             },
 
-            blurInput:function () {
+            blurInput: function() {
                 this.$el.find("form input:focus").blur();
             }
 

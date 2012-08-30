@@ -1,8 +1,8 @@
-define(['handlebars'], function (Handlebars) {
+define(['handlebars'], function(Handlebars) {
 
-    var loadResource = function (resourceName, parentRequire, callback, config) {
+    var loadResource = function(resourceName, parentRequire, callback, config) {
         parentRequire([("text!" + resourceName)],
-            function (templateContent) {
+            function(templateContent) {
                 var template = Handlebars.compile(templateContent);
                 callback(template);
             }

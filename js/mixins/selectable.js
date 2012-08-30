@@ -1,6 +1,6 @@
 define([
     'jquery'
-], function ($) {
+], function($) {
 
     return {
         /**
@@ -10,7 +10,7 @@ define([
          *
          * @return {*} the newly selected element
          */
-        selectElement:function ($el, selector, type) {
+        selectElement: function($el, selector, type) {
 
             // get currently selected element. If no, select the first one
             var $selected = this.findSelected($el, selector);
@@ -46,15 +46,15 @@ define([
             return $toSelect;
         },
 
-        selectNext:function ($el, selector) {
+        selectNext: function($el, selector) {
             this.selectElement($el, selector, "next");
         },
 
-        selectPrevious:function ($el, selector) {
+        selectPrevious: function($el, selector) {
             this.selectElement($el, selector, "previous");
         },
 
-        selectFirst:function ($el, selector) {
+        selectFirst: function($el, selector) {
             var $toSelect = $el.find(selector + ":first-child");
 
             if ($toSelect.hasClass("disabled")) {
@@ -70,7 +70,7 @@ define([
             return $toSelect;
         },
 
-        selectLast:function ($el, selector) {
+        selectLast: function($el, selector) {
             var $toSelect = $el.find(selector + ":last-child");
 
             if ($toSelect.hasClass("disabled")) {
@@ -86,14 +86,14 @@ define([
             return $toSelect;
         },
 
-        findSelected:function ($el, selector) {
+        findSelected: function($el, selector) {
             return $el.find(selector + ".selected");
         },
 
         /**
          * @return {*} the first element after the currently selected one
          */
-        findNextSelect:function ($el, selector) {
+        findNextSelect: function($el, selector) {
             var $next = $($el.get(0).nextElementSibling);
             if ($next && $next.length != 0) {
                 if ($next.hasClass("disabled")) {
@@ -109,7 +109,7 @@ define([
         /**
          * @return {*} the first element before the currently selected one
          */
-        findPreviousSelect:function ($el, selector) {
+        findPreviousSelect: function($el, selector) {
             var $previous = $($el.get(0).previousElementSibling);
             if ($previous && $previous.length != 0) {
                 if ($previous.hasClass("disabled")) {

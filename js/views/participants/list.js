@@ -13,24 +13,24 @@ define([
     'mixins/paginable',
     'pubsub',
     'bootstrap'
-], function ($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, participantListContainerTemplate, participantListTemplate, PaginationView, participantMiniatureTemplate, Selectable, Paginable, Pubsub) {
+], function($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, participantListContainerTemplate, participantListTemplate, PaginationView, participantMiniatureTemplate, Selectable, Paginable, Pubsub) {
 
     return Backbone.View.extend(
         _.extend({}, Selectable, Paginable, {
 
-            elemType:'participant',
+            elemType: 'participant',
 
-            events:{
-                "dragstart li.thumbnail[draggable=\"true\"]":"dragStartHandler",
-                "dragend li.thumbnail[draggable=\"true\"]":"dragEndHandler",
-                "focusin ul.thumbnails li.thumbnail a":"elemFocused",
-                "focusout ul.thumbnails li.thumbnail a":"elemFocused",
-                "click li.thumbnail":"hideTooltips"
+            events: {
+                "dragstart li.thumbnail[draggable=\"true\"]": "dragStartHandler",
+                "dragend li.thumbnail[draggable=\"true\"]": "dragEndHandler",
+                "focusin ul.thumbnails li.thumbnail a": "elemFocused",
+                "focusout ul.thumbnails li.thumbnail a": "elemFocused",
+                "click li.thumbnail": "hideTooltips"
             },
 
-            askedPage:1,
+            askedPage: 1,
 
-            initialize:function (params) {
+            initialize: function(params) {
                 this.collection = new ParticipantsCollection;
                 this.paginationView = new PaginationView();
 
@@ -47,7 +47,7 @@ define([
 
                 this.initDeleted();
 
-                Handlebars.registerHelper('if_deleted', function (id, options) {
+                Handlebars.registerHelper('if_deleted', function(id, options) {
 
                     if (this.deleted.indexOf(id) >= 0) {
                         return options.fn(this);
@@ -56,7 +56,7 @@ define([
                     }
                 }.bind(this));
 
-                Handlebars.registerHelper('disabled', function (id) {
+                Handlebars.registerHelper('disabled', function(id) {
                     return (this.deleted.indexOf(id) >= 0) ? 'disabled' : '';
                 }.bind(this));
 
@@ -72,7 +72,7 @@ define([
              * @param selectLast optional boolean. if true select the last element after rendering
              * @return {*} the current view
              */
-            render:function (partials, selectLast) {
+            render: function(partials, selectLast) {
 
                 this.initDeleted();
 
@@ -82,13 +82,13 @@ define([
                 // get the participants collection from server
                 this.collection.goTo(this.askedPage,
                     {
-                        success:function () {
+                        success: function() {
                             this.showTemplate(partials);
                             if (selectLast) {
                                 this.selectLast(this.$el, "li.thumbnail");
                             }
                         }.bind(this),
-                        error:function () {
+                        error: function() {
                             Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to fetch participants', 'alert-error');
                         }
                     });
@@ -100,7 +100,7 @@ define([
              *
              * @param event event raised
              */
-            dragStartHandler:function (event) {
+            dragStartHandler: function(event) {
                 event.originalEvent.dataTransfer.effectAllowed = 'move'; // only dropEffect='copy' will be droppable
 
                 // get id of the dragged element and set transfer data
@@ -117,13 +117,13 @@ define([
                 // To embed remote image, this should be cacheable and the remote server should implement the
                 // corresponding cache politic
                 var dragIcon = $("#dragIcon");
-                dragIcon.html(participantMiniatureTemplate({participant:participant.toJSON()}));
+                dragIcon.html(participantMiniatureTemplate({participant: participant.toJSON()}));
                 event.originalEvent.dataTransfer.setDragImage(dragIcon.get(0), 25, 25);
 
                 Pubsub.trigger(App.Events.DRAG_START);
             },
 
-            dragEndHandler:function (event) {
+            dragEndHandler: function(event) {
                 Pubsub.trigger(App.Events.DRAG_END);
             },
 
@@ -131,9 +131,9 @@ define([
              * @param id
              * @return {*} the model object in models collection from its id
              */
-            getModel:function (id) {
+            getModel: function(id) {
                 var mod = null;
-                $.each(this.collection.models, function (index, model) {
+                $.each(this.collection.models, function(index, model) {
                     if (model.id == id) {
                         mod = model;
                         return false;
@@ -145,7 +145,7 @@ define([
             /**
              * @param partials optional object containing partial views elements to display. if null, display all
              */
-            showTemplate:function (partials) {
+            showTemplate: function(partials) {
                 this.hideTooltips();
 
                 if (!partials || (partials.participants && partials.pagination)) {
@@ -153,7 +153,7 @@ define([
                 }
 
                 if (!partials || partials.participants) {
-                    this.$el.find(".elements").html(participantListTemplate({participants:this.collection.toJSON(), 'id_selected':this.idSelected}));
+                    this.$el.find(".elements").html(participantListTemplate({participants: this.collection.toJSON(), 'id_selected': this.idSelected}));
                 }
                 if (!partials || partials.pagination) {
                     this.$el.find(".pagination").html(this.paginationView.render(this.collection).$el);
@@ -175,11 +175,11 @@ define([
                 Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, 'list');
             },
 
-            initTooltips:function () {
+            initTooltips: function() {
                 // initialize tooltips
-                this.$el.find("li.thumbnail").tooltip({title:"drag on delete drop-zone to remove<br/>click to view details", trigger:'hover', placement:this.liTooltipPlacement});
+                this.$el.find("li.thumbnail").tooltip({title: "drag on delete drop-zone to remove<br/>click to view details", trigger: 'hover', placement: this.liTooltipPlacement});
                 // cannot define a tooltip on a same selector twice : define one on 'a' to link with focus event
-                this.$el.find("li.thumbnail > a").tooltip({title:"press <code>Del</code> to remove<br/>press <code>Enter</code> to view details", trigger:'focus', placement:this.liTooltipPlacement});
+                this.$el.find("li.thumbnail > a").tooltip({title: "press <code>Del</code> to remove<br/>press <code>Enter</code> to view details", trigger: 'focus', placement: this.liTooltipPlacement});
             },
 
             /**
@@ -188,7 +188,7 @@ define([
              * @param target DOM element 'tooltiped'
              * @return {String}
              */
-            liTooltipPlacement:function (tip, target) {
+            liTooltipPlacement: function(tip, target) {
 
                 var $target = $(target);
 
@@ -212,7 +212,7 @@ define([
                 return "bottom";
             },
 
-            hideTooltips:function () {
+            hideTooltips: function() {
                 this.$el.find("li.thumbnail").tooltip('hide');
                 this.$el.find("li.thumbnail a").tooltip('hide');
             },
@@ -221,7 +221,7 @@ define([
              * Handles deletions cancellation by reintegrating previously deleted elements in the
              * currently displayed list
              */
-            cancelDeletions:function () {
+            cancelDeletions: function() {
 
                 // retrieve and save the currently selected element, if any
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
@@ -241,7 +241,7 @@ define([
              *
              * @param id deleted participant id
              */
-            participantDeleted:function (id) {
+            participantDeleted: function(id) {
                 var $element = $('#' + id);
 
                 // remove deleted element
@@ -264,7 +264,7 @@ define([
             /**
              * Ask for deletion for the currently selected element
              */
-            deleteParticipant:function () {
+            deleteParticipant: function() {
 
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
                 if ($selected && $selected.length > 0) {
@@ -272,7 +272,7 @@ define([
                 }
             },
 
-            selectNextElem:function (event) {
+            selectNextElem: function(event) {
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
                 var $newSelected = this.selectElement(this.$el, "li.thumbnail", "next");
 
@@ -282,7 +282,7 @@ define([
 
             },
 
-            selectPreviousElem:function (event) {
+            selectPreviousElem: function(event) {
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
                 var $newSelected = this.selectElement(this.$el, "li.thumbnail", "previous");
 
@@ -294,7 +294,7 @@ define([
             /**
              * Navigates to the details view of the currently selected element
              */
-            showSelected:function () {
+            showSelected: function() {
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
                 this.hideTooltips();
                 if ($selected && $selected.length > 0) {
@@ -308,7 +308,7 @@ define([
              *
              * @param event event raised
              */
-            elemFocused:function (event) {
+            elemFocused: function(event) {
                 if (event && event.currentTarget) {
                     var $selected = this.findSelected(this.$el, "li.thumbnail");
                     if ($selected && $selected.length != 0) {
@@ -318,13 +318,13 @@ define([
                 }
             },
 
-            newPage:function (id, selectLast) {
+            newPage: function(id, selectLast) {
                 this.askedPage = id;
 
-                this.render({participants:true}, selectLast);
+                this.render({participants: true}, selectLast);
             },
 
-            initDeleted:function () {
+            initDeleted: function() {
                 // get the list of current deleted elements from local storage in order to exclude these
                 // elements from rendered view
                 this.deleted = JSON.parse(localStorage.getItem('deletedElements')).participant;
@@ -333,7 +333,7 @@ define([
                 }
             },
 
-            onDispose:function () {
+            onDispose: function() {
                 this.hideTooltips();
             }
 

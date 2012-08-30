@@ -7,32 +7,32 @@ define([
     'hbs!templates/help/shortcuts.html',
     'hbs!templates/help/shortcuts/global.html',
     'pubsub'
-], function ($, _, Backbone, Handlebars, BootstrapModal, shortcutsTemplate, globalTemplate, Pubsub) {
+], function($, _, Backbone, Handlebars, BootstrapModal, shortcutsTemplate, globalTemplate, Pubsub) {
 
     return Backbone.View.extend({
 
-        events:{
-            "keydown":"modalKeydown"
+        events: {
+            "keydown": "modalKeydown"
         },
 
-        initialize:function ($selector) {
+        initialize: function($selector) {
             // in this specific case we can add container as el because we will never close or review this view
             this.$el = $selector;
             Pubsub.on(App.Events.KEYBOARD_CALLED, this.render, this);
             Pubsub.on(App.Events.VIEW_CHANGED, this.viewChanged, this);
         },
 
-        render:function () {
+        render: function() {
 
             var elemTypeStr = _.str.capitalize(this.elemType);
             var viewTypeStr = _.str.capitalize(this.viewType);
 
-            this.$el.html(shortcutsTemplate({elemType:elemTypeStr, viewType:viewTypeStr}));
+            this.$el.html(shortcutsTemplate({elemType: elemTypeStr, viewType: viewTypeStr}));
             this.$el.find('.global-shortcuts > .shortcuts').html(globalTemplate());
 
             require(['hbs!templates/help/shortcuts/' + this.elemType + '/' + this.viewType + '.html'],
-                function (specificTemplate) {
-                    specificTemplate = specificTemplate({elemType:elemTypeStr, viewType:viewTypeStr});
+                function(specificTemplate) {
+                    specificTemplate = specificTemplate({elemType: elemTypeStr, viewType: viewTypeStr});
                     if (specificTemplate.indexOf("404") == -1) {
                         this.$el.find('.specific-shortcuts > .shortcuts').html(specificTemplate);
                     }
@@ -42,12 +42,12 @@ define([
             return this;
         },
 
-        modalKeydown:function (event) {
+        modalKeydown: function(event) {
             event.stopPropagation();
             event.preventDefault();
         },
 
-        viewChanged:function (elemType, viewType) {
+        viewChanged: function(elemType, viewType) {
             this.elemType = elemType;
             this.viewType = viewType;
         }

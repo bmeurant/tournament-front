@@ -10,7 +10,7 @@ define([
     'mixins/selectable',
     'pubsub',
     'async'
-], function ($, _, Backbone, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, Selectable, Pubsub) {
+], function($, _, Backbone, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, Selectable, Pubsub) {
 
     /**
      * Main view for displaying deletions
@@ -18,23 +18,23 @@ define([
     return AbstractView.extend(
         _.extend({}, Selectable, {
 
-            elemType:'deletions',
-            viewType:'list',
+            elemType: 'deletions',
+            viewType: 'list',
 
-            events:{
-                "click #deletions-container li.thumbnail":"elemClicked",
-                "dblclick #deletions-container li.thumbnail":"elemDblClicked",
-                "focusin ul.thumbnails li.thumbnail a":"elemFocused",
-                "focusout ul.thumbnails li.thumbnail a":"elemFocused"
+            events: {
+                "click #deletions-container li.thumbnail": "elemClicked",
+                "dblclick #deletions-container li.thumbnail": "elemDblClicked",
+                "focusin ul.thumbnails li.thumbnail a": "elemFocused",
+                "focusout ul.thumbnails li.thumbnail a": "elemFocused"
             },
 
-            attributes : {
-              id: "deletions-container"
+            attributes: {
+                id: "deletions-container"
             },
 
-            JSONCollection:{},
+            JSONCollection: {},
 
-            initialize:function () {
+            initialize: function() {
 
                 // call inherited constructor
                 AbstractView.prototype.initialize.apply(this, arguments);
@@ -54,15 +54,15 @@ define([
 
                 this.emptyJSONCollection();
 
-                Handlebars.registerHelper('if_deleted', function () {
+                Handlebars.registerHelper('if_deleted', function() {
                     return false;
                 });
 
-                Handlebars.registerHelper('disabled', function () {
+                Handlebars.registerHelper('disabled', function() {
                     return '';
                 });
 
-                Handlebars.registerHelper('selected', function (id) {
+                Handlebars.registerHelper('selected', function(id) {
                     return (this.idSelected && this.idSelected == id) ? "selected" : "";
                 }.bind(this));
 
@@ -71,14 +71,14 @@ define([
             /**
              * Creates an empty models collection with the correct format
              */
-            emptyJSONCollection:function () {
+            emptyJSONCollection: function() {
                 this.JSONCollection.participant = [];
             },
 
             /**
              * Populate and initialize properly instance collections in order to prepare rendering.
              */
-            populateCollection:function () {
+            populateCollection: function() {
 
                 // if collection is empty, don't do anything but rendering view
                 if (this.countElements(this.elemCollection) == 0) {
@@ -86,9 +86,9 @@ define([
                 }
                 else {
                     var elements = [];
-                    $.each(this.elemCollection, function (elemType, idArray) {
-                        $.each(idArray, function (index, id) {
-                            elements.push({type:elemType, id:id, index:index});
+                    $.each(this.elemCollection, function(elemType, idArray) {
+                        $.each(idArray, function(index, id) {
+                            elements.push({type: elemType, id: id, index: index});
 
                         }.bind(this));
                     }.bind(this));
@@ -97,14 +97,14 @@ define([
                 }
             },
 
-            fetchElement:function (elem, fetchCallback) {
-                $.getJSON(App.Config.serverRootURL +'/' + elem.type + '/' + elem.id)
-                    .done(function (data) {
+            fetchElement: function(elem, fetchCallback) {
+                $.getJSON(App.Config.serverRootURL + '/' + elem.type + '/' + elem.id)
+                    .done(function(data) {
                     // add model to current collection and call callback
                     this.JSONCollection[elem.type].push(data);
                     fetchCallback(null, elem);
                 }.bind(this))
-                    .fail(function (jqXHR) {
+                    .fail(function(jqXHR) {
                     if (jqXHR.status == 404) {
                         // element obviously already deleted from server. Ignore it and remove from local collection
                         this.elemCollection[elem.type].splice(elem.index, 1);
@@ -123,10 +123,10 @@ define([
              * @param err always null because default behaviour break map on first error
              * @param results array of fetched models : contain null value in cas of error
              */
-            afterPopulate:function (err, results) {
+            afterPopulate: function(err, results) {
 
                 // remove null elements i.e. models that could not be fetched
-                var successes = results.filter(function (e) {
+                var successes = results.filter(function(e) {
                     return e;
                 });
 
@@ -145,7 +145,7 @@ define([
                 Pubsub.trigger(App.Events.DELETIONS_POPULATED);
             },
 
-            render:function () {
+            render: function() {
                 this.hideTooltips();
                 this.initCollection();
                 this.emptyJSONCollection();
@@ -156,9 +156,9 @@ define([
                 return this;
             },
 
-            showTemplate:function () {
-                var participants_template = participantTemplate({'participants':this.JSONCollection['participant']});
-                this.$el.html(deletionsTemplate({'participants':this.JSONCollection['participant'], 'participants_template':new Handlebars.SafeString(participants_template)}));
+            showTemplate: function() {
+                var participants_template = participantTemplate({'participants': this.JSONCollection['participant']});
+                this.$el.html(deletionsTemplate({'participants': this.JSONCollection['participant'], 'participants_template': new Handlebars.SafeString(participants_template)}));
 
                 this.initTooltips();
 
@@ -170,7 +170,7 @@ define([
 
             },
 
-            elemClicked:function (event) {
+            elemClicked: function(event) {
                 if (event) {
                     event.stopPropagation();
                     event.preventDefault();
@@ -181,7 +181,7 @@ define([
                     return;
 
                 this.firing = true;
-                var timer = setTimeout(function () {
+                var timer = setTimeout(function() {
                     this.firingFunc.call(this, event);
 
                     // Always revert back to singleClick firing function
@@ -190,7 +190,7 @@ define([
                 }.bind(this), 150);
             },
 
-            elemDblClicked:function (event) {
+            elemDblClicked: function(event) {
 
                 if (event) {
                     event.stopPropagation();
@@ -205,7 +205,7 @@ define([
              *
              * @param event event raised if any
              */
-            cancelElementDeletion:function (event) {
+            cancelElementDeletion: function(event) {
                 if (event) {
                     event.stopPropagation();
                     event.preventDefault();
@@ -219,7 +219,7 @@ define([
             /**
              * Cancel deletion of the selected element
              */
-            cancelSelectedDeletion:function () {
+            cancelSelectedDeletion: function() {
 
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
                 if ($selected && $selected.length > 0) {
@@ -231,7 +231,7 @@ define([
             /**
              * Confirm deletion of the selected element
              */
-            confirmSelectedDeletion:function () {
+            confirmSelectedDeletion: function() {
 
                 var $selected = this.findSelected(this.$el, "li.thumbnail");
                 if ($selected && $selected.length > 0) {
@@ -240,7 +240,7 @@ define([
                 }
             },
 
-            confirmElementDeletion:function (event) {
+            confirmElementDeletion: function(event) {
                 if (event) {
                     event.stopPropagation();
                     event.preventDefault();
@@ -256,12 +256,12 @@ define([
              * @param elemType type of the element to delete
              * @param idElem id of the element to delete
              */
-            confirmDeletion:function (elemType, idElem) {
+            confirmDeletion: function(elemType, idElem) {
                 var elem = this.findElement(elemType, idElem);
                 this.deleteFromServer(elem, this.onElementDeleted.bind(this));
             },
 
-            onElementDeleted:function (err, result) {
+            onElementDeleted: function(err, result) {
                 if (result.elem == null) {
                     Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'Cannot remove selected element', 'alert-error');
                     return;
@@ -279,7 +279,7 @@ define([
              * @param elemType type of the element to delete
              * @param idElem id of the element to delete
              */
-            cancelDeletion:function (elemType, idElem) {
+            cancelDeletion: function(elemType, idElem) {
 
                 var elem = this.findElement(elemType, idElem);
                 this.removeAndSave(elem);
@@ -288,14 +288,14 @@ define([
                 Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Element deletion canceled', 'alert-success');
             },
 
-            findElement:function (elemType, idElem) {
+            findElement: function(elemType, idElem) {
                 // get collection from local storage
                 this.initCollection();
 
                 var elem = {};
 
                 // find and remove the element from the deletions collection
-                $.each(this.elemCollection[elemType], function (index, id) {
+                $.each(this.elemCollection[elemType], function(index, id) {
                     if (id == idElem) {
                         elem.id = id;
                         elem.index = index;
@@ -307,7 +307,7 @@ define([
                 return elem;
             },
 
-            removeAndSave:function (elem) {
+            removeAndSave: function(elem) {
 
                 this.hideTooltips();
 
@@ -326,11 +326,11 @@ define([
                 this.storeInLocalStorage();
             },
 
-            selectNext:function () {
+            selectNext: function() {
                 this.selectElement(this.$el, "li.thumbnail", "next");
             },
 
-            selectPrevious:function () {
+            selectPrevious: function() {
                 this.selectElement(this.$el, "li.thumbnail", "previous");
             },
 
@@ -340,7 +340,7 @@ define([
              *
              * @param event event raised
              */
-            elemFocused:function (event) {
+            elemFocused: function(event) {
                 if (event && event.currentTarget) {
                     var $selected = this.findSelected(this.$el, "li.thumbnail");
                     if ($selected && $selected.length != 0) {
@@ -350,11 +350,11 @@ define([
                 }
             },
 
-            initTooltips:function () {
+            initTooltips: function() {
                 // initialize tooltips
-                this.$el.find("li.thumbnail").tooltip({title:"double click to remove, simple click to cancel", trigger:'hover', placement:this.liTooltipPlacement});
+                this.$el.find("li.thumbnail").tooltip({title: "double click to remove, simple click to cancel", trigger: 'hover', placement: this.liTooltipPlacement});
                 // cannot define a tooltip on a same selector twice : define one on 'a' to link with focus event
-                this.$el.find("li.thumbnail > a").tooltip({title:"press <code>Del</code> to remove<br/>press <code>Enter</code> to cancel", trigger:'focus', placement:this.liTooltipPlacement});
+                this.$el.find("li.thumbnail > a").tooltip({title: "press <code>Del</code> to remove<br/>press <code>Enter</code> to cancel", trigger: 'focus', placement: this.liTooltipPlacement});
             },
 
             /**
@@ -363,7 +363,7 @@ define([
              * @param target DOM element 'tooltiped'
              * @return {String}
              */
-            liTooltipPlacement:function (tip, target) {
+            liTooltipPlacement: function(tip, target) {
 
                 $("li.thumbnail").tooltip('hide');
                 $("li.thumbnail a").tooltip('hide');
@@ -385,12 +385,12 @@ define([
 
             },
 
-            hideTooltips:function () {
+            hideTooltips: function() {
                 this.$el.find("li.thumbnail").tooltip('hide');
                 this.$el.find("li.thumbnail a").tooltip('hide');
             },
 
-            onDispose:function () {
+            onDispose: function() {
                 this.hideTooltips();
             },
 
@@ -398,7 +398,7 @@ define([
              * Retrieve element type from a dom selected or clicked li element
              * @param liElemId
              */
-            getElementType:function (liElemId) {
+            getElementType: function(liElemId) {
                 if ($('#' + liElemId).hasClass("participant")) return "participant";
             }
 

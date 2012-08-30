@@ -5,5 +5,5 @@
  */
 
 App.Config = {
-    serverRootURL:"http://localhost:8080/api"
+    serverRootURL: "http://localhost:8080/api"
 }

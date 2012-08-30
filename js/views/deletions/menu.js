@@ -8,32 +8,32 @@ define([
     'models/participant',
     'pubsub',
     'async'
-], function ($, _, Backbone, Handlebars, deletionsMenuTemplate, AbstractView, Participant, Pubsub) {
+], function($, _, Backbone, Handlebars, deletionsMenuTemplate, AbstractView, Participant, Pubsub) {
 
     return AbstractView.extend({
 
-        menuTemplate:Handlebars.compile(deletionsMenuTemplate),
-        nbDelsSelector:".nb-dels",
+        menuTemplate: Handlebars.compile(deletionsMenuTemplate),
+        nbDelsSelector: ".nb-dels",
 
         // For these main view types, the deletion menu will be completely rendered
-        acceptedTypes:['details', 'edit', 'list'],
-        ignoreElemTypes:['deletions'],
+        acceptedTypes: ['details', 'edit', 'list'],
+        ignoreElemTypes: ['deletions'],
 
         tagName: "ul",
         attributes: {
             class: "nav"
         },
 
-        events:{
-            "drop #deleteDropZone":"onDrop",
-            "dragover #deleteDropZone":"onDragOver",
-            "dragleave #deleteDropZone":"onDragLeave",
-            "click .delete-actions.cancel":"cancelDeletions",
-            "click .delete-actions.confirm":"confirmDeletions",
-            "click .delete":"removeElement"
+        events: {
+            "drop #deleteDropZone": "onDrop",
+            "dragover #deleteDropZone": "onDragOver",
+            "dragleave #deleteDropZone": "onDragLeave",
+            "click .delete-actions.cancel": "cancelDeletions",
+            "click .delete-actions.confirm": "confirmDeletions",
+            "click .delete": "removeElement"
         },
 
-        initialize:function () {
+        initialize: function() {
 
             // call inherited constructor
             AbstractView.prototype.initialize.apply(this, arguments);
@@ -59,7 +59,7 @@ define([
          * @param elemType type of the element managed by the main view
          * @param viewType type of the main view
          */
-        onViewChanged:function (elemType, viewType) {
+        onViewChanged: function(elemType, viewType) {
             this.render();
 
             // if the new type is not managed by the view, hide it
@@ -68,7 +68,7 @@ define([
             }
         },
 
-        render:function () {
+        render: function() {
             this.$el.html(deletionsMenuTemplate());
             this.initCollection();
             this.renderDels();
@@ -81,7 +81,7 @@ define([
          * @param elemType type of the current element
          * @param id id of the current element
          */
-        deleteElem:function (elemType, id) {
+        deleteElem: function(elemType, id) {
             this.initCollection();
             this.addToCollection(elemType, id);
             this.storeInLocalStorage();
@@ -93,7 +93,7 @@ define([
         /**
          * Emphasize drop zone on drag start
          */
-        onDragStart:function () {
+        onDragStart: function() {
             $('.drop-zone').addClass('emphasize');
         },
 
@@ -101,7 +101,7 @@ define([
          * Handles dropping element on drop zone
          * @param event
          */
-        onDrop:function (event) {
+        onDrop: function(event) {
             event.stopPropagation();
             event.preventDefault();
 
@@ -124,7 +124,7 @@ define([
          * @param elemType type of the element to delete
          * @param id id of the element to delete
          */
-        deleteElement:function (elemType, id) {
+        deleteElement: function(elemType, id) {
             this.initCollection();
             this.addToCollection(elemType, id);
             this.storeInLocalStorage();
@@ -136,7 +136,7 @@ define([
          * @param elemType type of the deleted element
          * @param id if of the deleted element
          */
-        onDragEnd:function (elemType, id) {
+        onDragEnd: function(elemType, id) {
             $('.drop-zone').removeClass('emphasize');
             if (elemType && id) {
                 this.clearDropZone();
@@ -151,7 +151,7 @@ define([
          * @param event event raised
          * @return {Boolean} false to prevent default browser behaviour
          */
-        onDragOver:function (event) {
+        onDragOver: function(event) {
             event.preventDefault(); // allows us to drop
             event.originalEvent.dataTransfer.dropEffect = 'move';
             this.emphasizeDropZone();
@@ -164,7 +164,7 @@ define([
          * @param event event raised
          * @return {Boolean} false to prevent default browser behaviour
          */
-        onDragLeave:function (event) {
+        onDragLeave: function(event) {
             event.preventDefault(); // allows us to drop
             event.originalEvent.dataTransfer.dropEffect = 'move';
             this.clearDropZone();
@@ -174,7 +174,7 @@ define([
         /**
          * Strong emphasize of drop zone (example: on drag over)
          */
-        emphasizeDropZone:function () {
+        emphasizeDropZone: function() {
             $('.drop-zone').addClass("droppable");
             $('.drop-zone a').addClass("droppable");
         },
@@ -182,7 +182,7 @@ define([
         /**
          * Remove strong emphasize of drop zone (exemple: on drag leave)
          */
-        clearDropZone:function () {
+        clearDropZone: function() {
             $('.drop-zone').removeClass("droppable");
             $('.drop-zone a').removeClass("droppable");
         },
@@ -190,7 +190,7 @@ define([
         /**
          * Refresh dels number badge component
          */
-        renderDels:function () {
+        renderDels: function() {
             this.getFromLocalStorage();
             var nbDels = this.countElements(this.elemCollection);
             $(this.nbDelsSelector).text(nbDels);
@@ -202,7 +202,7 @@ define([
          *
          * @param event event raised
          */
-        confirmDeletions:function (event) {
+        confirmDeletions: function(event) {
             if (event) {
                 event.stopPropagation();
                 event.preventDefault();
@@ -216,13 +216,13 @@ define([
         /**
          * Effective deletion of all element ids stored in the collection
          */
-        deleteElements:function () {
+        deleteElements: function() {
 
             var elements = [];
 
-            $.each(this.elemCollection, function (type, idArray) {
-                $.each(idArray, function (index, currentId) {
-                    elements.push({type:type, id:currentId, index:index});
+            $.each(this.elemCollection, function(type, idArray) {
+                $.each(idArray, function(index, currentId) {
+                    elements.push({type: type, id: currentId, index: index});
                 }.bind(this));
             }.bind(this));
 
@@ -235,12 +235,12 @@ define([
          * @param err always null because default behaviour break map on first error
          * @param results array of fetched models : contain null value in cas of error
          */
-        afterRemove:function (err, results) {
+        afterRemove: function(err, results) {
 
             var initialCollectionLength = this.countElements(this.elemCollection);
             this.emptyCollection();
 
-            $.each(results, function (index, result) {
+            $.each(results, function(index, result) {
 
                 if (result.type == "error") {
                     this.addToCollection(result.elem.type, result.elem.id);
@@ -274,7 +274,7 @@ define([
          *
          * @param event event raised
          */
-        cancelDeletions:function (event) {
+        cancelDeletions: function(event) {
             if (event) {
                 event.stopPropagation();
                 event.preventDefault();
@@ -293,7 +293,7 @@ define([
          * Handles a click on delete button
          * @param event event raised
          */
-        removeElement:function (event) {
+        removeElement: function(event) {
             event.stopPropagation();
             event.preventDefault();
             Pubsub.trigger(App.Events.DELETE_ELEM_FROM_BAR);
@@ -302,7 +302,7 @@ define([
         /**
          * Handles call to deletion view (example: from Keyboard shortcut)
          */
-        moveToDeletionsView:function () {
+        moveToDeletionsView: function() {
             Backbone.history.navigate("/deletions", true);
         }
 

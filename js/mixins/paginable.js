@@ -1,7 +1,7 @@
-define([], function () {
+define([], function() {
 
     return {
-        isValidPageNumber:function (value) {
+        isValidPageNumber: function(value) {
             if (value.length == 0) {
                 return false;
             }
