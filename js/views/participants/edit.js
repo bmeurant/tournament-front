@@ -24,11 +24,9 @@ define([
                 'keydown form input': 'onKeyDown'
             },
 
-            initialize: function(model, active) {
-                this.model = model;
-
+            initialize: function() {
                 // init view bindings if only the view should be activated
-                if (active == null || active == true) {
+                if (this.options.active == null || this.options.active == true) {
                     this.initBindings();
                 }
             },

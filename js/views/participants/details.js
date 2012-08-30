@@ -12,14 +12,6 @@ define([
         elemType: 'participant',
         viewType: 'details',
 
-        initialize: function(model) {
-            this.model = model;
-        },
-
-        initBindings: function() {
-
-        },
-
         render: function() {
             this.$el.html(detailsTemplate({participant: this.model.toJSON()}));
 

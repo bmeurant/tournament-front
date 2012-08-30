@@ -25,9 +25,8 @@ define([
          * @param id id of the participant
          * @param viewType type of the main view
          */
-        initialize: function(id, viewType) {
-            this.id = id;
-            this.viewType = viewType;
+        initialize: function() {
+            this.viewType = this.options.type;
             Pubsub.on(App.Events.VIEW_CHANGED, this.updatePills, this);
         },
 
@@ -52,7 +51,7 @@ define([
 
         render: function() {
             var navigable = ((this.viewType == 'details') || (this.viewType == 'edit'));
-            this.$el.html(navigationTemplate({id: this.id, navigable: navigable, type: this.viewType}));
+            this.$el.html(navigationTemplate({id: this.model.id, navigable: navigable, type: this.viewType}));
             this.initTooltips();
             return this;
         },

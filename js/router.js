@@ -29,17 +29,17 @@ define([
         },
 
         showParticipant: function(id) {
-            var view = new ParticipantView(id, 'details');
+            var view = new ParticipantView({id: id, type: 'details'});
             $('#content').html(view.render().el);
         },
 
         editParticipant: function(id) {
-            var view = new ParticipantView(id, 'edit');
+            var view = new ParticipantView({id: id, type: 'edit'});
             $('#content').html(view.render().el);
         },
 
         addParticipant: function() {
-            var view = new ParticipantView(null, 'add');
+            var view = new ParticipantView({id: null, type: 'add'});
             $('#content').html(view.render().el);
         },
 

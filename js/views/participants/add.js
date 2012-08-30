@@ -9,12 +9,10 @@ define([
         viewType: 'add',
 
         initialize: function() {
-
             // call inherited constructor
             EditView.prototype.initialize.apply(this, arguments);
             this.events = _.extend({}, EditView.prototype.events, this.events);
             this.handlers = _.extend([], EditView.prototype.handlers, this.handlers);
-
         },
 
         afterSave: function() {

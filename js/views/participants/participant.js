@@ -46,14 +46,14 @@ define([
          * @param id id of the participant
          * @param viewType main view type
          */
-        initialize: function(id, viewType) {
+        initialize: function() {
 
             // manually bind this event because Backbone does not trigger events directly bound on el !
             this.$el.on('dragstart', this.dragStartHandler.bind(this));
 
-            this.viewType = viewType;
+            this.viewType = this.options.type;
             this.model = new Participant();
-            this.model.id = id;
+            this.model.id = this.options.id;
 
             // get the list of current deleted elements from local storage in order to exclude these
             // elements from rendered view
@@ -63,7 +63,7 @@ define([
             }
 
             // create sub navigation component
-            this.navigationView = new NavigationView(this.model.id, this.viewType);
+            this.navigationView = new NavigationView({model: this.model, type: this.viewType});
 
             Pubsub.on(App.Events.DELETE_ELEM, this.deleteParticipant, this);
             Pubsub.on(App.Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant, this);
@@ -203,13 +203,13 @@ define([
             // instantiates view depending on its type
             switch (this.viewType) {
                 case 'details':
-                    this.mainView = new DetailsView(this.model);
+                    this.mainView = new DetailsView({model: this.model});
                     break;
                 case 'edit':
-                    this.mainView = new EditView(this.model);
+                    this.mainView = new EditView({model: this.model});
                     break;
                 case 'add':
-                    this.mainView = new AddView(this.model);
+                    this.mainView = new AddView({model: this.model});
                     break;
             }
 
@@ -249,7 +249,7 @@ define([
 
             // get the corresponding class and instantiate it, keeping it deactivated (argument 'false')
             var LinkedView = this.linkedViewsClasses[i];
-            var linkedViewInstance = new LinkedView(this.model, false);
+            var linkedViewInstance = new LinkedView({model: this.model, active: false});
 
             // for safety, explicitly remove bindings
             if (linkedViewInstance && linkedViewInstance.removeBindings) {
