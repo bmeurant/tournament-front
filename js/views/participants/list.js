@@ -13,7 +13,7 @@ define([
 ], function($, _, Backbone, Handlebars, ParticipantsCollection, listTemplate, participantMiniatureTemplate, Selectable, Paginable, Pubsub) {
 
     return Backbone.View.extend(
-        _.extend({}, Selectable, Paginable, {
+        _.extend(Selectable, Paginable, {
 
             elemType: 'participant',
 
@@ -30,8 +30,7 @@ define([
                 'click li.thumbnail': 'hideTooltips'
             },
 
-            initialize: function(params, collection) {
-                this.collection = collection ? collection : new ParticipantsCollection();
+            initialize: function() {
                 this.collection.on('reset', this.render.bind(this));
 
                 Pubsub.on(App.Events.ELEM_DELETED_FROM_BAR, this.participantDeleted, this);
@@ -61,8 +60,8 @@ define([
                 }.bind(this));
 
                 var askedPage = 1;
-                if (params) {
-                    if (params.page && this.isValidPageNumber(params.page)) askedPage = parseInt(params.page);
+                if (this.options.params) {
+                    if (this.options.params.page && this.isValidPageNumber(this.options.params.page)) askedPage = parseInt(this.options.params.page);
                 }
 
                 this.newPage(askedPage);

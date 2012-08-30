@@ -17,8 +17,7 @@ define([
 
         viewType: 'pagination',
 
-        initialize: function(collection) {
-            this.collection = collection;
+        initialize: function() {
 
             Pubsub.on(App.Events.PAGE_UP_CALLED, this.previousPage, this);
             Pubsub.on(App.Events.PAGE_DOWN_CALLED, this.nextPage, this);

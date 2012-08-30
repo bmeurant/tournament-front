@@ -11,10 +11,10 @@ define([
 
         elemType: 'participant',
 
-        initialize: function(params) {
-            this.collection = new ParticipantsCollection;
-            this.listView = new ListItemsView(params, this.collection);
-            this.paginationView = new PaginationView(this.collection);
+        initialize: function() {
+            this.collection = new ParticipantsCollection();
+            this.listView = new ListItemsView({params: this.options.params, collection: this.collection});
+            this.paginationView = new PaginationView({collection: this.collection});
             this.render();
         },
 

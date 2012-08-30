@@ -24,7 +24,7 @@ define([
         },
 
         listParticipants: function(params) {
-            var view = new ParticipantListView(params);
+            var view = new ParticipantListView({params: params});
             $('#content').html(view.el);
         },
 
