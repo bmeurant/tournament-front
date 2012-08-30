@@ -48,7 +48,7 @@ define([
 
                 Handlebars.registerHelper('if_deleted', function(id, options) {
 
-                    if (this.deleted.indexOf(id) >= 0) {
+                    if (this.deleted.indexOf(id.toString()) >= 0) {
                         return options.fn(this);
                     } else {
                         return options.inverse(this);
@@ -56,7 +56,7 @@ define([
                 }.bind(this));
 
                 Handlebars.registerHelper('disabled', function(id) {
-                    return (this.deleted.indexOf(id) >= 0) ? 'disabled' : '';
+                    return (this.deleted.indexOf(id.toString()) >= 0) ? 'disabled' : '';
                 }.bind(this));
 
                 var askedPage = 1;
