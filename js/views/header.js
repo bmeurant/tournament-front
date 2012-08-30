@@ -13,8 +13,6 @@ define([
 
     return Backbone.View.extend({
 
-        menuElemType: 'no',
-
         events: {
             'click div': 'menuClicked',
             'click .navbar-search .dropdown-menu li a': 'toggleSearchOption'

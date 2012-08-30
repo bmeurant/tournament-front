@@ -5,15 +5,15 @@ define([
     'resthub-handlebars',
     'backbone-paginator',
     'collections/participants',
-    'hbs!templates/participants/list-container.html',
     'hbs!templates/participants/list.html',
+    'hbs!templates/participants/listItems.html',
     'views/participants/pagination',
     'hbs!templates/participants/miniature.html',
     'mixins/selectable',
     'mixins/paginable',
     'pubsub',
     'bootstrap'
-], function($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, participantListContainerTemplate, participantListTemplate, PaginationView, participantMiniatureTemplate, Selectable, Paginable, Pubsub) {
+], function($, _, Backbone, Handlebars, BackbonePaginator, ParticipantsCollection, listTemplate, listItemsTemplate, PaginationView, participantMiniatureTemplate, Selectable, Paginable, Pubsub) {
 
     return Backbone.View.extend(
         _.extend({}, Selectable, Paginable, {
@@ -149,11 +149,11 @@ define([
                 this.hideTooltips();
 
                 if (!partials || (partials.participants && partials.pagination)) {
-                    this.$el.html(participantListContainerTemplate());
+                    this.$el.html(listTemplate());
                 }
 
                 if (!partials || partials.participants) {
-                    this.$el.find('.elements').html(participantListTemplate({participants: this.collection.toJSON(), 'id_selected': this.idSelected}));
+                    this.$el.find('.elements').html(listItemsTemplate({participants: this.collection.toJSON(), 'id_selected': this.idSelected}));
                 }
                 if (!partials || partials.pagination) {
                     this.$el.find('.pagination').html(this.paginationView.render(this.collection).$el);
