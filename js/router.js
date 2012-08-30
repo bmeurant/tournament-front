@@ -5,9 +5,10 @@ define([
     'backbone-queryparams',
     'views/participants/paginatedList',
     'views/participants/participant',
+    'views/participants/add',
     'views/deletions/list',
     'views/help/help'
-], function($, _, Backbone, BackboneQueryParams, ParticipantListView, ParticipantView, DeletionsView, HelpView) {
+], function($, _, Backbone, BackboneQueryParams, ParticipantListView, ParticipantView, AddView, DeletionsView, HelpView) {
 
     var AppRouter = Backbone.Router.extend({
         routes: {
@@ -30,17 +31,17 @@ define([
 
         showParticipant: function(id) {
             var view = new ParticipantView({id: id, type: 'details'});
-            $('#content').html(view.render().el);
+            $('#content').html(view.el);
         },
 
         editParticipant: function(id) {
             var view = new ParticipantView({id: id, type: 'edit'});
-            $('#content').html(view.render().el);
+            $('#content').html(view.el);
         },
 
         addParticipant: function() {
-            var view = new ParticipantView({id: null, type: 'add'});
-            $('#content').html(view.render().el);
+            var view = new AddView();
+            $('#content').html(view.el);
         },
 
         showDeletions: function() {

@@ -28,17 +28,18 @@ define([
             class: 'row'
         },
 
-        // management of linked views : i.e. views that could be switched with transition and without a
-        // global re-redering
-        linkedViewsTypes: ['details', 'edit'],
-        linkedViewsURLFragment: ['', '/edit'],
-        linkedViewsClasses: [DetailsView, EditView],
-        linkedViewsInstances: [],
+        linkedViewsOrder: ["details", "edit"],
+        linkedViews: {
+            details: {
+                url: '',
+                instance: null
+            },
+            edit: {
+                url: '/edit',
+                instance: null
+            }
+        },
 
-        // determines if the next view has to be re-rendered before switch
-        renderNext: false,
-
-        inTransition: false,
 
         /**
          * Initialize view
@@ -55,15 +56,14 @@ define([
             this.model = new Participant();
             this.model.id = this.options.id;
 
-            // get the list of current deleted elements from local storage in order to exclude these
-            // elements from rendered view
-            this.deleted = JSON.parse(localStorage.getItem('deletedElements')).participant;
-            if (!this.deleted) {
-                this.deleted = [];
-            }
+            this.inTransition = false;
+
+            this.initDeleted();
 
             // create sub navigation component
             this.navigationView = new NavigationView({model: this.model, type: this.viewType});
+
+            this.initViews();
 
             Pubsub.on(App.Events.DELETE_ELEM, this.deleteParticipant, this);
             Pubsub.on(App.Events.DELETE_ELEM_FROM_BAR, this.deleteParticipant, this);
@@ -72,9 +72,8 @@ define([
             Pubsub.on(App.Events.CHANGE_VIEW, this.changeParticipantView, this);
             Pubsub.on(App.Events.PREVIOUS_CALLED, this.precedentHandler, this);
             Pubsub.on(App.Events.NEXT_CALLED, this.nextHandler, this);
-        },
 
-        render: function() {
+            this.model.on("change", this.render.bind(this));
 
             if (this.model.id && this.deleted.indexOf(this.model.id) >= 0) {
                 Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'This participant is currently being deleted', 'alert-error');
@@ -89,9 +88,6 @@ define([
             // retrieve model from server and render view
             if (this.model.id) {
                 this.model.fetch({
-                    success: function() {
-                        this.showTemplate();
-                    }.bind(this),
                     error: function() {
                         Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to get participant', 'alert-error');
                     }
@@ -99,49 +95,44 @@ define([
             }
             // no model id : no model to retrieve (probably an 'add' view)
             else {
-                this.showTemplate();
+                this.render();
             }
-
-            return this;
         },
 
-        /**
-         * Handles drag start on current view
-         *
-         * @param event event raised
-         */
-        dragStartHandler: function(event) {
-
-            this.navigationView.hideTooltips();
-
-            // set transfer data
-            event.originalEvent.dataTransfer.effectAllowed = 'move'; // only dropEffect='copy' will be droppable
-            event.originalEvent.dataTransfer.setData('id', this.model.id);
-            event.originalEvent.dataTransfer.setData('elemType', 'participant');
-
-            // create miniature shown during drag
-            // this miniature must be already rendered by the browser and not hidden -> should be positioned
-            // out of visible page
-            // To embed remote image, this should be cacheable and the remote server should implement the
-            // corresponding cache politic
-            var dragIcon = $('#dragIcon');
-            dragIcon.html(miniatureTemplate({participant: this.model.toJSON()}));
-            event.originalEvent.dataTransfer.setDragImage(dragIcon.get(0), 50, 50);
-
-            Pubsub.trigger(App.Events.DRAG_START);
+        initDeleted: function() {
+            // get the list of current deleted elements from local storage in order to exclude these
+            // elements from rendered view
+            this.deleted = JSON.parse(localStorage.getItem('deletedElements')).participant;
+            if (!this.deleted) {
+                this.deleted = [];
+            }
         },
 
-        /**
-         * Render all views
-         */
-        showTemplate: function() {
+        initViews: function() {
+            this.initLinkedViews();
+            this.initMainView();
+        },
 
+        initLinkedViews: function() {
+            this.linkedViews.details.instance = new DetailsView({model: this.model, active: false});
+            this.linkedViews.edit.instance = new EditView({model: this.model, active: false});
+        },
+
+        initMainView: function() {
+            this.mainView = this.linkedViews[this.viewType].instance;
+
+            if (this.mainView.initBindings) {
+                this.mainView.initBindings();
+            }
+        },
+
+        render: function() {
             this.$el.html(participantTemplate());
-            this.navigationView.render().$el.appendTo(this.$el.find('#navigation'));
+            this.$el.find('#navigation').html(this.navigationView.el);
 
             this.renderViews();
 
-            Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
+            return this;
         },
 
         /**
@@ -149,115 +140,19 @@ define([
          */
         renderViews: function() {
 
-            this.initializeMainView();
+            _.each(this.linkedViews, _.bind(function(view, key) {
+                this.$el.find('#view #' + key).html(view.instance.el);
+            }, this));
 
-            // if it exists linked views, render these views
-            if (this.mainIsLinkedView()) {
-                this.initializeLinkedViews();
-                this.renderLinkedViews();
-                // allow css transitions between linked views
-                this.$el.find('#view').addClass('linked-views').css('margin-left', -(this.linkedViewsTypes.indexOf(this.viewType) * (940 + 20 + 50)) + 'px');
-            }
-            else {
-                this.renderMainView();
-            }
+            this.$el.find('#view #' + this.viewType).removeClass('hidden');
+
+            // allow css transitions between linked views
+            this.$el.find('#view').addClass('linked-views').css('margin-left', -(this.linkedViewsOrder.indexOf(this.viewType) * (940 + 20 + 50)) + 'px');
 
             // give focus after a mini timeout because some browsers (FFX) need it to give focus
             setTimeout(function() {
                 this.$el.find('form input:not(:disabled)').first().focus();
             }.bind(this), 1);
-        },
-
-        /**
-         * @return {Boolean} true if current main view is linked to others views
-         */
-        mainIsLinkedView: function() {
-            return this.linkedViewsTypes.indexOf(this.viewType) >= 0;
-        },
-
-        renderMainView: function() {
-            var $mainView = this.mainView.render().$el;
-            this.$el.find('#view #edit').html($mainView).removeClass('hidden');
-        },
-
-        renderLinkedViews: function() {
-            // get index of current main view
-            var mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
-
-            // retrieves successively linked instances and render each one
-            if (this.linkedViewsInstances) {
-                for (var i = 0; i < this.linkedViewsInstances.length; i++) {
-                    var $newView = this.linkedViewsInstances[i].render().$el;
-                    $newView.appendTo(this.$el.find('#view #' + this.linkedViewsInstances[i].viewType));
-
-                    // it its main view, show it. Otherwise it kept hidden
-                    if (i == mainIndex) {
-                        this.$el.find('div#' + this.linkedViewsInstances[i].viewType).removeClass('hidden');
-                    }
-                }
-            }
-        },
-
-        initializeMainView: function() {
-
-            // instantiates view depending on its type
-            switch (this.viewType) {
-                case 'details':
-                    this.mainView = new DetailsView({model: this.model});
-                    break;
-                case 'edit':
-                    this.mainView = new EditView({model: this.model});
-                    break;
-                case 'add':
-                    this.mainView = new AddView({model: this.model});
-                    break;
-            }
-
-        },
-
-        initializeLinkedViews: function() {
-
-            // initialize instances container and add main view instance on its index
-            this.linkedViewsInstances = [];
-            var indexOfMainView = this.linkedViewsTypes.indexOf(this.viewType);
-
-            if (indexOfMainView < 0) {
-                return;
-            }
-
-            this.linkedViewsInstances[indexOfMainView] = this.mainView;
-
-            // record previous linked views
-            var i;
-            for (i = indexOfMainView - 1; i >= 0; i--) {
-                this.recordLinkedView(i);
-            }
-
-            // record next linked views
-            for (i = indexOfMainView + 1; i < this.linkedViewsTypes.length; i++) {
-                this.recordLinkedView(i);
-            }
-
-        },
-
-        /**
-         * Record a new instance of a linked view
-         *
-         * @param i index of the view to record
-         */
-        recordLinkedView: function(i) {
-
-            // get the corresponding class and instantiate it, keeping it deactivated (argument 'false')
-            var LinkedView = this.linkedViewsClasses[i];
-            var linkedViewInstance = new LinkedView({model: this.model, active: false});
-
-            // for safety, explicitly remove bindings
-            if (linkedViewInstance && linkedViewInstance.removeBindings) {
-                linkedViewInstance.removeBindings.apply(linkedViewInstance);
-            }
-
-            // add the view to global container
-            this.linkedViewsInstances[i] = linkedViewInstance;
         },
 
         /**
@@ -302,29 +197,14 @@ define([
          */
         changeParticipantView: function(viewType) {
 
+            if (this.mainView.removeBindings) {
+                this.mainView.removeBindings();
+            }
+
             var oldType = this.viewType;
             this.viewType = viewType;
-            var mainIndex = this.linkedViewsTypes.indexOf(oldType);
 
-            // unbind current main view
-            if (this.linkedViewsInstances[mainIndex].removeBindings) {
-                this.linkedViewsInstances[mainIndex].removeBindings();
-            }
-
-            // is old view model was updated
-            var updated = this.linkedViewsInstances[mainIndex].updated;
-
-            // retrieve and bind new main view
-            mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
-            if (this.linkedViewsInstances[mainIndex].initBindings) {
-                this.linkedViewsInstances[mainIndex].initBindings();
-            }
-
-            // re-render next view if previous model was updated
-            if (updated) {
-                this.linkedViewsInstances[mainIndex].render();
-                this.renderNext = false;
-            }
+            this.mainView = this.linkedViews[viewType].instance;
 
             // display new view
             this.$el.find('.view-elem#' + this.viewType).removeClass('hidden');
@@ -339,7 +219,7 @@ define([
             Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
 
             // perform transition
-            this.$el.find('#view').addClass('slide').css('margin-left', -(mainIndex * (940 + 20 + 50)) + 'px');
+            this.$el.find('#view').addClass('slide').css('margin-left', -(this.linkedViewsOrder.indexOf(this.viewType) * (940 + 20 + 50)) + 'px');
         },
 
         /**
@@ -370,7 +250,7 @@ define([
             this.inTransition = false;
 
             // change url
-            window.history.pushState(null, 'Tournament', '/participant/' + this.model.id + this.linkedViewsURLFragment[this.linkedViewsTypes.indexOf(this.viewType)]);
+            window.history.pushState(null, 'Tournament', '/participant/' + this.model.id + this.linkedViews[this.viewType].url);
 
             // give focus to first input if exists
             this.$el.find('form input:not(:disabled)').first().focus();
@@ -387,13 +267,11 @@ define([
          */
         precedentHandler: function() {
             if (!this.inTransition) {
-                if (this.mainIsLinkedView()) {
-                    var mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
+                var currentIndex = this.linkedViewsOrder.indexOf(this.viewType);
 
-                    if (mainIndex > 0) {
-                        var newType = this.linkedViewsTypes[mainIndex - 1];
-                        this.changeParticipantView(newType);
-                    }
+                if (currentIndex > 0) {
+                    var newType = this.linkedViewsOrder[currentIndex - 1];
+                    this.changeParticipantView(newType);
                 }
             }
         },
@@ -403,18 +281,42 @@ define([
          */
         nextHandler: function() {
             if (!this.inTransition) {
-                if (this.mainIsLinkedView()) {
-                    var mainIndex = this.linkedViewsTypes.indexOf(this.viewType);
+                var currentIndex = this.linkedViewsOrder.indexOf(this.viewType);
 
-                    if (mainIndex < this.linkedViewsTypes.length - 1) {
-                        var newType = this.linkedViewsTypes[mainIndex + 1];
-                        this.changeParticipantView(newType);
-                    }
+                if (currentIndex < this.linkedViewsOrder.length - 1) {
+                    var newType = this.linkedViewsOrder[currentIndex + 1];
+                    this.changeParticipantView(newType);
                 }
             }
         },
 
-        dragEndHandler: function(event) {
+        /**
+         * Handles drag start on current view
+         *
+         * @param event event raised
+         */
+        dragStartHandler: function(event) {
+
+            this.navigationView.hideTooltips();
+
+            // set transfer data
+            event.originalEvent.dataTransfer.effectAllowed = 'move'; // only dropEffect='copy' will be droppable
+            event.originalEvent.dataTransfer.setData('id', this.model.id);
+            event.originalEvent.dataTransfer.setData('elemType', 'participant');
+
+            // create miniature shown during drag
+            // this miniature must be already rendered by the browser and not hidden -> should be positioned
+            // out of visible page
+            // To embed remote image, this should be cacheable and the remote server should implement the
+            // corresponding cache politic
+            var dragIcon = $('#dragIcon');
+            dragIcon.html(miniatureTemplate({participant: this.model.toJSON()}));
+            event.originalEvent.dataTransfer.setDragImage(dragIcon.get(0), 50, 50);
+
+            Pubsub.trigger(App.Events.DRAG_START);
+        },
+
+        dragEndHandler: function() {
             Pubsub.trigger(App.Events.DRAG_END);
         }
 

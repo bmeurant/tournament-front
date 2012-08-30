@@ -29,29 +29,25 @@ define([
                 if (this.options.active == null || this.options.active == true) {
                     this.initBindings();
                 }
+
+                this.model.on("sync", this.render.bind(this));
             },
 
             /**
              * Initialize all view bindings
              */
             initBindings: function() {
-
                 // allow backbone-validation view callbacks (for error display)
                 Backbone.Validation.bind(this);
-
-                Pubsub.on(App.Events.SAVE_ELEM, this.submitForm.bind(this), this);
+                Pubsub.on(App.Events.SAVE_ELEM, this.submitForm, this);
             },
 
             /**
              * Remove all view bindings (events and Pubsub). Listeners will not be called anymore
              */
             removeBindings: function() {
-                this.unbind();
-                if (this.handlers) {
-                    $.each(this.handlers, function(index, value) {
-                        Pubsub.off(value);
-                    });
-                }
+                Backbone.Validation.unbind(this);
+                Pubsub.off(null, null, this);
             },
 
             render: function() {
@@ -267,5 +263,8 @@ define([
                 this.$el.find('form input:focus').blur();
             }
 
-        }));
-});
+        })
+    )
+        ;
+})
+;

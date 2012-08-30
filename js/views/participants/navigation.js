@@ -28,6 +28,7 @@ define([
         initialize: function() {
             this.viewType = this.options.type;
             Pubsub.on(App.Events.VIEW_CHANGED, this.updatePills, this);
+            this.render();
         },
 
         /**

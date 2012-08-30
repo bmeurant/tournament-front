@@ -137,39 +137,6 @@ define([
                 return mod;
             },
 
-            /**
-             * @param partials optional object containing partial views elements to display. if null, display all
-             */
-            showTemplate: function(partials) {
-                this.hideTooltips();
-
-                if (!partials || (partials.participants && partials.pagination)) {
-                    this.$el.html(listTemplate());
-                }
-
-                if (!partials || partials.participants) {
-                    this.$el.find('.elements').html(listItemsTemplate({participants: this.collection.toJSON(), 'id_selected': this.idSelected}));
-                }
-                if (!partials || partials.pagination) {
-                    this.$el.find('.pagination').html(this.paginationView.render(this.collection).$el);
-                }
-                else {
-                    this.paginationView.render(this.collection);
-                }
-
-                this.initTooltips();
-
-                // if no element is currently select, select the first one
-                var $selected = this.findSelected(this.$el, 'li.thumbnail');
-                if (!$selected || $selected.length == 0) {
-                    this.selectFirst(this.$el, 'li.thumbnail');
-                }
-
-                window.history.pushState(null, 'Tournament', '/participants' + ((this.collection.info().currentPage != 1) ? '?page=' + this.collection.info().currentPage : ''));
-
-                Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, 'list');
-            },
-
             initTooltips: function() {
                 // initialize tooltips
                 this.$el.find('li.thumbnail').tooltip({title: 'drag on delete drop-zone to remove<br/>click to view details', trigger: 'hover', placement: this.liTooltipPlacement});
