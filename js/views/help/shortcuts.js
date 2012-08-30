@@ -20,6 +20,7 @@ define([
             this.setElement($selector);
             Pubsub.on(App.Events.KEYBOARD_CALLED, this.render, this);
             Pubsub.on(App.Events.VIEW_CHANGED, this.viewChanged, this);
+            Pubsub.on(App.Events.ECHAP_CALLED, this.hide, this);
         },
 
         render: function() {
@@ -50,6 +51,10 @@ define([
         viewChanged: function(elemType, viewType) {
             this.elemType = elemType;
             this.viewType = viewType;
+        },
+
+        hide: function () {
+            this.$el.modal('hide');
         }
 
     });

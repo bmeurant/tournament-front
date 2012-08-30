@@ -81,7 +81,6 @@ define([
         },
 
         pushEvent: function(appEvent, event) {
-
             Pubsub.trigger(appEvent, event);
         },
 
@@ -90,7 +89,7 @@ define([
         },
 
         filter: function(event) {
-            if (this.isModalActive()) return false;
+            if (!(event.which == 27) && this.isModalActive()) return false;
 
             return this.originalFilter.apply(this, [event]);
         }
