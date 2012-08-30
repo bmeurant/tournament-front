@@ -31,7 +31,7 @@ define([
             },
 
             initialize: function() {
-                this.collection.on('reset', this.render.bind(this));
+                this.collection.on('sync', this.render.bind(this));
 
                 Pubsub.on(App.Events.ELEM_DELETED_FROM_BAR, this.participantDeleted, this);
                 Pubsub.on(App.Events.DELETIONS_CANCELED, this.cancelDeletions, this);

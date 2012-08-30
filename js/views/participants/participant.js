@@ -73,8 +73,6 @@ define([
             Pubsub.on(App.Events.PREVIOUS_CALLED, this.precedentHandler, this);
             Pubsub.on(App.Events.NEXT_CALLED, this.nextHandler, this);
 
-            this.model.on("change", this.render.bind(this));
-
             if (this.model.id && this.deleted.indexOf(this.model.id) >= 0) {
                 Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'This participant is currently being deleted', 'alert-error');
 
@@ -88,6 +86,7 @@ define([
             // retrieve model from server and render view
             if (this.model.id) {
                 this.model.fetch({
+                    success: this.render.bind(this),
                     error: function() {
                         Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to get participant', 'alert-error');
                     }

@@ -22,7 +22,7 @@ define([
             Pubsub.on(App.Events.PAGE_UP_CALLED, this.previousPage, this);
             Pubsub.on(App.Events.PAGE_DOWN_CALLED, this.nextPage, this);
 
-            this.collection.on('reset', this.render.bind(this));
+            this.collection.on('sync', this.render.bind(this));
         },
 
         render: function() {
