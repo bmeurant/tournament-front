@@ -65,8 +65,8 @@ define([
                 event.preventDefault();
             }
 
-            if (this.elemCollection.info().previous) {
-                Pubsub.trigger(App.Events.NEW_PAGE, this.collection.info().previous, selectLast);
+            if (this.collection.previous) {
+                Pubsub.trigger(App.Events.NEW_PAGE, this.collection.previous, selectLast);
             }
         },
 
@@ -77,8 +77,8 @@ define([
                 event.preventDefault();
             }
 
-            if (this.elemCollection.info().next) {
-                Pubsub.trigger(App.Events.NEW_PAGE, this.collection.info().next);
+            if (this.collection.next) {
+                Pubsub.trigger(App.Events.NEW_PAGE, this.collection.next);
             }
         }
 

@@ -54,6 +54,8 @@ define([
             this.totalPages = response.totalPages;
             this.totalRecords = response.totalElements;
             this.lastPage = this.totalPages;
+            this.next = !response.lastPage ? this.currentPage + 1 : null;
+            this.previous = !response.firstPage ? this.currentPage - 1: null;
             return participants;
         }
     });

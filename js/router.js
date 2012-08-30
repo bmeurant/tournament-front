@@ -3,7 +3,7 @@ define([
     'underscore',
     'backbone',
     'backbone-queryparams',
-    'views/participants/list',
+    'views/participants/listItems',
     'views/participants/participant',
     'views/deletions/list',
     'views/help/help'
