@@ -6,10 +6,11 @@ define([
     'views/deletions/abstract',
     'hbs!templates/participants/list.html',
     'models/participant',
+    'collections/participants',
     'mixins/selectable',
     'pubsub',
     'async'
-], function($, _, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, Selectable, Pubsub) {
+], function($, _, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, ParticipantCollection, Selectable, Pubsub) {
 
     /**
      * Main view for displaying deletions
@@ -31,27 +32,11 @@ define([
                 id: 'deletions-container'
             },
 
-            JSONCollection: {},
-
             initialize: function() {
 
+                this.events = _.extend({}, AbstractView.prototype.events, this.events);
                 // call inherited constructor
                 AbstractView.prototype.initialize.apply(this, arguments);
-                this.events = _.extend({}, AbstractView.prototype.events, this.events);
-                this.handlers = _.extend([], AbstractView.prototype.handlers, this.handlers);
-
-                // set defaut handler for click in order to handle both simple and dble click
-                this.firingFunc = this.cancelElementDeletion.bind(this);
-
-                // init Pubsub bindings
-                Pubsub.on(App.Events.DELETIONS_CONFIRMED, this.render, this);
-                Pubsub.on(App.Events.DELETIONS_CANCELED, this.render, this);
-                Pubsub.on(App.Events.NEXT_CALLED, this.selectNext, this);
-                Pubsub.on(App.Events.PREVIOUS_CALLED, this.selectPrevious, this);
-                Pubsub.on(App.Events.DELETE_ELEM, this.confirmSelectedDeletion, this);
-                Pubsub.on(App.Events.ENTER_CALLED, this.cancelSelectedDeletion, this);
-
-                this.emptyJSONCollection();
 
                 Handlebars.registerHelper('if_deleted', function() {
                     return false;
@@ -65,54 +50,87 @@ define([
                     return (this.idSelected && this.idSelected == id) ? 'selected' : '';
                 }.bind(this));
 
+                // set defaut handler for click in order to handle both simple and dble click
+                this.firingFunc = this.cancelElementDeletion.bind(this);
+
+                // init Pubsub bindings
+                Pubsub.on(App.Events.DELETIONS_CONFIRMED, this.refreshView, this);
+                Pubsub.on(App.Events.DELETIONS_CANCELED, this.refreshView, this);
+                Pubsub.on(App.Events.NEXT_CALLED, this.selectNext, this);
+                Pubsub.on(App.Events.PREVIOUS_CALLED, this.selectPrevious, this);
+                Pubsub.on(App.Events.DELETE_ELEM, this.confirmSelectedDeletion, this);
+                Pubsub.on(App.Events.ENTER_CALLED, this.cancelSelectedDeletion, this);
+
+                this.refreshView();
+            },
+
+            initCollections: function() {
+                this.initCollection();
+
+                if (!this.collections || this.collections.keys == 0) {
+                    this.collections = {};
+                    var participantCollection = new ParticipantCollection();
+                    this.collections.participant = participantCollection;
+                }
+                else {
+                    this.emptyCollections();
+                }
+
+                for (var index in this.idsCollection.participant) {
+                    this.collections.participant.add(new Participant({id: this.idsCollection.participant[index]}));
+                }
+
+                this.collections.participant.on("remove", function(model) {
+                    this.idsCollection.participant.splice(this.idsCollection.participant.indexOf(model.id), 1);
+                }.bind(this))
             },
 
             /**
              * Creates an empty models collection with the correct format
              */
-            emptyJSONCollection: function() {
-                this.JSONCollection.participant = [];
+            emptyCollections: function() {
+                this.collections.participant.reset();
             },
 
             /**
              * Populate and initialize properly instance collections in order to prepare rendering.
              */
-            populateCollection: function() {
-
+            populateCollections: function() {
                 // if collection is empty, don't do anything but rendering view
-                if (this.countElements(this.elemCollection) == 0) {
-                    this.showTemplate();
+                if (this.countElements(this.collections) == 0) {
+                    this.render();
                 }
                 else {
                     var elements = [];
-                    $.each(this.elemCollection, function(elemType, idArray) {
-                        $.each(idArray, function(index, id) {
-                            elements.push({type: elemType, id: id, index: index});
-
-                        }.bind(this));
+                    $.each(this.collections, function(elemType, collection) {
+                        elements = elements.concat(collection.models);
                     }.bind(this));
 
                     async.map(elements, this.fetchElement.bind(this), this.afterPopulate.bind(this));
                 }
             },
 
-            fetchElement: function(elem, fetchCallback) {
-                $.getJSON(App.Config.serverRootURL + '/' + elem.type + '/' + elem.id)
-                    .done(function(data) {
-                    // add model to current collection and call callback
-                    this.JSONCollection[elem.type].push(data);
-                    fetchCallback(null, elem);
-                }.bind(this))
-                    .fail(function(jqXHR) {
-                    if (jqXHR.status == 404) {
-                        // element obviously already deleted from server. Ignore it and remove from local collection
-                        this.elemCollection[elem.type].splice(elem.index, 1);
-                    }
+            fetchElement: function(model, fetchCallback) {
 
-                    // callback is called with null error parameter because otherwise it breaks the
-                    // loop and top on first error :-(
-                    fetchCallback(null, null);
-                }.bind(this));
+                var type = this.getModelType(model);
+
+                model.fetch({wait: true,
+                    success: function(model) {
+                        // add model to current collection and call callback
+                        this.collections[type].add(model);
+                        fetchCallback(null, model);
+                    }.bind(this),
+                    error: function(model, response) {
+                        if (response.status == 404) {
+                            // element obviously already deleted from server. Ignore it and remove from local collection
+                            this.collections[type].remove(model);
+                        }
+
+                        // callback is called with null error parameter because otherwise it breaks the
+                        // loop and top on first error :-(
+                        fetchCallback(null, null);
+                    }.bind(this)
+                });
             },
 
             /**
@@ -134,30 +152,19 @@ define([
                     Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to fetch participants', 'alert-error');
                 }
                 // there is at least on error
-                else if (successes.length < this.countElements(this.elemCollection)) {
+                else if (successes.length < this.countElements(this.collections)) {
                     Pubsub.trigger(App.Events.ALERT_RAISED, 'Warning!', 'Some participants could not be retrieved', 'alert-warning');
                 }
 
                 this.storeInLocalStorage();
-                this.showTemplate();
+                this.render();
 
                 Pubsub.trigger(App.Events.DELETIONS_POPULATED);
             },
 
             render: function() {
-                this.hideTooltips();
-                this.initCollection();
-                this.emptyJSONCollection();
-                this.populateCollection();
-
-                Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
-                $('.delete-menu.drop-zone').addClass('hidden');
-                return this;
-            },
-
-            showTemplate: function() {
-                var participants_template = participantTemplate({'participants': this.JSONCollection['participant']});
-                this.$el.html(deletionsTemplate({'participants': this.JSONCollection['participant'], 'participants_template': new Handlebars.SafeString(participants_template)}));
+                var participants_template = participantTemplate({'participants': this.collections.participant.toJSON()});
+                this.$el.html(deletionsTemplate({'hasParticipants': this.collections.participant.length > 0, 'participants_template': new Handlebars.SafeString(participants_template)}));
 
                 this.initTooltips();
 
@@ -167,6 +174,16 @@ define([
                     this.selectFirst(this.$el, 'li.thumbnail');
                 }
 
+
+                $('.delete-menu.drop-zone').addClass('hidden');
+                Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
+                return this;
+            },
+
+            refreshView: function() {
+                this.hideTooltips();
+                this.initCollections();
+                this.populateCollections();
             },
 
             elemClicked: function(event) {
@@ -212,7 +229,7 @@ define([
 
                 var idElem = event.currentTarget.getAttribute('id');
 
-                this.cancelDeletion(this.getElementType(idElem), idElem);
+                this.cancelDeletion(idElem);
             },
 
             /**
@@ -223,7 +240,7 @@ define([
                 var $selected = this.findSelected(this.$el, 'li.thumbnail');
                 if ($selected && $selected.length > 0) {
                     var idElem = $selected.attr('id');
-                    this.cancelDeletion(this.getElementType(idElem), idElem);
+                    this.cancelDeletion(idElem);
                 }
             },
 
@@ -256,17 +273,23 @@ define([
              * @param idElem id of the element to delete
              */
             confirmDeletion: function(elemType, idElem) {
-                var elem = this.findElement(elemType, idElem);
-                this.deleteFromServer(elem, this.onElementDeleted.bind(this));
+                var model = this.collections[elemType].where({id: parseInt(idElem)})[0];
+
+                var $element = $('.' + elemType + '#' + model.id);
+                $element.addClass('disabled');
+                $('<div>').addClass('foreground').appendTo($element);
+                $element.removeClass("selected");
+
+                this.deleteFromServer(model, this.onElementDeleted.bind(this));
             },
 
             onElementDeleted: function(err, result) {
-                if (result.elem == null) {
+                if (result.model == null) {
                     Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'Cannot remove selected element', 'alert-error');
                     return;
                 }
 
-                this.removeAndSave(result.elem);
+                this.removeAndSave(result.model);
 
                 Pubsub.trigger(App.Events.DELETION_CONFIRMED);
                 Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Element deletion confirmed', 'alert-success');
@@ -278,41 +301,25 @@ define([
              * @param elemType type of the element to delete
              * @param idElem id of the element to delete
              */
-            cancelDeletion: function(elemType, idElem) {
+            cancelDeletion: function(idElem) {
 
-                var elem = this.findElement(elemType, idElem);
-                this.removeAndSave(elem);
+                var elemClass = this.getElementClass(idElem);
+                var model = new elemClass({id: parseInt(idElem)});
+                this.removeAndSave(model);
 
                 Pubsub.trigger(App.Events.DELETION_CANCELED);
                 Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Element deletion canceled', 'alert-success');
             },
 
-            findElement: function(elemType, idElem) {
-                // get collection from local storage
-                this.initCollection();
+            removeAndSave: function(model) {
 
-                var elem = {};
-
-                // find and remove the element from the deletions collection
-                $.each(this.elemCollection[elemType], function(index, id) {
-                    if (id == idElem) {
-                        elem.id = id;
-                        elem.index = index;
-                        elem.type = elemType;
-                        return false;
-                    }
-                }.bind(this));
-
-                return elem;
-            },
-
-            removeAndSave: function(elem) {
+                var type = this.getModelType(model);
 
                 this.hideTooltips();
 
-                this.elemCollection[elem.type].splice(elem.index, 1);
+                this.idsCollection[type].splice(this.idsCollection[type].indexOf(model.id), 1);
                 // remove element from the current view
-                $('#' + elem.id).remove();
+                $('.' + type + '#' + model.id).remove();
 
                 // retrieve and save the currently selected element, if any
                 var $selected = this.findSelected(this.$el, 'li.thumbnail');
@@ -399,6 +406,10 @@ define([
              */
             getElementType: function(liElemId) {
                 if ($('#' + liElemId).hasClass('participant')) return 'participant';
+            },
+
+            getElementClass: function(liElemId) {
+                if ($('#' + liElemId).hasClass('participant')) return Participant;
             }
 
         }));

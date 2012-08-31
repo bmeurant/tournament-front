@@ -46,12 +46,12 @@ define([
 
         showDeletions: function() {
             var view = new DeletionsView();
-            $('#content').html(view.render().el);
+            $('#content').html(view.el);
         },
 
         showHelp: function() {
             var view = new HelpView();
-            $('#content').html(view.render().el);
+            $('#content').html(view.el);
         },
 
         defaultAction: function() {

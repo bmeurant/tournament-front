@@ -1,7 +1,8 @@
 define([
     'jquery',
-    'backbone'
-], function($, Backbone) {
+    'backbone',
+    'models/participant'
+], function($, Backbone, Participant) {
 
     /**
      * 'Abstract' view defining global controls, events, handlers and methods for 'concrete'
@@ -19,7 +20,7 @@ define([
          */
         initCollection: function() {
             this.getFromLocalStorage();
-            if (!this.elemCollection || Object.keys(this.elemCollection).length == 0) {
+            if (!this.idsCollection || Object.keys(this.idsCollection).length == 0) {
                 this.emptyCollection();
             }
             this.storeInLocalStorage();
@@ -29,22 +30,22 @@ define([
          * Creates an empty collection with the correct format
          */
         emptyCollection: function() {
-            this.elemCollection = {};
-            this.elemCollection.participant = [];
+            this.idsCollection = {};
+            this.idsCollection.participant = [];
         },
 
         /**
          * Retrieve collection from local storage
          */
         getFromLocalStorage: function() {
-            this.elemCollection = JSON.parse(localStorage.getItem('deletedElements'));
+            this.idsCollection = JSON.parse(localStorage.getItem('deletedElements'));
         },
 
         /**
          * Save current collection state in local storage
          */
         storeInLocalStorage: function() {
-            localStorage.setItem('deletedElements', JSON.stringify(this.elemCollection));
+            localStorage.setItem('deletedElements', JSON.stringify(this.idsCollection));
         },
 
         /**
@@ -54,15 +55,14 @@ define([
          * @param id id of the element to add
          */
         addToCollection: function(elemType, id) {
-
             // initialize collection elemType hash key if not exists
-            if (!this.elemCollection[elemType]) {
-                this.elemCollection[elemType] = [];
+            if (!this.idsCollection[elemType]) {
+                this.idsCollection[elemType] = [];
             }
 
             // if the collection does not already contains the element, add it.
-            if (this.elemCollection[elemType].indexOf(id) < 0) {
-                this.elemCollection[elemType].push(id);
+            if (this.idsCollection[elemType].indexOf(id) < 0) {
+                this.idsCollection[elemType].push(id);
             }
         },
 
@@ -78,24 +78,35 @@ define([
             return elements;
         },
 
-        deleteFromServer: function(elem, deleteCallback) {
-            $.ajax({
-                url: App.Config.serverRootURL + '/' + elem.type + '/' + elem.id,
-                type: 'DELETE'
-            })
-                .done(function() {
-                    deleteCallback(null, {type: 'success', elem: elem});
-                })
-                .fail(function(jqXHR) {
-                if (jqXHR.status == 404) {
-                    // element obviously already deleted from server. Ignore it and remove from local collection
-                    this.elemCollection[elem.type].splice(elem.index, 1);
-                }
+        deleteFromServer: function(model, deleteCallback) {
+            var type = this.getModelType(model);
 
-                // callback is called with null error parameter because otherwise it breaks the
-                // loop and stop on first error :-(
-                deleteCallback(null, {type: 'error', elem: elem});
-            }.bind(this));
+            model.destroy({
+                wait: true,
+                success: function(model) {
+                    deleteCallback(null, {type: 'success', model: model});
+                },
+                error: function(model, response) {
+                    if (response.status == 404) {
+                        // element obviously already deleted from server. Ignore it and remove from
+                        // local collection
+                        this.idsCollection[type].remove(model);
+                    }
+                    else {
+                        deleteCallback(null, {type: 'error', model: model});
+                    }
+                }.bind(this)
+            });
+        },
+
+        getModelType: function(model) {
+            if (model instanceof Participant) return 'participant';
+            return null;
+        },
+
+        getClassFromType: function(type) {
+            if (type == 'participant') return Participant;
+            return null;
         }
 
     });

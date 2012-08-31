@@ -41,7 +41,7 @@ define([
                 Pubsub.on(App.Events.ENTER_CALLED, this.showSelected, this);
                 Pubsub.on(App.Events.ELEM_DELETED_FROM_VIEW, this.participantDeleted, this);
                 Pubsub.on(App.Events.NEW_PAGE, this.newPage, this);
-                Pubsub.on(App.Events.DELETIONS_CONFIRMED, this.render, this);
+                Pubsub.on(App.Events.DELETIONS_CONFIRMED, this.refreshPage, this);
 
                 this.initDeleted();
 
@@ -293,6 +293,10 @@ define([
                             Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to fetch participants', 'alert-error');
                         }
                     });
+            },
+
+            refreshPage: function() {
+                this.newPage(this.collection.currentPage);
             },
 
             initDeleted: function() {

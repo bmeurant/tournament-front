@@ -5,9 +5,10 @@ define([
     'resthub-handlebars',
     'hbs!templates/deletions/menu.html',
     'views/deletions/abstract',
+    'models/participant',
     'pubsub',
     'async'
-], function($, _, Backbone, Handlebars, deletionsMenuTemplate, AbstractView, Pubsub) {
+], function($, _, Backbone, Handlebars, deletionsMenuTemplate, AbstractView, Participant, Pubsub) {
 
     return AbstractView.extend({
 
@@ -190,7 +191,7 @@ define([
          */
         renderDels: function() {
             this.getFromLocalStorage();
-            var nbDels = this.countElements(this.elemCollection);
+            var nbDels = this.countElements(this.idsCollection);
             $(this.nbDelsSelector).text(nbDels);
             nbDels > 0 ? $('.delete-actions').removeClass('hidden') : $('.delete-actions').addClass('hidden');
         },
@@ -218,9 +219,10 @@ define([
 
             var elements = [];
 
-            $.each(this.elemCollection, function(type, idArray) {
+            $.each(this.idsCollection, function(type, idArray) {
                 $.each(idArray, function(index, currentId) {
-                    elements.push({type: type, id: currentId, index: index});
+                    var ModelClass = this.getClassFromType(type);
+                    elements.push(new ModelClass({id: parseInt(currentId)}));
                 }.bind(this));
             }.bind(this));
 
@@ -235,7 +237,7 @@ define([
          */
         afterRemove: function(err, results) {
 
-            var initialCollectionLength = this.countElements(this.elemCollection);
+            var initialCollectionLength = this.countElements(this.idsCollection);
             this.emptyCollection();
 
             $.each(results, function(index, result) {
@@ -246,7 +248,7 @@ define([
 
             }.bind(this));
 
-            var finalCollectionLength = this.countElements(this.elemCollection);
+            var finalCollectionLength = this.countElements(this.idsCollection);
 
             if (finalCollectionLength == 0) {
                 Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Elements successfully deleted', 'alert-success');
@@ -283,7 +285,7 @@ define([
 
             this.render();
 
-            Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Deletion canceled', 'alert-success');
+            Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Deletions canceled', 'alert-success');
             Pubsub.trigger(App.Events.DELETIONS_CANCELED);
         },
 

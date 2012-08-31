@@ -299,6 +299,10 @@ body input, textarea, select, .uneditable-input {
     min-height: 50px;
 }
 
+.elements {
+    min-width: 960px;
+}
+
 .navbar-search {
     position: relative;
 }
