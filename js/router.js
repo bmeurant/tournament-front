@@ -2,13 +2,8 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'backbone-queryparams',
-    'views/participants/paginatedList',
-    'views/participants/participant',
-    'views/participants/add',
-    'views/deletions/list',
-    'views/help/help'
-], function($, _, Backbone, BackboneQueryParams, ParticipantListView, ParticipantView, AddView, DeletionsView, HelpView) {
+    'backbone-queryparams'
+], function($, _, Backbone, BackboneQueryParams) {
 
     var AppRouter = Backbone.Router.extend({
         routes: {
@@ -25,33 +20,51 @@ define([
         },
 
         listParticipants: function(params) {
-            var view = new ParticipantListView({params: params});
-            $('#content').html(view.el);
+            require(['views/participants/paginatedList'],
+                function(ParticipantListView) {
+                    var view = new ParticipantListView({params: params});
+                    $('#content').html(view.el);
+                });
         },
 
         showParticipant: function(id) {
-            var view = new ParticipantView({id: id, type: 'details'});
-            $('#content').html(view.el);
+            require(['views/participants/participant'],
+                function(ParticipantView) {
+                    var view = new ParticipantView({id: id, type: 'details'});
+                    $('#content').html(view.el);
+                });
         },
 
         editParticipant: function(id) {
-            var view = new ParticipantView({id: id, type: 'edit'});
-            $('#content').html(view.el);
+            require(['views/participants/participant'],
+                function(ParticipantView) {
+                    var view = new ParticipantView({id: id, type: 'edit'});
+                    $('#content').html(view.el);
+                });
         },
 
         addParticipant: function() {
-            var view = new AddView();
-            $('#content').html(view.el);
+            require(['views/participants/add'],
+                function(AddView) {
+                    var view = new AddView();
+                    $('#content').html(view.el);
+                });
         },
 
         showDeletions: function() {
-            var view = new DeletionsView();
-            $('#content').html(view.el);
+            require(['views/deletions/list'],
+                function(DeletionsView) {
+                    var view = new DeletionsView();
+                    $('#content').html(view.el);
+                });
         },
 
         showHelp: function() {
-            var view = new HelpView();
-            $('#content').html(view.el);
+            require(['views/help/help'],
+                function(HelpView) {
+                    var view = new HelpView();
+                    $('#content').html(view.el);
+                });
         },
 
         defaultAction: function() {
