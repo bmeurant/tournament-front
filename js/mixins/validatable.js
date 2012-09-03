@@ -4,8 +4,8 @@ define([
 
     return {
         clearValidationErrors: function() {
-            $('.control-group').removeClass("error");
-            $('.help-inline').empty();
+            this.$('.control-group').removeClass("error");
+            this.$('.help-inline').empty();
         }
     };
 });

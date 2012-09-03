@@ -1,5 +1,4 @@
 define([
-    'jquery',
     'underscore',
     'resthub-handlebars',
     'hbs!templates/deletions/list.html',
@@ -10,7 +9,7 @@ define([
     'mixins/selectable',
     'pubsub',
     'async'
-], function($, _, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, ParticipantCollection, Selectable, Pubsub) {
+], function(_, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, ParticipantCollection, Selectable, Pubsub) {
 
     /**
      * Main view for displaying deletions
@@ -169,13 +168,13 @@ define([
                 this.initTooltips();
 
                 // if no element is currently select, select the first one
-                var $selected = this.findSelected(this.$el, 'li.thumbnail');
+                var $selected = this.findSelected('li.thumbnail');
                 if (!$selected || $selected.length == 0) {
-                    this.selectFirst(this.$el, 'li.thumbnail');
+                    this.selectFirst('li.thumbnail');
                 }
 
 
-                $('.delete-menu.drop-zone').addClass('hidden');
+                this.$('.delete-menu.drop-zone').addClass('hidden');
                 Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
                 return this;
             },
@@ -237,7 +236,7 @@ define([
              */
             cancelSelectedDeletion: function() {
 
-                var $selected = this.findSelected(this.$el, 'li.thumbnail');
+                var $selected = this.findSelected('li.thumbnail');
                 if ($selected && $selected.length > 0) {
                     var idElem = $selected.attr('id');
                     this.cancelDeletion(idElem);
@@ -249,7 +248,7 @@ define([
              */
             confirmSelectedDeletion: function() {
 
-                var $selected = this.findSelected(this.$el, 'li.thumbnail');
+                var $selected = this.findSelected('li.thumbnail');
                 if ($selected && $selected.length > 0) {
                     var idElem = $selected.attr('id');
                     this.confirmDeletion(this.getElementType(idElem), idElem);
@@ -275,9 +274,9 @@ define([
             confirmDeletion: function(elemType, idElem) {
                 var model = this.collections[elemType].where({id: parseInt(idElem)})[0];
 
-                var $element = $('.' + elemType + '#' + model.id);
+                var $element = this.$('.' + elemType + '#' + model.id);
                 $element.addClass('disabled');
-                $('<div>').addClass('foreground').appendTo($element);
+                this.$('<div>').addClass('foreground').appendTo($element);
                 $element.removeClass("selected");
 
                 this.deleteFromServer(model, this.onElementDeleted.bind(this));
@@ -319,25 +318,25 @@ define([
 
                 this.idsCollection[type].splice(this.idsCollection[type].indexOf(model.id), 1);
                 // remove element from the current view
-                $('.' + type + '#' + model.id).remove();
+                this.$('.' + type + '#' + model.id).remove();
 
                 // retrieve and save the currently selected element, if any
-                var $selected = this.findSelected(this.$el, 'li.thumbnail');
+                var $selected = this.findSelected('li.thumbnail');
 
                 this.selectNext();
 
-                if (!$selected || $selected.length == 0) this.selectFirst(this.$el, 'li.thumbnail');
+                if (!$selected || $selected.length == 0) this.selectFirst('li.thumbnail');
 
                 // save changes in local storage
                 this.storeInLocalStorage();
             },
 
             selectNext: function() {
-                this.selectElement(this.$el, 'li.thumbnail', 'next');
+                this.selectElement('li.thumbnail', 'next');
             },
 
             selectPrevious: function() {
-                this.selectElement(this.$el, 'li.thumbnail', 'previous');
+                this.selectElement('li.thumbnail', 'previous');
             },
 
             /**
@@ -348,19 +347,19 @@ define([
              */
             elemFocused: function(event) {
                 if (event && event.currentTarget) {
-                    var $selected = this.findSelected(this.$el, 'li.thumbnail');
+                    var $selected = this.findSelected('li.thumbnail');
                     if ($selected && $selected.length != 0) {
                         $selected.removeClass('selected');
                     }
-                    $(event.currentTarget).parent().addClass('selected');
+                    this.$(event.currentTarget).parent().addClass('selected');
                 }
             },
 
             initTooltips: function() {
                 // initialize tooltips
-                this.$el.find('li.thumbnail').tooltip({title: 'double click to remove, simple click to cancel', trigger: 'hover', placement: this.liTooltipPlacement});
+                this.$('li.thumbnail').tooltip({title: 'double click to remove, simple click to cancel', trigger: 'hover', placement: this.liTooltipPlacement.bind(this)});
                 // cannot define a tooltip on a same selector twice : define one on 'a' to link with focus event
-                this.$el.find('li.thumbnail > a').tooltip({title: 'press <code>Del</code> to remove<br/>press <code>Enter</code> to cancel', trigger: 'focus', placement: this.liTooltipPlacement});
+                this.$('li.thumbnail > a').tooltip({title: 'press <code>Del</code> to remove<br/>press <code>Enter</code> to cancel', trigger: 'focus', placement: this.liTooltipPlacement.bind(this)});
             },
 
             /**
@@ -371,9 +370,9 @@ define([
              */
             liTooltipPlacement: function(tip, target) {
 
-                $('li.thumbnail').tooltip('hide');
-                $('li.thumbnail a').tooltip('hide');
-                var $target = $(target);
+                this.$('li.thumbnail').tooltip('hide');
+                this.$('li.thumbnail a').tooltip('hide');
+                var $target = this.$(target);
 
                 // if target is a : found the real target (parent li) and force
                 // bootstrap-tooltip to consider this element instead of original 'a'
@@ -392,8 +391,8 @@ define([
             },
 
             hideTooltips: function() {
-                this.$el.find('li.thumbnail').tooltip('hide');
-                this.$el.find('li.thumbnail a').tooltip('hide');
+                this.$('li.thumbnail').tooltip('hide');
+                this.$('li.thumbnail a').tooltip('hide');
             },
 
             onDispose: function() {
@@ -405,11 +404,11 @@ define([
              * @param liElemId
              */
             getElementType: function(liElemId) {
-                if ($('#' + liElemId).hasClass('participant')) return 'participant';
+                if (this.$('#' + liElemId).hasClass('participant')) return 'participant';
             },
 
             getElementClass: function(liElemId) {
-                if ($('#' + liElemId).hasClass('participant')) return Participant;
+                if (this.$('#' + liElemId).hasClass('participant')) return Participant;
             }
 
         }));

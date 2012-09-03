@@ -1,8 +1,7 @@
 define([
-    'jquery',
     'backbone',
     'hbs!templates/search/menu.html'
-], function($, Backbone, searchMenuTemplate) {
+], function(Backbone, searchMenuTemplate) {
 
     return Backbone.View.extend({
 
@@ -25,8 +24,8 @@ define([
                 event.stopPropagation();
                 event.preventDefault();
 
-                $(event.currentTarget).blur();
-                $('.container').focus();
+                this.$(event.currentTarget).blur();
+                this.$('.container').focus();
             }
         }
 

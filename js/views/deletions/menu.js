@@ -1,5 +1,4 @@
 define([
-    'jquery',
     'underscore',
     'backbone',
     'resthub-handlebars',
@@ -8,7 +7,7 @@ define([
     'models/participant',
     'pubsub',
     'async'
-], function($, _, Backbone, Handlebars, deletionsMenuTemplate, AbstractView, Participant, Pubsub) {
+], function(_, Backbone, Handlebars, deletionsMenuTemplate, AbstractView, Participant, Pubsub) {
 
     return AbstractView.extend({
 
@@ -63,7 +62,7 @@ define([
 
             // if the new type is not managed by the view, hide it
             if (this.ignoreElemTypes.indexOf(elemType) >= 0 || this.acceptedTypes.indexOf(viewType) < 0) {
-                this.$el.find('.delete-menu.drop-zone').addClass('hidden');
+                this.$('.delete-menu.drop-zone').addClass('hidden');
             }
         },
 
@@ -93,7 +92,7 @@ define([
          * Emphasize drop zone on drag start
          */
         onDragStart: function() {
-            $('.drop-zone').addClass('emphasize');
+            this.$('.drop-zone').addClass('emphasize');
         },
 
         /**
@@ -136,7 +135,7 @@ define([
          * @param id if of the deleted element
          */
         onDragEnd: function(elemType, id) {
-            $('.drop-zone').removeClass('emphasize');
+            this.$('.drop-zone').removeClass('emphasize');
             if (elemType && id) {
                 this.clearDropZone();
                 this.renderDels();
@@ -174,16 +173,16 @@ define([
          * Strong emphasize of drop zone (example: on drag over)
          */
         emphasizeDropZone: function() {
-            $('.drop-zone').addClass('droppable');
-            $('.drop-zone a').addClass('droppable');
+            this.$('.drop-zone').addClass('droppable');
+            this.$('.drop-zone a').addClass('droppable');
         },
 
         /**
          * Remove strong emphasize of drop zone (exemple: on drag leave)
          */
         clearDropZone: function() {
-            $('.drop-zone').removeClass('droppable');
-            $('.drop-zone a').removeClass('droppable');
+            this.$('.drop-zone').removeClass('droppable');
+            this.$('.drop-zone a').removeClass('droppable');
         },
 
         /**
@@ -192,8 +191,8 @@ define([
         renderDels: function() {
             this.getFromLocalStorage();
             var nbDels = this.countElements(this.idsCollection);
-            $(this.nbDelsSelector).text(nbDels);
-            nbDels > 0 ? $('.delete-actions').removeClass('hidden') : $('.delete-actions').addClass('hidden');
+            this.$(this.nbDelsSelector).text(nbDels);
+            nbDels > 0 ? this.$('.delete-actions').removeClass('hidden') : this.$('.delete-actions').addClass('hidden');
         },
 
         /**

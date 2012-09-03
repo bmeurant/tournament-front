@@ -14,6 +14,7 @@ define([
 
         render: function() {
             this.$el.html(detailsTemplate({participant: this.model.toJSON()}));
+            Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
             return this;
         }
 

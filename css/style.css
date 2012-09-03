@@ -27,6 +27,10 @@ div.participant-thumb {
     vertical-align: middle;
 }
 
+.actions-menu {
+    min-width: 227px;
+}
+
 .form-actions a.right-btn {
     float: right;
     margin-left: 5px;

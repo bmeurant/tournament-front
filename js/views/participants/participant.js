@@ -1,5 +1,4 @@
 define([
-    'jquery',
     'underscore',
     'backbone',
     'models/participant',
@@ -10,7 +9,7 @@ define([
     'views/participants/edit',
     'views/participants/add',
     'pubsub'
-], function($, _, Backbone, Participant, participantTemplate, NavigationView, miniatureTemplate, DetailsView, EditView, AddView, Pubsub) {
+], function(_, Backbone, Participant, participantTemplate, NavigationView, miniatureTemplate, DetailsView, EditView, AddView, Pubsub) {
 
     /**
      * Manage global view surrounding all unitary participants views
@@ -126,7 +125,7 @@ define([
 
         render: function() {
             this.$el.html(participantTemplate());
-            this.$el.find('#navigation').html(this.navigationView.el);
+            this.$('#navigation').html(this.navigationView.el);
 
             this.renderViews();
 
@@ -139,17 +138,17 @@ define([
         renderViews: function() {
 
             _.each(this.linkedViews, _.bind(function(view, key) {
-                this.$el.find('#view #' + key).html(view.instance.el);
+                this.$('#view #' + key).html(view.instance.el);
             }, this));
 
-            this.$el.find('#view #' + this.viewType).removeClass('hidden');
+            this.$('#view #' + this.viewType).removeClass('hidden');
 
             // allow css transitions between linked views
-            this.$el.find('#view').addClass('linked-views').css('margin-left', -(this.linkedViewsOrder.indexOf(this.viewType) * (940 + 20 + 50)) + 'px');
+            this.$('#view').addClass('linked-views').css('margin-left', -(this.linkedViewsOrder.indexOf(this.viewType) * (940 + 20 + 50)) + 'px');
 
             // give focus after a mini timeout because some browsers (FFX) need it to give focus
             setTimeout(function() {
-                this.$el.find('form input:not(:disabled)').first().focus();
+                this.$('form input:not(:disabled)').first().focus();
             }.bind(this), 1);
         },
 
@@ -205,19 +204,19 @@ define([
             this.mainView = this.linkedViews[viewType].instance;
 
             // display new view
-            this.$el.find('.view-elem#' + this.viewType).removeClass('hidden');
+            this.$('.view-elem#' + this.viewType).removeClass('hidden');
 
             // hide navigation bar and deactivate controls during transition because of some potential bugs
-            this.$el.find('#navigation .nav-pills').addClass('hidden');
+            this.$('#navigation .nav-pills').addClass('hidden');
             this.inTransition = true;
 
             // register callbacks executed after css transition
-            this.addTransitionCallbacks(this.$el.find('#view'), this.$el.find('.view-elem#' + oldType));
+            this.addTransitionCallbacks(this.$('#view'), this.$('.view-elem#' + oldType));
 
             Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
 
             // perform transition
-            this.$el.find('#view').addClass('slide').css('margin-left', -(this.linkedViewsOrder.indexOf(this.viewType) * (940 + 20 + 50)) + 'px');
+            this.$('#view').addClass('slide').css('margin-left', -(this.linkedViewsOrder.indexOf(this.viewType) * (940 + 20 + 50)) + 'px');
         },
 
         /**
@@ -244,20 +243,20 @@ define([
             event.data.oldView.addClass('hidden');
 
             // reactivate nav bar and controls
-            this.$el.find('#navigation .nav-pills').removeClass('hidden');
+            this.$('#navigation .nav-pills').removeClass('hidden');
             this.inTransition = false;
 
             // change url
             window.history.pushState(null, 'Tournament', '/participant/' + this.model.id + this.linkedViews[this.viewType].url);
 
             // give focus to first input if exists
-            this.$el.find('form input:not(:disabled)').first().focus();
+            this.$('form input:not(:disabled)').first().focus();
 
             // unbind events
-            this.$el.find('#view').off('webkitTransitionEnd');
-            this.$el.find('#view').off('transitionend');
-            this.$el.find('#view').off('MSTransitionEnd');
-            this.$el.find('#view').off('oTransitionEnd');
+            this.$('#view').off('webkitTransitionEnd');
+            this.$('#view').off('transitionend');
+            this.$('#view').off('MSTransitionEnd');
+            this.$('#view').off('oTransitionEnd');
         },
 
         /**

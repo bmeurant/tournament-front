@@ -10,9 +10,6 @@ define([
      */
     return Backbone.View.extend({
 
-        events: {
-        },
-
         initialize: function() {
 
             this.setElement(document);

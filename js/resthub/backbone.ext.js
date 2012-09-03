@@ -121,8 +121,8 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
         populateModel: function(form, model) {
             var attributes = {};
 
-            form = form || this.$el.find("form");
-            form = form instanceof Backbone.$ ? form : this.$el.find((Backbone.$(form)));
+            form = form || this.$("form");
+            form = form instanceof Backbone.$ ? form : this.$((Backbone.$(form)));
             var fields = form.find("input[type!='submit']");
 
             if (arguments.length < 2) model = this.model;

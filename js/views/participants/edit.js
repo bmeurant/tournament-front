@@ -50,6 +50,7 @@ define([
 
             render: function() {
                 this.$el.html(participantEditTemplate({participant: this.model.toJSON()}));
+                Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
                 return this;
             },
 
@@ -66,7 +67,7 @@ define([
 
                 // get input and parents in order to refresh error displaying components
                 var target = event.currentTarget;
-                var $parent = $(target.parentNode);
+                var $parent = this.$(target.parentNode);
                 var $help = $parent.find('.help-inline');
                 var $controlGroup = $parent.parent();
                 $help.text(target.validationMessage);
@@ -87,7 +88,7 @@ define([
              * html5 validation. form.submit() does not work properly
              */
             submitForm: function() {
-                this.$el.find("form input[type='submit']").click();
+                this.$("form input[type='submit']").click();
             },
 
             /**
@@ -111,7 +112,7 @@ define([
 
                 // build array of form attributes to refresh model
                 var attributes = {};
-                this.$el.find("form input[type!='submit']").each(function(index, value) {
+                this.$("form input[type!='submit']").each(function(index, value) {
                     attributes[value.name] = value.value;
                     this.model.set(value.name, value.value);
                 }.bind(this));
@@ -171,7 +172,7 @@ define([
 
                 // restore the focus on the last acceded field before saving
                 if (this.focusedField) {
-                    $(this.focusedField).focus();
+                    this.$(this.focusedField).focus();
                 }
             },
 
@@ -204,7 +205,7 @@ define([
                 // Read the image file from the local file system and display it in the img tag
                 var reader = new FileReader();
                 reader.onloadend = function() {
-                    $('.photo').attr('src', reader.result);
+                    this.$('.photo').attr('src', reader.result);
                 };
                 reader.readAsDataURL(this.pictureFile);
             },
@@ -258,11 +259,9 @@ define([
             },
 
             blurInput: function() {
-                this.$el.find('form input:focus').blur();
+                this.$('form input:focus').blur();
             }
 
         })
-    )
-        ;
-})
-;
+    );
+});

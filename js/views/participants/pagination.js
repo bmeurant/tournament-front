@@ -1,9 +1,8 @@
 define([
-    'jquery',
     'backbone',
     'hbs!templates/participants/pagination.html',
     'pubsub'
-], function($, Backbone, paginationTemplate, Pubsub) {
+], function(Backbone, paginationTemplate, Pubsub) {
 
     return Backbone.View.extend({
 
@@ -40,7 +39,7 @@ define([
 
             var target = event.currentTarget;
             var pattern = 'page=';
-            var href = $(target).attr('href');
+            var href = this.$(target).attr('href');
             var pageId = href.substring(href.indexOf(pattern) + pattern.length);
             if (pageId.indexOf('&') >= 0) {
                 pageId = pageId.substring(0, pageId.indexOf('&'));

@@ -1,12 +1,11 @@
 define([
-    'jquery',
     'backbone',
     'hbs!templates/header.html',
     'views/deletions/menu',
     'views/search/menu',
     'views/participants/menu',
     'pubsub'
-], function($, Backbone, headerTemplate, DeletionsMenuView, SearchMenuView, ParticipantsMenuView, Pubsub) {
+], function(Backbone, headerTemplate, DeletionsMenuView, SearchMenuView, ParticipantsMenuView, Pubsub) {
 
     return Backbone.View.extend({
 
@@ -40,25 +39,25 @@ define([
 
         render: function() {
             this.$el.html(headerTemplate());
-            this.deletionMenu.render().$el.appendTo(this.$el.find('.element-menu.delete-menu'));
-            this.searchMenu.render().$el.appendTo(this.$el.find('.search-menu'));
+            this.deletionMenu.render().$el.appendTo(this.$('.element-menu.delete-menu'));
+            this.searchMenu.render().$el.appendTo(this.$('.search-menu'));
             return this;
         },
 
         selectMenuItem: function(menuItem) {
-            this.$el.find('.nav li').removeClass('active');
+            this.$('.nav li').removeClass('active');
             if (menuItem) {
-                this.$el.find('.' + menuItem).addClass('active');
+                this.$('.' + menuItem).addClass('active');
             }
         },
 
         setMenu: function(MenuView) {
             this.menuView = new MenuView();
-            $('.actions-menu').html(this.menuView.el);
+            this.$('.actions-menu').html(this.menuView.el);
         },
 
         clearMenu: function() {
-            $('.actions-menu').html('&nbsp;');
+            this.$('.actions-menu').html('&nbsp;');
         },
 
         menuClicked: function() {
@@ -68,7 +67,7 @@ define([
         toggleSearchOption: function(event) {
             event.stopPropagation();
             event.preventDefault();
-            var $target = $(event.currentTarget);
+            var $target = this.$(event.currentTarget);
             var $checkbox = $target.find('.search-include');
             this.toggleCheckBox($checkbox);
             this.searchOptions[$target.attr('id')] = !this.searchOptions[$target.attr('id')];
@@ -98,7 +97,7 @@ define([
         focusOnSearch: function(event) {
             event.stopPropagation();
             event.preventDefault();
-            $('#searchText').focus();
+            this.$('#searchText').focus();
         },
 
         /**

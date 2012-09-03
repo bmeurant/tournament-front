@@ -1,10 +1,9 @@
 define([
-    'jquery',
     'backbone',
     'hbs!templates/alert.html',
     'pubsub',
     'bootstrap'
-], function($, Backbone, alertsTemplate, Pubsub) {
+], function(Backbone, alertsTemplate, Pubsub) {
 
     return Backbone.View.extend({
 
@@ -20,22 +19,22 @@ define([
         },
 
         hideAlerts: function() {
-            $('.alert').fadeOut('fast');
-            $('.alert').alert('close');
+            this.$('.alert').fadeOut('fast');
+            this.$('.alert').alert('close');
         },
 
         showAlert: function(title, text, klass) {
-            $('.alert').fadeOut('fast');
-            $('.alert').alert('close');
+            this.$('.alert').fadeOut('fast');
+            this.$('.alert').alert('close');
 
             this.render();
-            $('.alert').addClass(klass);
-            $('.alert > .message').html('<strong>' + title + '</strong> ' + text);
-            $('.alert').fadeIn('fast');
+            this.$('.alert').addClass(klass);
+            this.$('.alert > .message').html('<strong>' + title + '</strong> ' + text);
+            this.$('.alert').fadeIn('fast');
 
             clearTimeout(this.timeout);
             this.timeout = setTimeout(function() {
-                $('.alert').alert('close');
+                this.$('.alert').alert('close');
             }.bind(this), 5000);
         }
 

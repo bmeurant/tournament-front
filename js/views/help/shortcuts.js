@@ -26,14 +26,14 @@ define([
             var elemTypeStr = _.str.capitalize(this.elemType);
             var viewTypeStr = _.str.capitalize(this.viewType);
 
-            this.$el.html(shortcutsTemplate({elemType: elemTypeStr, viewType: viewTypeStr}));
-            this.$el.find('.global-shortcuts > .shortcuts').html(globalTemplate());
+            this.$(shortcutsTemplate({elemType: elemTypeStr, viewType: viewTypeStr}));
+            this.$('.global-shortcuts > .shortcuts').html(globalTemplate());
 
             require(['hbs!templates/help/shortcuts/' + this.elemType + '/' + this.viewType + '.html'],
                 function(specificTemplate) {
                     specificTemplate = specificTemplate({elemType: elemTypeStr, viewType: viewTypeStr});
                     if (specificTemplate.indexOf('404') == -1) {
-                        this.$el.find('.specific-shortcuts > .shortcuts').html(specificTemplate);
+                        this.$('.specific-shortcuts > .shortcuts').html(specificTemplate);
                     }
                 }.bind(this));
 

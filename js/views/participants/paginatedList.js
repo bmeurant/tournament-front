@@ -20,8 +20,8 @@ define([
 
         render: function() {
             this.$el.html(paginatedListTemplate());
-            this.$el.find('.elements').html(this.listView.el);
-            this.$el.find('.pagination').html(this.paginationView.el);
+            this.$('.elements').html(this.listView.el);
+            this.$('.pagination').html(this.paginationView.el);
 
             Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, 'list');
             return this;

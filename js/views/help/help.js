@@ -16,8 +16,8 @@ define([
         },
 
         render: function() {
-            this.$el.html(helpTemplate);
-            this.$el.find('ul.shortcuts').html(shortcutsTemplate);
+            this.$(helpTemplate);
+            this.$('ul.shortcuts').html(shortcutsTemplate);
             return this;
         }
 

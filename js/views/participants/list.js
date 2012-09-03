@@ -47,7 +47,7 @@ define([
 
                 Handlebars.registerHelper('if_deleted', function(id, options) {
 
-                    if (this.deleted.indexOf(id.toString()) >= 0) {
+                    if ((this.deleted.indexOf(id.toString()) >= 0) || (this.deleted.indexOf(id) >= 0)) {
                         return options.fn(this);
                     } else {
                         return options.inverse(this);
@@ -55,7 +55,7 @@ define([
                 }.bind(this));
 
                 Handlebars.registerHelper('disabled', function(id) {
-                    return (this.deleted.indexOf(id.toString()) >= 0) ? 'disabled' : '';
+                    return ((this.deleted.indexOf(id.toString()) >= 0) || (this.deleted.indexOf(id) >= 0)) ? 'disabled' : '';
                 }.bind(this));
 
                 var askedPage = 1;
@@ -75,13 +75,13 @@ define([
                 this.initTooltips();
 
                 if (this.previousPage && (this.previousPage > this.collection.currentPage )) {
-                    this.selectLast(this.$el, 'li.thumbnail');
+                    this.selectLast('li.thumbnail');
                 }
 
                 // if no element is currently select, select the first one
-                var $selected = this.findSelected(this.$el, 'li.thumbnail');
+                var $selected = this.findSelected('li.thumbnail');
                 if (!$selected || $selected.length == 0) {
-                    this.selectFirst(this.$el, 'li.thumbnail');
+                    this.selectFirst('li.thumbnail');
                 }
 
                 window.history.pushState(null, 'Tournament', '/participants' + ((this.collection.info().currentPage != 1) ? '?page=' + this.collection.info().currentPage : ''));
@@ -138,9 +138,9 @@ define([
 
             initTooltips: function() {
                 // initialize tooltips
-                this.$el.find('li.thumbnail').tooltip({title: 'drag on delete drop-zone to remove<br/>click to view details', trigger: 'hover', placement: this.liTooltipPlacement});
+                this.$('li.thumbnail').tooltip({title: 'drag on delete drop-zone to remove<br/>click to view details', trigger: 'hover', placement: this.liTooltipPlacement.bind(this)});
                 // cannot define a tooltip on a same selector twice : define one on 'a' to link with focus event
-                this.$el.find('li.thumbnail > a').tooltip({title: 'press <code>Del</code> to remove<br/>press <code>Enter</code> to view details', trigger: 'focus', placement: this.liTooltipPlacement});
+                this.$('li.thumbnail > a').tooltip({title: 'press <code>Del</code> to remove<br/>press <code>Enter</code> to view details', trigger: 'focus', placement: this.liTooltipPlacement.bind(this)});
             },
 
             /**
@@ -156,12 +156,12 @@ define([
                 // if target is a : found the real target (parent li) and force
                 // bootstrap-tooltip to consider this element instead of original 'a'
                 if (target.tagName == 'A') {
-                    $('li.thumbnail').tooltip('hide');
+                    this.$('li.thumbnail').tooltip('hide');
                     $target = $target.parent();
                     this.$element = $target;
                 }
                 else {
-                    $('li.thumbnail a').tooltip('hide');
+                    this.$('li.thumbnail a').tooltip('hide');
                 }
 
                 var index = $target.index();
@@ -174,8 +174,8 @@ define([
             },
 
             hideTooltips: function() {
-                this.$el.find('li.thumbnail').tooltip('hide');
-                this.$el.find('li.thumbnail a').tooltip('hide');
+                this.$('li.thumbnail').tooltip('hide');
+                this.$('li.thumbnail a').tooltip('hide');
             },
 
             /**
@@ -185,10 +185,10 @@ define([
             cancelDeletions: function() {
 
                 // retrieve and save the currently selected element, if any
-                var $selected = this.findSelected(this.$el, 'li.thumbnail');
+                var $selected = this.findSelected('li.thumbnail');
 
                 if ($selected && $selected.length > 0) {
-                    this.idSelected = this.findSelected(this.$el, 'li.thumbnail').get(0).id;
+                    this.idSelected = this.findSelected('li.thumbnail').get(0).id;
                 }
 
                 this.initDeleted();
@@ -203,7 +203,7 @@ define([
              * @param id deleted participant id
              */
             participantDeleted: function(id) {
-                var $element = $('#' + id);
+                var $element = this.$('#' + id);
 
                 // remove deleted element
                 $element.addClass('disabled');
@@ -211,13 +211,13 @@ define([
 
                 // if the deleted element is selected, select previous
                 if ($element.hasClass('selected')) {
-                    this.selectNext(this.$el, 'li.thumbnail');
+                    this.selectNext('li.thumbnail');
                 }
 
                 // if no element is currently select, select the first one
-                var $selected = this.findSelected(this.$el, 'li.thumbnail');
+                var $selected = this.findSelected('li.thumbnail');
                 if (!$selected || $selected.length == 0) {
-                    this.selectFirst(this.$el, 'li.thumbnail');
+                    this.selectFirst('li.thumbnail');
                 }
 
             },
@@ -227,15 +227,15 @@ define([
              */
             deleteParticipant: function() {
 
-                var $selected = this.findSelected(this.$el, 'li.thumbnail');
+                var $selected = this.findSelected('li.thumbnail');
                 if ($selected && $selected.length > 0) {
                     Pubsub.trigger(App.Events.DELETE_ELEM_FROM_VIEW, 'participant', $selected.get(0).id);
                 }
             },
 
             selectNextElem: function(event) {
-                var $selected = this.findSelected(this.$el, 'li.thumbnail');
-                var $newSelected = this.selectElement(this.$el, 'li.thumbnail', 'next');
+                var $selected = this.findSelected('li.thumbnail');
+                var $newSelected = this.selectElement('li.thumbnail', 'next');
 
                 if ($selected.attr('id') == $newSelected.attr('id')) {
                     if (this.collection.next) {
@@ -246,8 +246,8 @@ define([
             },
 
             selectPreviousElem: function(event) {
-                var $selected = this.findSelected(this.$el, 'li.thumbnail');
-                var $newSelected = this.selectElement(this.$el, 'li.thumbnail', 'previous');
+                var $selected = this.findSelected('li.thumbnail');
+                var $newSelected = this.selectElement('li.thumbnail', 'previous');
 
                 if ($selected.attr('id') == $newSelected.attr('id')) {
                     if (this.collection.previous) {
@@ -260,7 +260,7 @@ define([
              * Navigates to the details view of the currently selected element
              */
             showSelected: function() {
-                var $selected = this.findSelected(this.$el, 'li.thumbnail');
+                var $selected = this.findSelected('li.thumbnail');
                 this.hideTooltips();
                 if ($selected && $selected.length > 0) {
                     Backbone.history.navigate('/participant/' + $selected.get(0).id, true);
@@ -275,11 +275,11 @@ define([
              */
             elemFocused: function(event) {
                 if (event && event.currentTarget) {
-                    var $selected = this.findSelected(this.$el, 'li.thumbnail');
+                    var $selected = this.findSelected('li.thumbnail');
                     if ($selected && $selected.length != 0) {
                         $selected.removeClass('selected');
                     }
-                    $(event.currentTarget).parent().addClass('selected');
+                    this.$(event.currentTarget).parent().addClass('selected');
                 }
             },
 
