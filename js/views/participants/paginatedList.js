@@ -7,25 +7,24 @@ define([
     'pubsub'
 ], function(Backbone, paginatedListTemplate, ListView, PaginationView, ParticipantsCollection, Pubsub) {
 
-    return Backbone.View.extend({
+    var PaginatedListView = Backbone.View.extend({
 
+        template: paginatedListTemplate,
         elemType: 'participant',
 
         initialize: function() {
             this.collection = new ParticipantsCollection();
-            this.listView = new ListView({params: this.options.params, collection: this.collection});
-            this.paginationView = new PaginationView({collection: this.collection});
-            this.render();
+            this.refreshView();
+            new ListView({root: this.$('.elements'), params: this.options.params, collection: this.collection});
+            new PaginationView({root: this.$('.pagination'), collection: this.collection});
         },
 
-        render: function() {
-            this.$el.html(paginatedListTemplate());
-            this.$('.elements').html(this.listView.el);
-            this.$('.pagination').html(this.paginationView.el);
-
+        refreshView: function() {
+            this.render();
             Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, 'list');
             return this;
         }
-
     });
+
+    return PaginatedListView;
 });

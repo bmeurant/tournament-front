@@ -5,6 +5,8 @@ define([
 
     return Backbone.View.extend({
 
+        template: searchMenuTemplate,
+
         tagName: 'form',
         attributes: {
             class: 'nav navbar-search pull-right dropdown'
@@ -14,9 +16,8 @@ define([
             'keydown #searchText': 'onKeyDown'
         },
 
-        render: function() {
-            this.$el.html(searchMenuTemplate());
-            return this;
+        initialize: function() {
+            this.render();
         },
 
         onKeyDown: function(event) {

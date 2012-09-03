@@ -7,15 +7,16 @@ define([
     'bootstrap'
 ], function(_, Backbone, shortcutsTemplate, globalTemplate, Pubsub) {
 
-    return Backbone.View.extend({
+    var ShortcutsTemplate = Backbone.View.extend({
+
+        template: shortcutsTemplate,
 
         events: {
             'keydown': 'modalKeydown'
         },
 
-        initialize: function($selector) {
+        initialize: function() {
             // in this specific case we can add container as el because we will never close or review this view
-            this.setElement($selector);
             Pubsub.on(App.Events.KEYBOARD_CALLED, this.render, this);
             Pubsub.on(App.Events.VIEW_CHANGED, this.viewChanged, this);
             Pubsub.on(App.Events.ECHAP_CALLED, this.hide, this);
@@ -26,7 +27,8 @@ define([
             var elemTypeStr = _.str.capitalize(this.elemType);
             var viewTypeStr = _.str.capitalize(this.viewType);
 
-            this.$(shortcutsTemplate({elemType: elemTypeStr, viewType: viewTypeStr}));
+            ShortcutsTemplate.__super__.render.apply(this, [{elemType: elemTypeStr, viewType: viewTypeStr}]);
+
             this.$('.global-shortcuts > .shortcuts').html(globalTemplate());
 
             require(['hbs!templates/help/shortcuts/' + this.elemType + '/' + this.viewType + '.html'],
@@ -37,7 +39,7 @@ define([
                     }
                 }.bind(this));
 
-            this.$el.modal('show');
+            this.$root.modal('show');
             return this;
         },
 
@@ -54,6 +56,7 @@ define([
         hide: function () {
             this.$el.modal('hide');
         }
-
     });
+
+    return ShortcutsTemplate;
 });

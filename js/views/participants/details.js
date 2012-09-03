@@ -3,22 +3,20 @@ define([
     'hbs!templates/participants/details.html'
 ], function(Backbone, detailsTemplate) {
 
-    return Backbone.View.extend({
+    var DetailsView = Backbone.View.extend({
 
         elemType: 'participant',
         viewType: 'details',
+        template: detailsTemplate,
 
         initialize: function() {
-            this.model.on("sync", this.render.bind(this));
+            this.model.on("sync", this.render, this);
         },
 
         render: function() {
-            this.$el.html(detailsTemplate({participant: this.model.toJSON()}));
-            Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
-            return this;
+            return DetailsView.__super__.render.apply(this);
         }
-
     });
 
-})
-;
+    return DetailsView;
+});

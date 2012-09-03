@@ -20,6 +20,8 @@ define([
             tournaments: true
         },
 
+        template: headerTemplate,
+
         attributes: {
             class: 'navbar navbar-inverse navbar-fixed-top'
         },
@@ -32,16 +34,10 @@ define([
             Pubsub.on(App.Events.FIND_CALLED, this.focusOnSearch, this);
             Pubsub.on(App.Events.VIEW_CHANGED, this.onViewChanged, this);
 
-            this.deletionMenu = new DeletionsMenuView();
-            this.searchMenu = new SearchMenuView();
+            this.render();
 
-        },
-
-        render: function() {
-            this.$el.html(headerTemplate());
-            this.deletionMenu.render().$el.appendTo(this.$('.element-menu.delete-menu'));
-            this.searchMenu.render().$el.appendTo(this.$('.search-menu'));
-            return this;
+            new DeletionsMenuView({root: this.$('.element-menu.delete-menu')});
+            new SearchMenuView({root: this.$('.search-menu')});
         },
 
         selectMenuItem: function(menuItem) {
@@ -52,8 +48,7 @@ define([
         },
 
         setMenu: function(MenuView) {
-            this.menuView = new MenuView();
-            this.$('.actions-menu').html(this.menuView.el);
+            this.menuView = new MenuView({root: this.$('.actions-menu')});
         },
 
         clearMenu: function() {

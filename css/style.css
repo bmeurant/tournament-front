@@ -27,8 +27,12 @@ div.participant-thumb {
     vertical-align: middle;
 }
 
-.actions-menu {
+.element-menu.actions-menu {
     min-width: 227px;
+}
+
+.element-menu.delete-menu {
+    min-width: 196px;
 }
 
 .form-actions a.right-btn {

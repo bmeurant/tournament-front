@@ -6,17 +6,15 @@ define([
 
     return Backbone.View.extend({
 
+        template: footerTemplate,
+
         events: {
             'click p.shortcuts-menu a': 'showShortcuts'
         },
 
         initialize: function() {
             Pubsub.on(App.Events.HELP_CALLED, this.showHelp, this);
-        },
-
-        render: function() {
-            this.$el.html(footerTemplate());
-            return this;
+            this.render();
         },
 
         showShortcuts: function(event) {

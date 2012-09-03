@@ -2,9 +2,11 @@ define([
     'backbone',
     'hbs!templates/help/global.html',
     'hbs!templates/help/shortcuts/global.html'
-], function(helpTemplate, shortcutsTemplate) {
+], function(Backbone, helpTemplate, shortcutsTemplate) {
 
-    return Backbone.View.extend({
+    var HelpView =  Backbone.View.extend({
+
+        template: helpTemplate,
 
         attributes: {
             id: 'help',
@@ -16,10 +18,11 @@ define([
         },
 
         render: function() {
-            this.$(helpTemplate);
+            HelpView.__super__.render.apply(this, arguments);
             this.$('ul.shortcuts').html(shortcutsTemplate);
             return this;
         }
-
     });
+
+    return HelpView;
 });

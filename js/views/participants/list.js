@@ -29,8 +29,10 @@ define([
                 'click li.thumbnail': 'hideTooltips'
             },
 
+            template: listTemplate,
+
             initialize: function() {
-                this.collection.on('sync', this.render.bind(this));
+                this.collection.on('sync', this.refreshView, this);
 
                 Pubsub.on(App.Events.ELEM_DELETED_FROM_BAR, this.participantDeleted, this);
                 Pubsub.on(App.Events.DELETIONS_CANCELED, this.cancelDeletions, this);
@@ -66,11 +68,10 @@ define([
                 this.newPage(askedPage);
             },
 
-            render: function() {
-
+            refreshView: function() {
                 this.hideTooltips();
 
-                this.$el.html(listTemplate({participants: this.collection.toJSON(), 'id_selected': this.idSelected}));
+                this.render({participants: this.collection.toJSON(), 'id_selected': this.idSelected});
 
                 this.initTooltips();
 
@@ -138,9 +139,9 @@ define([
 
             initTooltips: function() {
                 // initialize tooltips
-                this.$('li.thumbnail').tooltip({title: 'drag on delete drop-zone to remove<br/>click to view details', trigger: 'hover', placement: this.liTooltipPlacement.bind(this)});
+                this.$('li.thumbnail').tooltip({title: 'drag on delete drop-zone to remove<br/>click to view details', trigger: 'hover', placement: this.liTooltipPlacement});
                 // cannot define a tooltip on a same selector twice : define one on 'a' to link with focus event
-                this.$('li.thumbnail > a').tooltip({title: 'press <code>Del</code> to remove<br/>press <code>Enter</code> to view details', trigger: 'focus', placement: this.liTooltipPlacement.bind(this)});
+                this.$('li.thumbnail > a').tooltip({title: 'press <code>Del</code> to remove<br/>press <code>Enter</code> to view details', trigger: 'focus', placement: this.liTooltipPlacement});
             },
 
             /**
@@ -156,12 +157,12 @@ define([
                 // if target is a : found the real target (parent li) and force
                 // bootstrap-tooltip to consider this element instead of original 'a'
                 if (target.tagName == 'A') {
-                    this.$('li.thumbnail').tooltip('hide');
+                    $('li.thumbnail').tooltip('hide');
                     $target = $target.parent();
                     this.$element = $target;
                 }
                 else {
-                    this.$('li.thumbnail a').tooltip('hide');
+                    $('li.thumbnail a').tooltip('hide');
                 }
 
                 var index = $target.index();
@@ -194,7 +195,7 @@ define([
                 this.initDeleted();
 
                 // re-render view selecting the previously selected element
-                this.render();
+                this.refreshView();
             },
 
             /**

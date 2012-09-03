@@ -14,11 +14,12 @@ define([
     /**
      * Main view for displaying deletions
      */
-    return AbstractView.extend(
+    var DeletionsList = AbstractView.extend(
         _.extend({}, Selectable, {
 
             elemType: 'deletions',
             viewType: 'list',
+            template: deletionsTemplate,
 
             events: {
                 'click #deletions-container li.thumbnail': 'elemClicked',
@@ -163,7 +164,7 @@ define([
 
             render: function() {
                 var participants_template = participantTemplate({'participants': this.collections.participant.toJSON()});
-                this.$el.html(deletionsTemplate({'hasParticipants': this.collections.participant.length > 0, 'participants_template': new Handlebars.SafeString(participants_template)}));
+                DeletionsList.__super__.render.apply(this, [{'hasParticipants': this.collections.participant.length > 0, 'participants_template': new Handlebars.SafeString(participants_template)}]);
 
                 this.initTooltips();
 
@@ -357,9 +358,9 @@ define([
 
             initTooltips: function() {
                 // initialize tooltips
-                this.$('li.thumbnail').tooltip({title: 'double click to remove, simple click to cancel', trigger: 'hover', placement: this.liTooltipPlacement.bind(this)});
+                this.$('li.thumbnail').tooltip({title: 'double click to remove, simple click to cancel', trigger: 'hover', placement: this.liTooltipPlacement});
                 // cannot define a tooltip on a same selector twice : define one on 'a' to link with focus event
-                this.$('li.thumbnail > a').tooltip({title: 'press <code>Del</code> to remove<br/>press <code>Enter</code> to cancel', trigger: 'focus', placement: this.liTooltipPlacement.bind(this)});
+                this.$('li.thumbnail > a').tooltip({title: 'press <code>Del</code> to remove<br/>press <code>Enter</code> to cancel', trigger: 'focus', placement: this.liTooltipPlacement});
             },
 
             /**
@@ -370,16 +371,19 @@ define([
              */
             liTooltipPlacement: function(tip, target) {
 
-                this.$('li.thumbnail').tooltip('hide');
-                this.$('li.thumbnail a').tooltip('hide');
-                var $target = this.$(target);
+                var $target = $(target);
 
                 // if target is a : found the real target (parent li) and force
                 // bootstrap-tooltip to consider this element instead of original 'a'
                 if (target.tagName == 'A') {
+                    $('li.thumbnail').tooltip('hide');
                     $target = $target.parent();
                     this.$element = $target;
                 }
+                else {
+                    $('li.thumbnail a').tooltip('hide');
+                }
+
                 var index = $target.index();
                 var liWidth = $target.outerWidth(true);
                 var ulWidth = $target.parent().innerWidth(false);
@@ -412,4 +416,6 @@ define([
             }
 
         }));
+
+    return DeletionsList;
 });

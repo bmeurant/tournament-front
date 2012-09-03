@@ -97,13 +97,10 @@ require([
     });
 
     // Define global singleton views
-    App.Views.HeaderView = new HeaderView();
-    $('.header').html(App.Views.HeaderView.render().el);
-    App.Views.AlertsView = new AlertsView();
-    $('.alerts').html(App.Views.AlertsView.render().el);
-    App.Views.FooterView = new FooterView();
-    $('footer').html(App.Views.FooterView.render().el);
-    App.Views.ShortcutsView = new ShortcutsView($('.shortcuts-container'));
+    App.Views.HeaderView = new HeaderView({root: $('.header')});
+    App.Views.AlertsView = new AlertsView({root: $('.alerts')});
+    App.Views.FooterView = new FooterView({root: $('footer')});
+    App.Views.ShortcutsView = new ShortcutsView({root: $('.shortcuts-container')});
     App.Views.KeyboardView = new KeyboardView();
 
     // Pass in our Router module and call it's initialize function

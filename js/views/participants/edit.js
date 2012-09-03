@@ -8,11 +8,12 @@ define([
     'resthub-backbone-validation'
 ], function($, _, Backbone, participantEditTemplate, Validatable, Pubsub) {
 
-    return Backbone.View.extend(
+    var EditView = Backbone.View.extend(
         _.extend({}, Validatable, {
 
             elemType: 'participant',
             viewType: 'edit',
+            template: participantEditTemplate,
 
             events: {
                 'drop .well': 'dropHandler',
@@ -28,7 +29,11 @@ define([
                     this.initBindings();
                 }
 
-                this.model.on("sync", this.render.bind(this));
+                this.model.on("sync", this.render, this);
+            },
+
+            render: function() {
+                return EditView.__super__.render.apply(this);
             },
 
             /**
@@ -46,12 +51,6 @@ define([
             removeBindings: function() {
                 Backbone.Validation.unbind(this);
                 Pubsub.off(null, null, this);
-            },
-
-            render: function() {
-                this.$el.html(participantEditTemplate({participant: this.model.toJSON()}));
-                Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
-                return this;
             },
 
             /**
@@ -109,7 +108,6 @@ define([
              * Save the current participant (update or create depending of the existence of a valid model.id)
              */
             saveParticipant: function() {
-
                 // build array of form attributes to refresh model
                 var attributes = {};
                 this.$("form input[type!='submit']").each(function(index, value) {
@@ -148,7 +146,6 @@ define([
              * @param model model to save
              */
             onSaveSuccess: function(model) {
-
                 this.model = model;
 
                 this.clearValidationErrors();
@@ -264,4 +261,6 @@ define([
 
         })
     );
+
+    return EditView;
 });

@@ -22,48 +22,42 @@ define([
         listParticipants: function(params) {
             require(['views/participants/paginatedList'],
                 function(ParticipantListView) {
-                    var view = new ParticipantListView({params: params});
-                    $('#content').html(view.el);
+                    new ParticipantListView({root: '#content', params: params});
                 });
         },
 
         showParticipant: function(id) {
             require(['views/participants/participant'],
                 function(ParticipantView) {
-                    var view = new ParticipantView({id: id, type: 'details'});
-                    $('#content').html(view.el);
+                    new ParticipantView({root: '#content', id: id, type: 'details'});
                 });
         },
 
         editParticipant: function(id) {
             require(['views/participants/participant'],
                 function(ParticipantView) {
-                    var view = new ParticipantView({id: id, type: 'edit'});
-                    $('#content').html(view.el);
+                    new ParticipantView({root: '#content', id: id, type: 'edit'});
                 });
         },
 
         addParticipant: function() {
             require(['views/participants/add'],
                 function(AddView) {
-                    var view = new AddView();
-                    $('#content').html(view.el);
+                    new AddView({root: '#content'});
                 });
         },
 
         showDeletions: function() {
             require(['views/deletions/list'],
                 function(DeletionsView) {
-                    var view = new DeletionsView();
-                    $('#content').html(view.el);
+                    new DeletionsView({root: '#content'});
                 });
         },
 
         showHelp: function() {
             require(['views/help/help'],
                 function(HelpView) {
-                    var view = new HelpView();
-                    $('#content').html(view.el);
+                    new HelpView({root: '#content'});
                 });
         },
 

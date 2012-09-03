@@ -10,6 +10,8 @@ define([
 
         elemType: 'participant',
 
+        template: menuTemplate,
+
         events: {
             'click .save': 'saveElement'
         },
@@ -41,6 +43,8 @@ define([
             Handlebars.registerHelper('hidden', function(viewType) {
                 return _.indexOf(this.actions[this.viewType], viewType) < 0 ? 'hidden' : '';
             }.bind(this));
+
+            this.render();
         },
 
         /**
@@ -65,11 +69,6 @@ define([
             event.stopPropagation();
             event.preventDefault();
             Pubsub.trigger(App.Events.SAVE_ELEM);
-        },
-
-        render: function() {
-            this.$el.html(menuTemplate());
-            return this;
         },
 
         backToElementHome: function() {

@@ -17,6 +17,7 @@ define([
     return Backbone.View.extend({
 
         elemType: 'participant',
+        template: participantTemplate,
 
         events: {
             dragend: 'dragEndHandler'
@@ -38,7 +39,6 @@ define([
             }
         },
 
-
         /**
          * Initialize view
          *
@@ -46,7 +46,6 @@ define([
          * @param viewType main view type
          */
         initialize: function() {
-
             // manually bind this event because Backbone does not trigger events directly bound on el !
             this.$el.on('dragstart', this.dragStartHandler.bind(this));
 
@@ -57,10 +56,6 @@ define([
             this.inTransition = false;
 
             this.initDeleted();
-
-            // create sub navigation component
-            this.navigationView = new NavigationView({model: this.model, type: this.viewType});
-
             this.initViews();
 
             Pubsub.on(App.Events.DELETE_ELEM, this.deleteParticipant, this);
@@ -84,7 +79,7 @@ define([
             // retrieve model from server and render view
             if (this.model.id) {
                 this.model.fetch({
-                    success: this.render.bind(this),
+                    success: this.renderViews.bind(this),
                     error: function() {
                         Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to get participant', 'alert-error');
                     }
@@ -92,7 +87,7 @@ define([
             }
             // no model id : no model to retrieve (probably an 'add' view)
             else {
-                this.render();
+                this.renderViews();
             }
         },
 
@@ -106,13 +101,18 @@ define([
         },
 
         initViews: function() {
+            this.render();
+
+            // create sub navigation component
+            this.navigationView = new NavigationView({root: this.$('#navigation'), model: this.model, type: this.viewType});
+
             this.initLinkedViews();
             this.initMainView();
         },
 
         initLinkedViews: function() {
-            this.linkedViews.details.instance = new DetailsView({model: this.model, active: false});
-            this.linkedViews.edit.instance = new EditView({model: this.model, active: false});
+            this.linkedViews.details.instance = new DetailsView({root: this.$('#view #details'), model: this.model, active: false});
+            this.linkedViews.edit.instance = new EditView({root: this.$('#view #edit'), model: this.model, active: false});
         },
 
         initMainView: function() {
@@ -121,26 +121,14 @@ define([
             if (this.mainView.initBindings) {
                 this.mainView.initBindings();
             }
-        },
 
-        render: function() {
-            this.$el.html(participantTemplate());
-            this.$('#navigation').html(this.navigationView.el);
-
-            this.renderViews();
-
-            return this;
+            Pubsub.trigger(App.Events.VIEW_CHANGED, this.elemType, this.viewType);
         },
 
         /**
          * Render main and linked views
          */
         renderViews: function() {
-
-            _.each(this.linkedViews, _.bind(function(view, key) {
-                this.$('#view #' + key).html(view.instance.el);
-            }, this));
-
             this.$('#view #' + this.viewType).removeClass('hidden');
 
             // allow css transitions between linked views
@@ -193,7 +181,6 @@ define([
          * @param viewType main view type to render
          */
         changeParticipantView: function(viewType) {
-
             if (this.mainView.removeBindings) {
                 this.mainView.removeBindings();
             }
@@ -238,7 +225,6 @@ define([
          * @param event raised event
          */
         onTransitionEnd: function(event) {
-
             // hide old view
             event.data.oldView.addClass('hidden');
 
@@ -293,7 +279,6 @@ define([
          * @param event event raised
          */
         dragStartHandler: function(event) {
-
             this.navigationView.hideTooltips();
 
             // set transfer data
@@ -316,6 +301,5 @@ define([
         dragEndHandler: function() {
             Pubsub.trigger(App.Events.DRAG_END);
         }
-
     });
 });

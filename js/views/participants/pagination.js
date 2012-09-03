@@ -6,6 +6,8 @@ define([
 
     return Backbone.View.extend({
 
+        template: paginationTemplate,
+
         events: {
             'click a': 'changePage'
         },
@@ -17,20 +19,14 @@ define([
             Pubsub.on(App.Events.PAGE_UP_CALLED, this.previousPage, this);
             Pubsub.on(App.Events.PAGE_DOWN_CALLED, this.nextPage, this);
 
-            this.collection.on('sync', this.render.bind(this));
+            this.collection.on('sync', this.refreshView, this);
         },
 
-        render: function() {
-            this.$el.html(paginationTemplate(
-                {
-                    info: this.collection.info(),
-                    firstPage: this.collection.paginator_ui.firstPage,
-                    previous : this.collection.previous,
-                    next: this.collection.next
-                }
-            ));
-
-            return this;
+        refreshView: function() {
+            this.render({info: this.collection.info(),
+                firstPage: this.collection.paginator_ui.firstPage,
+                previous: this.collection.previous,
+                next: this.collection.next});
         },
 
         changePage: function(event) {

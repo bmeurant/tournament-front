@@ -14,6 +14,7 @@ define([
         },
 
         types: ['details', 'edit', 'teams'],
+        template: navigationTemplate,
 
         /**
          * Initialize view
@@ -24,7 +25,8 @@ define([
         initialize: function() {
             this.viewType = this.options.type;
             Pubsub.on(App.Events.VIEW_CHANGED, this.updatePills, this);
-            this.render();
+            this.render({id: this.model.id, type: this.viewType});
+            this.initTooltips();
         },
 
         /**
@@ -46,15 +48,7 @@ define([
             }
         },
 
-        render: function() {
-            var navigable = ((this.viewType == 'details') || (this.viewType == 'edit'));
-            this.$el.html(navigationTemplate({id: this.model.id, navigable: navigable, type: this.viewType}));
-            this.initTooltips();
-            return this;
-        },
-
         initTooltips: function() {
-
             if (this.viewType != 'add') {
                 this.$('div.title').tooltip({title: 'drag on delete drop-zone to remove', trigger: 'hover'});
                 this.$('.nav-pills > li:not(.active):first > a').tooltip({title: 'press <code>&larr;</code> or <code>&rarr;</code> or click to navigate', trigger: 'manual', placement: 'bottom'});
@@ -68,7 +62,6 @@ define([
          * @param viewType main view type
          */
         updatePills: function(elemType, viewType) {
-
             // preventive hide if any tooltip displayed
             this.$('.nav-pills > li:not(.active):first > a').tooltip('hide');
 

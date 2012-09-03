@@ -1,25 +1,24 @@
-{{#with participant}}
-    <h2>{{firstname}} {{lastname}}</h2>
-    <br>
-    <div class="span2">
-        <p>
-            {{#if pictureUrl}}
-                <img class="photo" src="{{photo_link pictureUrl}}" alt="" draggable="false"/>
-                <p hidden><img src="{{photo_link pictMin}}"/></p>
-            {{else}}
-                <img class="photo" src="/img/participants/no-photo.jpg" alt="" draggable="false"/>
-            {{/if}}
-        </p>
+<h2>{{firstname}} {{lastname}}</h2>
+<br>
+<div class="span2">
+    <p>
+        {{#if pictureUrl}}
+        <img class="photo" src="{{photo_link pictureUrl}}" alt="" draggable="false"/>
 
-    </div>
+    <p hidden><img src="{{photo_link pictMin}}"/></p>
+    {{else}}
+    <img class="photo" src="/img/participants/no-photo.jpg" alt="" draggable="false"/>
+    {{/if}}
+    </p>
 
-    <div class="span9">
-        <table class="table table-striped">
-            <tr>
-                <td><strong>Email:</strong></td>
-                <td><i class="icon-envelope"></i> <a href="mailto:<%= participant.email %>">{{email}}</a>
-                </td>
-            </tr>
-        </table>
-    </div>
-{{/with}}
+</div>
+
+<div class="span9">
+    <table class="table table-striped">
+        <tr>
+            <td><strong>Email:</strong></td>
+            <td><i class="icon-envelope"></i> <a href="mailto:{{email}}">{{email}}</a>
+            </td>
+        </tr>
+    </table>
+</div>

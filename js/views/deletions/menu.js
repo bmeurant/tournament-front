@@ -9,13 +9,15 @@ define([
     'async'
 ], function(_, Backbone, Handlebars, deletionsMenuTemplate, AbstractView, Participant, Pubsub) {
 
-    return AbstractView.extend({
+    var DeletionsMenu =  AbstractView.extend({
 
         nbDelsSelector: '.nb-dels',
 
         // For these main view types, the deletion menu will be completely rendered
         acceptedTypes: ['details', 'edit', 'list'],
         ignoreElemTypes: ['deletions'],
+
+        template: deletionsMenuTemplate,
 
         tagName: 'ul',
         attributes: {
@@ -67,7 +69,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(deletionsMenuTemplate());
+            DeletionsMenu.__super__.render.apply(this, arguments);
             this.initCollection();
             this.renderDels();
             return this;
@@ -304,6 +306,7 @@ define([
         moveToDeletionsView: function() {
             Backbone.history.navigate('/deletions', true);
         }
-
     });
+
+    return DeletionsMenu;
 });
