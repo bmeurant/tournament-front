@@ -5,7 +5,7 @@ define([
     'backbone-queryparams'
 ], function($, _, Backbone, BackboneQueryParams) {
 
-    var AppRouter = Backbone.Router.extend({
+    var ParticipantsRouter = Backbone.Router.extend({
         routes: {
             // Define some URL routes
             //':route/:action':'loadView',
@@ -13,10 +13,7 @@ define([
             'participant/:id': 'showParticipant',
             'participant/:id/edit': 'editParticipant',
             'participants': 'listParticipants',
-            'deletions': 'showDeletions',
-            'help': 'showHelp',
-            // Default
-            '*path': 'defaultAction'
+            'deletions': 'showDeletions'
         },
 
         listParticipants: function(params) {
@@ -52,27 +49,8 @@ define([
                 function(DeletionsView) {
                     new DeletionsView({root: '#content'});
                 });
-        },
-
-        showHelp: function() {
-            require(['views/help/help'],
-                function(HelpView) {
-                    new HelpView({root: '#content'});
-                });
-        },
-
-        defaultAction: function() {
-            this.navigate('participants', true);
         }
-
     });
 
-    var initialize = function() {
-        App.Routers.AppRouter = new AppRouter;
-        Backbone.history.start({pushState: true, root: '/'});
-
-    };
-    return {
-        initialize: initialize
-    };
+    return ParticipantsRouter;
 });

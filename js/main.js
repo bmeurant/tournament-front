@@ -80,7 +80,7 @@ require([
     // Load our app module and pass it to our definition function
     'jquery',
     'resthub-handlebars',
-    'router',
+    'routers/router',
     'views/header',
     'views/alerts',
     'views/help/shortcuts',
