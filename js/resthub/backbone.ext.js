@@ -3,20 +3,20 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
     // Backbone.View extension
     // -----------------------
 
-    var originalPrototype        = Backbone.View.prototype;
-    var originalDelegateEvents   = originalPrototype.delegateEvents;
+    var originalPrototype = Backbone.View.prototype;
+    var originalDelegateEvents = originalPrototype.delegateEvents;
     var originalUndelegateEvents = originalPrototype.undelegateEvents;
-    var originalSetElement       = originalPrototype.setElement;
-    var originalRemove           = originalPrototype.remove;
-    var originalDispose          = originalPrototype.dispose;
-    var originalConstructor      = Backbone.View;
-    var originalExtend           = Backbone.View.extend;
+    var originalSetElement = originalPrototype.setElement;
+    var originalRemove = originalPrototype.remove;
+    var originalDispose = originalPrototype.dispose;
+    var originalConstructor = Backbone.View;
+    var originalExtend = Backbone.View.extend;
 
     var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'root', 'strategy', 'context'];
 
     // Restore original prototype
     Backbone.View.prototype = originalPrototype;
-    Backbone.View.extend    = originalExtend;
+    Backbone.View.extend = originalExtend;
 
     // extend **Backbone.View** properties and methods.
     _.extend(Backbone.View.prototype, {
@@ -74,12 +74,12 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
         },
 
         _configure: function(options) {
-          if (this.options) options = _.extend({}, this.options, options);
-          for (var i = 0, l = viewOptions.length; i < l; i++) {
-            var attr = viewOptions[i];
-            if (options[attr]) this[attr] = options[attr];
-          }
-          this.options = options;
+            if (this.options) options = _.extend({}, this.options, options);
+            for (var i = 0, l = viewOptions.length; i < l; i++) {
+                var attr = viewOptions[i];
+                if (options[attr]) this[attr] = options[attr];
+            }
+            this.options = options;
         },
 
         // Override Backbone delegateEvents() method
@@ -192,10 +192,11 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
             // build array of form attributes to refresh model
             fields.each(_.bind(function(index, value) {
                 attributes[value.name] = value.value;
-                if (model) {
-                    model.set(value.name, value.value);
-                }
             }, this));
+
+            if (model) {
+                model.set(attributes);
+            }
         }
 
     });
@@ -205,7 +206,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
     // --------------------------
 
     var originalHistPrototype = Backbone.History.prototype;
-    var originalStart         = originalHistPrototype.start;
+    var originalStart = originalHistPrototype.start;
 
     // extend **Backbone.History** properties and methods.
     _.extend(Backbone.History.prototype, {
