@@ -108,12 +108,7 @@ define([
              * Save the current participant (update or create depending of the existence of a valid model.id)
              */
             saveParticipant: function() {
-                // build array of form attributes to refresh model
-                var attributes = {};
-                this.$("form input[type!='submit']").each(function(index, value) {
-                    attributes[value.name] = value.value;
-                    this.model.set(value.name, value.value);
-                }.bind(this));
+                this.populateModel();
 
                 // save model if its valid, display alert otherwise
                 if (this.model.isValid()) {
