@@ -1,8 +1,9 @@
 define([
     'backbone',
     'hbs!templates/participants/pagination.html',
-    'pubsub'
-], function(Backbone, paginationTemplate, Pubsub) {
+    'pubsub',
+    'i18n!nls/messages'
+], function(Backbone, paginationTemplate, Pubsub, messages) {
 
     return Backbone.View.extend({
 
@@ -26,7 +27,8 @@ define([
             this.render({info: this.collection.info(),
                 firstPage: this.collection.paginator_ui.firstPage,
                 previous: this.collection.previous,
-                next: this.collection.next});
+                next: this.collection.next,
+                messages: messages});
         },
 
         changePage: function(event) {

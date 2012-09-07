@@ -8,8 +8,9 @@ define([
     'views/participants/details',
     'views/participants/edit',
     'views/participants/add',
-    'pubsub'
-], function(_, Backbone, Participant, participantTemplate, NavigationView, miniatureTemplate, DetailsView, EditView, AddView, Pubsub) {
+    'pubsub',
+    'i18n!nls/messages'
+], function(_, Backbone, Participant, participantTemplate, NavigationView, miniatureTemplate, DetailsView, EditView, AddView, Pubsub, messages) {
 
     /**
      * Manage global view surrounding all unitary participants views
@@ -67,7 +68,7 @@ define([
             Pubsub.on(App.Events.NEXT_CALLED, this.nextHandler, this);
 
             if (this.model.id && this.deleted.indexOf(this.model.id) >= 0) {
-                Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'This participant is currently being deleted', 'alert-error');
+                Pubsub.trigger(App.Events.ALERT_RAISED, messages.error, messages.errorParticipantBeingDeleted, 'alert-error');
 
                 setTimeout(function() {
                     Backbone.history.navigate('/participants', true);
@@ -81,7 +82,7 @@ define([
                 this.model.fetch({
                     success: this.renderViews.bind(this),
                     error: function() {
-                        Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to get participant', 'alert-error');
+                        Pubsub.trigger(App.Events.ALERT_RAISED, messages.error, messages.errorFetchParticipant, 'alert-error');
                     }
                 });
             }
@@ -156,7 +157,7 @@ define([
                     callbackSuccess();
                 })
                 .fail(function() {
-                    Pubsub.trigger(App.Events.ALERT_RAISED, 'Warning!', 'Error occurred while deleting ' + id + 'photo', 'alert-warning');
+                    Pubsub.trigger(App.Events.ALERT_RAISED, messages.warning, _.str.sprintf(messages.errorDeletingPhoto, id), 'alert-warning');
                 });
         },
 
@@ -233,7 +234,7 @@ define([
             this.inTransition = false;
 
             // change url
-            window.history.pushState(null, 'Tournament', '/participant/' + this.model.id + this.linkedViews[this.viewType].url);
+            Backbone.history.navigate('participant/' + this.model.id + this.linkedViews[this.viewType].url, false);
 
             // give focus to first input if exists
             this.$('form input:not(:disabled)').first().focus();

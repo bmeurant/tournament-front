@@ -1,7 +1,8 @@
 define([
     'backbone',
-    'hbs!templates/search/menu.html'
-], function(Backbone, searchMenuTemplate) {
+    'hbs!templates/search/menu.html',
+    'i18n!nls/messages'
+], function(Backbone, searchMenuTemplate, messages) {
 
     return Backbone.View.extend({
 
@@ -17,7 +18,7 @@ define([
         },
 
         initialize: function() {
-            this.render();
+            this.render({messages: messages});
         },
 
         onKeyDown: function(event) {

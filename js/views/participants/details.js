@@ -1,7 +1,8 @@
 define([
     'backbone',
-    'hbs!templates/participants/details.html'
-], function(Backbone, detailsTemplate) {
+    'hbs!templates/participants/details.html',
+    'i18n!nls/messages'
+], function(Backbone, detailsTemplate, messages) {
 
     var DetailsView = Backbone.View.extend({
 
@@ -14,7 +15,7 @@ define([
         },
 
         render: function() {
-            return DetailsView.__super__.render.apply(this);
+            return DetailsView.__super__.render.apply(this, [{messages: messages, participant: this.model.toJSON()}]);
         }
     });
 

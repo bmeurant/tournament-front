@@ -21,7 +21,6 @@
      */
     _.extend(Backbone.Validation.callbacks, {
         valid: function(view, attr, selector) {
-
             // find matching form input and remove error class and text if any
             var attrSelector = '[' + selector + '~=' + attr + ']';
             // get the control group element
@@ -30,7 +29,6 @@
             view.$(attrSelector).closest('.controls').find('span.help-inline').text('');
         },
         invalid: function(view, attr, error, selector) {
-
             // find matching form input and add error class and text error
             var attrSelector = '[' + selector + '~=' + attr + ']';
             // get the control group element

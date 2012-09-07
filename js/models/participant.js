@@ -1,8 +1,9 @@
 define([
     'underscore',
     'backbone',
+    'i18n!nls/messages',
     'resthub-backbone-validation'
-], function(_, Backbone) {
+], function(_, Backbone, messages) {
 
     /**
      * Definition of a Participant model object
@@ -16,14 +17,17 @@ define([
         // Defines validation options (see Backbone-Validation)
         validation: {
             firstname: {
-                required: true
+                required: true,
+                msg: _.str.sprintf(messages.required, messages.firstname)
             },
             lastname: {
-                required: true
+                required: true,
+                msg: _.str.sprintf(messages.required, messages.lastname)
             },
             email: {
                 required: false,
-                pattern: 'email'
+                pattern: 'email',
+                msg: messages.invalidEmail
             }
         },
 

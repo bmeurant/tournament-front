@@ -3,8 +3,9 @@ define([
     'backbone',
     'resthub-handlebars',
     'hbs!templates/participants/menu.html',
-    'pubsub'
-], function(_, Backbone, Handlebars, menuTemplate, Pubsub) {
+    'pubsub',
+    'i18n!nls/messages'
+], function(_, Backbone, Handlebars, menuTemplate, Pubsub, messages) {
 
     return Backbone.View.extend({
 
@@ -44,7 +45,7 @@ define([
                 return _.indexOf(this.actions[this.viewType], viewType) < 0 ? 'hidden' : '';
             }.bind(this));
 
-            this.render();
+            this.render({messages: messages});
         },
 
         /**
@@ -56,7 +57,7 @@ define([
         onViewChanged: function(elemType, viewType) {
             if (elemType == this.elemType) {
                 this.viewType = viewType;
-                this.render();
+                this.render({messages: messages});
             }
         },
 

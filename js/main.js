@@ -64,7 +64,9 @@ require.config({
         keymaster: 'libs/keymaster',
         hbs: 'resthub/handlebars-require',
         templates: '/templates'
-    }
+    },
+
+    locale: localStorage.getItem('locale') || 'fr-fr'
 
 });
 

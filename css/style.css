@@ -149,10 +149,6 @@ ul.thumbnails li.thumbnail a:focus {
 .element-separator {
 }
 
-.navbar .brand {
-    width:95px;
-}
-
 body .navbar .nav > li > a {
     padding-top: 11px;
 }

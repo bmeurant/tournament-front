@@ -334,7 +334,7 @@ saveParticipant:function () {
         });
     }
     else {
-        Pubsub.publish(App.Events.ALERT_RAISED, ['Warning!', 'Fix validation errors and try again', 'alert-warning']);
+        Pubsub.publish(App.Events.ALERT_RAISED, [messages.warning, 'Fix validation errors and try again', 'alert-warning']);
     }
 },
 ```
@@ -502,7 +502,7 @@ render:function (partials, selectLast) {
                 }
             }.bind(this),
             error:function (collection, response) {
-                Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
+                Pubsub.publish(App.Events.ALERT_RAISED, [messages.error, 'An error occurred while trying to fetch participants', 'alert-error']);
             }
         });
     return this;
@@ -569,7 +569,7 @@ this.collection.goTo(this.askedPage,
             }
         }.bind(this),
         error:function () {
-            Pubsub.publish(App.Events.ALERT_RAISED, ['Error!', 'An error occurred while trying to fetch participants', 'alert-error']);
+            Pubsub.publish(App.Events.ALERT_RAISED, [messages.error, 'An error occurred while trying to fetch participants', 'alert-error']);
         }
     });
 return this;

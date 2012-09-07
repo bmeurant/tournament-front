@@ -8,8 +8,9 @@ define([
     'collections/participants',
     'mixins/selectable',
     'pubsub',
+    'i18n!nls/messages',
     'async'
-], function(_, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, ParticipantCollection, Selectable, Pubsub) {
+], function(_, Handlebars, deletionsTemplate, AbstractView, participantTemplate, Participant, ParticipantCollection, Selectable, Pubsub, messages) {
 
     /**
      * Main view for displaying deletions
@@ -149,11 +150,11 @@ define([
 
                 // if the number of errors is strictly equal to the number of elements to fetch
                 if (successes.length == 0) {
-                    Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to fetch participants', 'alert-error');
+                    Pubsub.trigger(App.Events.ALERT_RAISED, messages.error, messages.errorFetchParticipants, 'alert-error');
                 }
                 // there is at least on error
                 else if (successes.length < this.countElements(this.collections)) {
-                    Pubsub.trigger(App.Events.ALERT_RAISED, 'Warning!', 'Some participants could not be retrieved', 'alert-warning');
+                    Pubsub.trigger(App.Events.ALERT_RAISED, messages.warning, messages.warningRetrieveSomeParticipants, 'alert-warning');
                 }
 
                 this.storeInLocalStorage();
@@ -164,7 +165,7 @@ define([
 
             render: function() {
                 var participants_template = participantTemplate({'participants': this.collections.participant.toJSON()});
-                DeletionsList.__super__.render.apply(this, [{'hasParticipants': this.collections.participant.length > 0, 'participants_template': new Handlebars.SafeString(participants_template)}]);
+                DeletionsList.__super__.render.apply(this, [{'hasParticipants': this.collections.participant.length > 0, 'participants_template': new Handlebars.SafeString(participants_template), messages: messages}]);
 
                 this.initTooltips();
 
@@ -285,14 +286,14 @@ define([
 
             onElementDeleted: function(err, result) {
                 if (result.model == null) {
-                    Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'Cannot remove selected element', 'alert-error');
+                    Pubsub.trigger(App.Events.ALERT_RAISED, messages.error, messages.errorCannotRemoveElement, 'alert-error');
                     return;
                 }
 
                 this.removeAndSave(result.model);
 
                 Pubsub.trigger(App.Events.DELETION_CONFIRMED);
-                Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Element deletion confirmed', 'alert-success');
+                Pubsub.trigger(App.Events.ALERT_RAISED, messages.success, messages.successElementDeletionConfirmed, 'alert-success');
             },
 
             /**
@@ -308,7 +309,7 @@ define([
                 this.removeAndSave(model);
 
                 Pubsub.trigger(App.Events.DELETION_CANCELED);
-                Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Element deletion canceled', 'alert-success');
+                Pubsub.trigger(App.Events.ALERT_RAISED, messages.success, messages.successDeletionCanceled, 'alert-success');
             },
 
             removeAndSave: function(model) {
@@ -358,9 +359,9 @@ define([
 
             initTooltips: function() {
                 // initialize tooltips
-                this.$('li.thumbnail').tooltip({title: 'double click to remove, simple click to cancel', trigger: 'hover', placement: this.liTooltipPlacement});
+                this.$('li.thumbnail').tooltip({title: messages.tooltipDelsHover, trigger: 'hover', placement: this.liTooltipPlacement});
                 // cannot define a tooltip on a same selector twice : define one on 'a' to link with focus event
-                this.$('li.thumbnail > a').tooltip({title: 'press <code>Del</code> to remove<br/>press <code>Enter</code> to cancel', trigger: 'focus', placement: this.liTooltipPlacement});
+                this.$('li.thumbnail > a').tooltip({title: messages.tooltipDelsFocus, trigger: 'focus', placement: this.liTooltipPlacement});
             },
 
             /**

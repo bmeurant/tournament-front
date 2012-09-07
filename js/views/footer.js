@@ -1,8 +1,9 @@
 define([
     'backbone',
     'hbs!templates/footer.html',
-    'pubsub'
-], function(Backbone, footerTemplate, Pubsub) {
+    'pubsub',
+    'i18n!nls/messages'
+], function(Backbone, footerTemplate, Pubsub, messages) {
 
     return Backbone.View.extend({
 
@@ -14,7 +15,7 @@ define([
 
         initialize: function() {
             Pubsub.on(App.Events.HELP_CALLED, this.showHelp, this);
-            this.render();
+            this.render({messages: messages});
         },
 
         showShortcuts: function(event) {

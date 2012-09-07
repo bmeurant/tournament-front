@@ -5,8 +5,9 @@ define([
     'hbs!templates/participants/edit.html',
     'mixins/validatable',
     'pubsub',
+    'i18n!nls/messages',
     'resthub-backbone-validation'
-], function($, _, Backbone, participantEditTemplate, Validatable, Pubsub) {
+], function($, _, Backbone, participantEditTemplate, Validatable, Pubsub, messages) {
 
     var EditView = Backbone.View.extend(
         _.extend({}, Validatable, {
@@ -33,7 +34,7 @@ define([
             },
 
             render: function() {
-                return EditView.__super__.render.apply(this);
+                return EditView.__super__.render.apply(this, [{messages: messages, participant: this.model.toJSON()}]);
             },
 
             /**
@@ -118,7 +119,7 @@ define([
                     });
                 }
                 else {
-                    Pubsub.trigger(App.Events.ALERT_RAISED, 'Warning!', 'Fix validation errors and try again', 'alert-warning');
+                    Pubsub.trigger(App.Events.ALERT_RAISED, messages.warning, messages.warningFixValidation, 'alert-warning');
                 }
             },
 
@@ -131,7 +132,7 @@ define([
             onSaveError: function(model, resp) {
                 // error is an http (server) one
                 if (resp.hasOwnProperty('status')) {
-                    Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to update this item', 'alert-error');
+                    Pubsub.trigger(App.Events.ALERT_RAISED, messages.error, messages.errorUpdateItem, 'alert-error');
                 }
             },
 
@@ -160,7 +161,7 @@ define([
                 // store the fact that the model has been updated
                 this.updated = true;
 
-                Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Participant saved successfully', 'alert-success');
+                Pubsub.trigger(App.Events.ALERT_RAISED, messages.success, messages.successParticipantSaved, 'alert-success');
 
                 // restore the focus on the last acceded field before saving
                 if (this.focusedField) {
@@ -227,7 +228,7 @@ define([
                         callbackSuccess();
                     })
                     .fail(function() {
-                        Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while uploading ' + file.name, 'alert-error');
+                        Pubsub.trigger(App.Events.ALERT_RAISED, messages.error, _.str.sprintf(messages.errorUploadingFile, file.name));
                     });
             },
 

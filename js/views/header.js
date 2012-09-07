@@ -4,8 +4,9 @@ define([
     'views/deletions/menu',
     'views/search/menu',
     'views/participants/menu',
-    'pubsub'
-], function(Backbone, headerTemplate, DeletionsMenuView, SearchMenuView, ParticipantsMenuView, Pubsub) {
+    'pubsub',
+    'i18n!nls/messages'
+], function(Backbone, headerTemplate, DeletionsMenuView, SearchMenuView, ParticipantsMenuView, Pubsub, messages) {
 
     return Backbone.View.extend({
 
@@ -34,7 +35,7 @@ define([
             Pubsub.on(App.Events.FIND_CALLED, this.focusOnSearch, this);
             Pubsub.on(App.Events.VIEW_CHANGED, this.onViewChanged, this);
 
-            this.render();
+            this.render({messages: messages});
 
             new DeletionsMenuView({root: this.$('.element-menu.delete-menu')});
             new SearchMenuView({root: this.$('.search-menu')});

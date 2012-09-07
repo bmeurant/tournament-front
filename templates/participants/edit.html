@@ -1,72 +1,74 @@
-<form class="form-horizontal">
-    <fieldset>
-        <div class="row">
-            <div class="span8">
-                <div class="control-group">
-                    {{#if id}}
-                    <label for="participantId" class="control-label">Id:</label>
+{{#with participant}}
+    <form class="form-horizontal">
+        <fieldset>
+            <div class="row">
+                <div class="span8">
+                    <div class="control-group">
+                        {{#if id}}
+                            <label for="participantId" class="control-label">{{../../messages.id}}:</label>
 
-                    <div class="controls">
-                        <div class="input-prepend">
-                            <span class="add-on"><i class="icon-asterisk"></i></span>
-                            <input class="span3" id="participantId" name="id" type="text" value="{{id}}" disabled/>
-                        </div>
-                    </div>
-                    {{/if}}
-                </div>
-
-                <div class="control-group">
-                    <label for="firstname" class="control-label">First name:</label>
-
-                    <div class="controls">
-                        <div class="input-prepend">
-                            <span class="add-on"><i class="icon-user"></i></span>
-                            <input class="span3" type="text" id="firstname" name="firstname" required="true" value="{{firstname}}" tabindex="1" autofocus="autofocus"/>
-                        </div>
-                        <span class="help-inline"></span>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label for="lastname" class="control-label">Last name:</label>
-
-                    <div class="controls">
-                        <div class="input-prepend">
-                            <span class="add-on"><i class="icon-user"></i></span>
-                            <input class="span3" type="text" id="lastname" name="lastname" required="true" value="{{lastname}}" tabindex="2"/>
-                        </div>
-                        <span class="help-inline"></span>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label for="email" class="control-label">email address:</label>
-
-                    <div class="controls">
-                        <div class="input-prepend">
-                            <span class="add-on"><i class="icon-envelope"></i></span>
-                            <input class="span3" type="email" id="email" name="email" value="{{email}}" tabindex="3"/>
-                        </div>
-                        <span class="help-inline"></span>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="span3">
-                <div class="well">
-                    <p class="photo">
-                        {{#if pictureUrl}}
-                            <img class="photo" src="{{photo_link pictureUrl}}" alt="" draggable="false"/>
-                            <p hidden><img src="{{photo_link pictMin}}"/></p>
-                        {{else}}
-                            <img class="photo" src="/img/participants/no-photo.jpg" alt="" draggable="false"/>
+                            <div class="controls">
+                                <div class="input-prepend">
+                                    <span class="add-on"><i class="icon-asterisk"></i></span>
+                                    <input class="span3" id="participantId" name="id" type="text" value="{{id}}" disabled/>
+                                </div>
+                            </div>
                         {{/if}}
-                    </p>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="firstname" class="control-label">{{../messages.firstname}}:</label>
+
+                        <div class="controls">
+                            <div class="input-prepend">
+                                <span class="add-on"><i class="icon-user"></i></span>
+                                <input class="span3" type="text" id="firstname" name="firstname" required="true" value="{{firstname}}" tabindex="1" autofocus="autofocus"/>
+                            </div>
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="lastname" class="control-label">{{../messages.lastname}}:</label>
+
+                        <div class="controls">
+                            <div class="input-prepend">
+                                <span class="add-on"><i class="icon-user"></i></span>
+                                <input class="span3" type="text" id="lastname" name="lastname" required="true" value="{{lastname}}" tabindex="2"/>
+                            </div>
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="email" class="control-label">{{../messages.email}}:</label>
+
+                        <div class="controls">
+                            <div class="input-prepend">
+                                <span class="add-on"><i class="icon-envelope"></i></span>
+                                <input class="span3" type="email" id="email" name="email" value="{{email}}" tabindex="3"/>
+                            </div>
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+
                 </div>
-                <div class=""><img src="/img/info.png" class="icon" alt="info"/> To change the picture, drag a new picture from your file system onto the box above.</div>
+
+                <div class="span3">
+                    <div class="well">
+                        <p class="photo">
+                            {{#if pictureUrl}}
+                                <img class="photo" src="{{photo_link pictureUrl}}" alt="" draggable="false"/>
+                                <p hidden><img src="{{photo_link pictMin}}"/></p>
+                            {{else}}
+                                <img class="photo" src="/img/participants/no-photo.jpg" alt="" draggable="false"/>
+                            {{/if}}
+                        </p>
+                    </div>
+                    <div class=""><img src="/img/info.png" class="icon" alt="info"/> {{../messages.dragPicMsg}}</div>
+                </div>
             </div>
-        </div>
-    </fieldset>
-    <input type="submit" style="display:none" value="Submit"/>
-</form>
+        </fieldset>
+        <input type="submit" style="display:none" value="Submit"/>
+    </form>
+{{/with}}

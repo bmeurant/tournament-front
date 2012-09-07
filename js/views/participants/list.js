@@ -8,8 +8,9 @@ define([
     'mixins/selectable',
     'mixins/paginable',
     'pubsub',
+    'i18n!nls/messages',
     'bootstrap'
-], function($, _, Backbone, Handlebars, listTemplate, participantMiniatureTemplate, Selectable, Paginable, Pubsub) {
+], function($, _, Backbone, Handlebars, listTemplate, participantMiniatureTemplate, Selectable, Paginable, Pubsub, messages) {
 
     return Backbone.View.extend(
         _.extend(Selectable, Paginable, {
@@ -85,8 +86,6 @@ define([
                     this.selectFirst('li.thumbnail');
                 }
 
-                window.history.pushState(null, 'Tournament', '/participants' + ((this.collection.info().currentPage != 1) ? '?page=' + this.collection.info().currentPage : ''));
-
                 return this;
             },
 
@@ -139,9 +138,9 @@ define([
 
             initTooltips: function() {
                 // initialize tooltips
-                this.$('li.thumbnail').tooltip({title: 'drag on delete drop-zone to remove<br/>click to view details', trigger: 'hover', placement: this.liTooltipPlacement});
+                this.$('li.thumbnail').tooltip({title: messages.tooltipListHover, trigger: 'hover', placement: this.liTooltipPlacement});
                 // cannot define a tooltip on a same selector twice : define one on 'a' to link with focus event
-                this.$('li.thumbnail > a').tooltip({title: 'press <code>Del</code> to remove<br/>press <code>Enter</code> to view details', trigger: 'focus', placement: this.liTooltipPlacement});
+                this.$('li.thumbnail > a').tooltip({title: messages.tooltipListFocus, trigger: 'focus', placement: this.liTooltipPlacement});
             },
 
             /**
@@ -291,7 +290,7 @@ define([
                 this.collection.goTo(id,
                     {
                         error: function() {
-                            Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'An error occurred while trying to fetch participants', 'alert-error');
+                            Pubsub.trigger(App.Events.ALERT_RAISED, messages.error, messages.errorFetchParticipants, 'alert-error');
                         }
                     });
             },

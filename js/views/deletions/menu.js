@@ -6,8 +6,9 @@ define([
     'views/deletions/abstract',
     'models/participant',
     'pubsub',
+    'i18n!nls/messages',
     'async'
-], function(_, Backbone, Handlebars, deletionsMenuTemplate, AbstractView, Participant, Pubsub) {
+], function(_, Backbone, Handlebars, deletionsMenuTemplate, AbstractView, Participant, Pubsub, messages) {
 
     var DeletionsMenu =  AbstractView.extend({
 
@@ -60,7 +61,7 @@ define([
          * @param viewType type of the main view
          */
         onViewChanged: function(elemType, viewType) {
-            this.render();
+            this.render({messages: messages});
 
             // if the new type is not managed by the view, hide it
             if (this.ignoreElemTypes.indexOf(elemType) >= 0 || this.acceptedTypes.indexOf(viewType) < 0) {
@@ -252,13 +253,13 @@ define([
             var finalCollectionLength = this.countElements(this.idsCollection);
 
             if (finalCollectionLength == 0) {
-                Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Elements successfully deleted', 'alert-success');
+                Pubsub.trigger(App.Events.ALERT_RAISED, messages.success, messages.successElementsDeleted, 'alert-success');
             }
             else if (finalCollectionLength == initialCollectionLength) {
-                Pubsub.trigger(App.Events.ALERT_RAISED, 'Error!', 'Error occurred while deleting these elements', 'alert-error');
+                Pubsub.trigger(App.Events.ALERT_RAISED, messages.error, messages.errorDeletingElements, 'alert-error');
             }
             else {
-                Pubsub.trigger(App.Events.ALERT_RAISED, 'Warning!', 'Error occurred while deleting some elements', 'alert-warning');
+                Pubsub.trigger(App.Events.ALERT_RAISED, messages.warning, messages.warningDeletingSomeElements, 'alert-warning');
             }
 
             // save collection
@@ -286,7 +287,7 @@ define([
 
             this.render();
 
-            Pubsub.trigger(App.Events.ALERT_RAISED, 'Success!', 'Deletions canceled', 'alert-success');
+            Pubsub.trigger(App.Events.ALERT_RAISED, messages.success, messages.successDeletionsCanceled, 'alert-success');
             Pubsub.trigger(App.Events.DELETIONS_CANCELED);
         },
 
